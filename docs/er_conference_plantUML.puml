@@ -1,0 +1,68 @@
+@startuml
+
+class USER {
+  +id
+  +name
+  +email
+  +userId
+}
+
+class SERVER {
+  +id
+  +name
+  +serverUrl
+}
+
+class MEETING {
+  +id
+  +roomId
+  +userRef
+  +baseUrl
+  +status
+ 
+}
+
+USER 1 -- N MEETING : PARTICIPATES
+
+MEETING N -- 1 SERVER : HOSTED_ON
+
+
+@enduml
+
+@startuml
+
+class User {
+  +id
+  +name
+  +email
+}
+
+class Server {
+  +id
+  +name
+  +serverUrl
+}
+
+class Meeting {
+  +id
+  +roomId
+  +userRef
+  +baseUrl
+  +status
+}
+
+class ServerPreference {
+  +id
+  +serverUrl
+  +userEmail
+}
+
+User 1 <--> N Meeting : creates 
+/'//cardinality changes if relationship becomes participates'/
+Meeting N <--> 1 Server : hosted on
+User 1 <--> N Server : chooses 
+ ServerPreference . (User,Server)
+
+
+@enduml
+
