@@ -1,17 +1,19 @@
-package entity;
+package com.teenthofabud.videoconference.moderator.conference.entity;
 
-import constants.ConferenceStatus;
+import com.teenthofabud.videoconference.moderator.conference.constants.ConferenceStatus;
+import com.teenthofabud.videoconference.moderator.conference.converter.ConferenceStatusAttributeConverter;
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Getter
-@Setter
 @ToString
 @EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor
-public class Conference {
+@Builder
+@Getter
+@Setter
+public class ConferenceEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,7 +29,8 @@ public class Conference {
     String serverUrl;
 
     @Column(name = "status", nullable = false)
+    @Convert(converter = ConferenceStatusAttributeConverter.class  )
     ConferenceStatus status;
-    
+
 
 }

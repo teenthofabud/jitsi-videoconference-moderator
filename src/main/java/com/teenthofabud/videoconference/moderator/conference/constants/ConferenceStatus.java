@@ -1,4 +1,4 @@
-package constants;
+package com.teenthofabud.videoconference.moderator.conference.constants;
 
 import lombok.Getter;
 import lombok.experimental.FieldNameConstants;
