@@ -13,7 +13,7 @@ public class ConferenceEntityToGoogeConferenceDataVoConverter implements Convert
         return GoogleConferenceDataVo.builder()
                 .id(source.getRoomId())
                 .adminEmail(source.getUserId())
-                .videoUri(source.getServerUrl())
+                .videoUri(source.getServerUrl()+"/"+source.getRoomId())
                 .build();
     }
 }

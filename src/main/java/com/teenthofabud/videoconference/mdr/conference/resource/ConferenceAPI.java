@@ -1,7 +1,7 @@
 package com.teenthofabud.videoconference.mdr.conference.resource;
 
+import com.teenthofabud.videoconference.mdr.conference.error.google.GoogleConferenceException;
 import com.teenthofabud.videoconference.mdr.conference.vo.google.GoogleConferenceDataVo;
-import com.teenthofabud.videoconference.mdr.conference.error.google.UserNotFoundException;
 import com.teenthofabud.videoconference.mdr.conference.form.google.GoogleConferenceForm;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -16,6 +16,6 @@ public interface ConferenceAPI {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Conference created"),
     })
-    ResponseEntity<GoogleConferenceDataVo> createNewGoogleConference(GoogleConferenceForm form) throws UserNotFoundException;
+    ResponseEntity<GoogleConferenceDataVo> createNewGoogleConference(GoogleConferenceForm form) throws GoogleConferenceException;
 }
 

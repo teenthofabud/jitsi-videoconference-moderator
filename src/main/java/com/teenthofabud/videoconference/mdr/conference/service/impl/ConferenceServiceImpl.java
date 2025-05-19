@@ -1,9 +1,10 @@
 package com.teenthofabud.videoconference.mdr.conference.service.impl;
 
+import com.teenthofabud.videoconference.mdr.conference.constants.google.GoogleConferenceErrorType;
 import com.teenthofabud.videoconference.mdr.conference.converter.google.ConferenceEntityToGoogeConferenceDataVoConverter;
+import com.teenthofabud.videoconference.mdr.conference.error.google.GoogleConferenceException;
 import com.teenthofabud.videoconference.mdr.conference.vo.google.GoogleConferenceDataVo;
 import com.teenthofabud.videoconference.mdr.conference.entity.ConferenceEntity;
-import com.teenthofabud.videoconference.mdr.conference.error.google.UserNotFoundException;
 import com.teenthofabud.videoconference.mdr.conference.form.google.GoogleConferenceForm;
 import com.teenthofabud.videoconference.mdr.conference.repository.ConferenceRepository;
 import com.teenthofabud.videoconference.mdr.conference.service.ConferenceService;
@@ -21,15 +22,16 @@ public class ConferenceServiceImpl implements ConferenceService {
     ConferenceEntityToGoogeConferenceDataVoConverter conferenceEntityToGoogeConferenceDataVoConverter;
 
     @Override
-    public GoogleConferenceDataVo createNewGoogleConference(GoogleConferenceForm form) throws UserNotFoundException {
+    public GoogleConferenceDataVo createNewGoogleConference(GoogleConferenceForm form) throws GoogleConferenceException, GoogleConferenceException {
         GoogleConferenceDataVo googleConferenceDataVo = GoogleConferenceDataVo.builder().build();
 
         String calendarId = form.getCalendarEvent().getCalendarId();
-        ConferenceEntity conferenceEntity = conferenceRepository.findByUserRef(calendarId);
+        ConferenceEntity conferenceEntity = conferenceRepository.findByUserId(calendarId);
         if(conferenceEntity!=null){
             googleConferenceDataVo = conferenceEntityToGoogeConferenceDataVoConverter.convert(conferenceEntity);
         }
-        else throw new UserNotFoundException();
+        else
+            throw new GoogleConferenceException(GoogleConferenceErrorType.CONFERENCE_SOLUTION_FORBIDDEN,new Object[]{calendarId});
         return googleConferenceDataVo;
     }
 }

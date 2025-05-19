@@ -22,7 +22,7 @@ public class ConferenceEntity {
     @Column(name = "room_id", nullable = false)
     String roomId;
 
-    @Column(name = "user_ref", nullable = false)
+    @Column(name = "user_id", nullable = false)
     String userId;
 
     @Column(name = "server_url", nullable = false)
