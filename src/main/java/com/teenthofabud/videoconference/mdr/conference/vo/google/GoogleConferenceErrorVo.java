@@ -1,7 +1,6 @@
 package com.teenthofabud.videoconference.mdr.conference.vo.google;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.teenthofabud.videoconference.mdr.conference.constants.google.GoogleConferenceErrorType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,6 +14,7 @@ import lombok.NoArgsConstructor;
 public class GoogleConferenceErrorVo {
 
     String authenticationUrl;
-    GoogleConferenceErrorType errorType;
+    String error;
+    String message;
 
 }

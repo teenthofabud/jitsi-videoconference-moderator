@@ -10,6 +10,12 @@ import lombok.ToString;
 @ToString
 public class GoogleConferenceException extends Exception{
 
-    public GoogleConferenceException(GoogleConferenceErrorType errorType, Obj)
+    GoogleConferenceErrorType errorType;
+    Object[] parameters;
+
+    public GoogleConferenceException(GoogleConferenceErrorType errorType, Object[] parameters){
+        this.errorType = errorType;
+        this.parameters = parameters;
+    }
 
 }

@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ConferenceRepository extends JpaRepository<ConferenceEntity,Long> {
 
-    ConferenceEntity findByUserRef(String userRef);
+    ConferenceEntity findByUserId(String userId);
 }

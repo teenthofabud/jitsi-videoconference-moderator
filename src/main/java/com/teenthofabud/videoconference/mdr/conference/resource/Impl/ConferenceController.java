@@ -1,7 +1,7 @@
 package com.teenthofabud.videoconference.mdr.conference.resource.Impl;
 
+import com.teenthofabud.videoconference.mdr.conference.error.google.GoogleConferenceException;
 import com.teenthofabud.videoconference.mdr.conference.vo.google.GoogleConferenceDataVo;
-import com.teenthofabud.videoconference.mdr.conference.error.google.UserNotFoundException;
 import com.teenthofabud.videoconference.mdr.conference.form.google.GoogleConferenceForm;
 import com.teenthofabud.videoconference.mdr.conference.resource.ConferenceAPI;
 import com.teenthofabud.videoconference.mdr.conference.service.ConferenceService;
@@ -23,7 +23,7 @@ public class ConferenceController implements ConferenceAPI {
 
     @Override
     @PostMapping("/google")
-    public ResponseEntity<GoogleConferenceDataVo> createNewGoogleConference(@RequestBody GoogleConferenceForm form) throws UserNotFoundException {
+    public ResponseEntity<GoogleConferenceDataVo> createNewGoogleConference(@RequestBody GoogleConferenceForm form) throws GoogleConferenceException {
         log.info("Received request with body : {}",form);
         GoogleConferenceDataVo googleConferenceDataVo = null;
         googleConferenceDataVo = conferenceService.createNewGoogleConference(form);
