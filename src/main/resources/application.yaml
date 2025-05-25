@@ -1,6 +1,8 @@
 spring:
  application:
   name: jitsi-conference-moderator
+  version: 1.0
+  description : Jitsi Video Conference Moderator
 
  h2:
   console:

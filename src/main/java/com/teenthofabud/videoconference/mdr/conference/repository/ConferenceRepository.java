@@ -4,8 +4,10 @@ import com.teenthofabud.videoconference.mdr.conference.entity.ConferenceEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface ConferenceRepository extends JpaRepository<ConferenceEntity,Long> {
 
-    ConferenceEntity findByUserId(String userId);
+    List<ConferenceEntity> findByUserId(String userId);
 }

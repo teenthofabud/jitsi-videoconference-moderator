@@ -1,5 +1,6 @@
 package com.teenthofabud.videoconference.mdr.configuration;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.teenthofabud.videoconference.mdr.error.core.MDRMessageSource;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -31,5 +32,10 @@ public class ServiceConfiguration {
         messageSource.setDefaultEncoding("UTF-8");
         messageSource.setBasenames("messages");
         return messageSource;
+    }
+
+    @Bean
+    public ObjectMapper mapper(){
+        return new ObjectMapper();
     }
 }

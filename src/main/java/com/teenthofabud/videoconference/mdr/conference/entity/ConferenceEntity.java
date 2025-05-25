@@ -19,7 +19,7 @@ public class ConferenceEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @Column(name = "room_id", nullable = false)
+    @Column(name = "room_id", nullable = false, unique = true)
     String roomId;
 
     @Column(name = "user_id", nullable = false)

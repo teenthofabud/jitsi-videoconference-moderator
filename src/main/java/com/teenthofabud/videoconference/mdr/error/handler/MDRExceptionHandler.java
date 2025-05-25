@@ -45,7 +45,8 @@ public class MDRExceptionHandler {
     public ResponseEntity<GoogleConferenceErrorVo> parseGoogleExceptionToResponse(GoogleConferenceException e) {
         GoogleConferenceErrorVo vo = googleExceptionToConferenceErrorVoConverter.convert(e);
         log.debug("{}",vo);
-        return ResponseEntity.status(500).body(vo);
+        //sending any other httpStatus leads to request failure in appScript
+        return ResponseEntity.status(200).body(vo);
     }
 
 

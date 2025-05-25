@@ -9,33 +9,24 @@ import java.util.NoSuchElementException;
 @FieldNameConstants(onlyExplicitlyIncluded = true)
 public enum ConferenceStatus {
 
-    ACTIVE(0),
-    INACTIVE(1);
+    ACTIVE,
+    INACTIVE;
 
     @Override
     public String toString() {
         return name();
     }
 
-    private Integer ordinal;
-
-    ConferenceStatus(Integer ordinal) {
-        this.ordinal = ordinal;
-    }
-
-    public static ConferenceStatus getByOrdinal(Integer ordinal) throws NoSuchElementException {
-        ConferenceStatus x = null;
-        for(ConferenceStatus t : ConferenceStatus.values()) {
-            if(t.getOrdinal().compareTo(ordinal) == 0) {
-                x = t;
-                break;
+    public static ConferenceStatus getByName(String name) throws NoSuchElementException {
+        for (ConferenceStatus status : ConferenceStatus.values()) {
+            if (status.name().equals(name)) {
+                return status;
             }
         }
-        if(x != null) {
-            return x;
-        } else {
-            throw new NoSuchElementException("No Conference Status available by ordinal: " + ordinal);
-        }
+        throw new NoSuchElementException("No Conference Status available by name: " + name);
     }
 
+    public static String getName(ConferenceStatus status) {
+        return status != null ? status.name() : null;
+    }
 }
