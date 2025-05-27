@@ -8,4 +8,6 @@ import org.springframework.stereotype.Repository;
 public interface ServerPreferenceRepository extends JpaRepository<ServerPreferenceEntity,Long> {
 
     ServerPreferenceEntity findByServerUrl(String serverUrl);
+
+    ServerPreferenceEntity findByUserId(String userId);
 }

@@ -11,6 +11,7 @@ import lombok.*;
 @Builder
 @Getter
 @Setter
+@Table(name = "server_preference")
 public class ServerPreferenceEntity {
 
     @Id

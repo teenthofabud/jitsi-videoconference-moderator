@@ -9,6 +9,8 @@ import com.teenthofabud.videoconference.mdr.conference.vo.google.GoogleConferenc
 import com.teenthofabud.videoconference.mdr.conference.form.google.GoogleConferenceForm;
 import com.teenthofabud.videoconference.mdr.conference.resource.ConferenceAPI;
 import com.teenthofabud.videoconference.mdr.conference.service.ConferenceService;
+import com.teenthofabud.videoconference.mdr.serverpreference.error.ServerPreferenceException;
+import com.teenthofabud.videoconference.mdr.user.error.UserException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,7 +32,7 @@ public class ConferenceController implements ConferenceAPI {
 
     @Override
     @PostMapping("/google")
-    public ResponseEntity<GoogleConferenceDataVo> createNewGoogleConference(@RequestBody GoogleConferenceForm form) throws GoogleConferenceException {
+    public ResponseEntity<GoogleConferenceDataVo> createNewGoogleConference(@RequestBody GoogleConferenceForm form) throws GoogleConferenceException, ServerPreferenceException, UserException {
         log.info("Received request with body : {}",form);
         GoogleConferenceDataVo googleConferenceDataVo = null;
         googleConferenceDataVo = conferenceService.createNewGoogleConference(form);

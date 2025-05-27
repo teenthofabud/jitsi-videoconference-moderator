@@ -3,6 +3,7 @@ package com.teenthofabud.videoconference.mdr.conference.service.impl;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fge.jsonpatch.JsonPatch;
+import com.teenthofabud.videoconference.mdr.conference.constants.ConferenceStatus;
 import com.teenthofabud.videoconference.mdr.conference.constants.google.GoogleConferenceErrorType;
 import com.teenthofabud.videoconference.mdr.conference.converter.ConferenceEntityToConferenceDtoConverter;
 import com.teenthofabud.videoconference.mdr.conference.converter.google.ConferenceEntityToGoogeConferenceDataVoConverter;
@@ -16,6 +17,10 @@ import com.teenthofabud.videoconference.mdr.conference.form.google.GoogleConfere
 import com.teenthofabud.videoconference.mdr.conference.repository.ConferenceRepository;
 import com.teenthofabud.videoconference.mdr.conference.service.ConferenceService;
 import com.teenthofabud.videoconference.mdr.error.core.MDRErrorCode;
+import com.teenthofabud.videoconference.mdr.serverpreference.dto.ServerPreferenceDto;
+import com.teenthofabud.videoconference.mdr.serverpreference.error.ServerPreferenceException;
+import com.teenthofabud.videoconference.mdr.serverpreference.service.ServerPreferenceService;
+import com.teenthofabud.videoconference.mdr.user.error.UserException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +28,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -37,18 +43,27 @@ public class ConferenceServiceImpl implements ConferenceService {
     ConferenceEntityToConferenceDtoConverter conferenceEntityToConferenceDtoConverter;
     @Autowired
     ObjectMapper objectMapper;
+    @Autowired
+    ServerPreferenceService serverPreferenceService;
 
     @Override
-    public GoogleConferenceDataVo createNewGoogleConference(GoogleConferenceForm form) throws GoogleConferenceException, GoogleConferenceException {
-        GoogleConferenceDataVo googleConferenceDataVo = GoogleConferenceDataVo.builder().build();
+    public GoogleConferenceDataVo createNewGoogleConference(GoogleConferenceForm form) throws GoogleConferenceException, GoogleConferenceException, UserException, ServerPreferenceException {
         String calendarId = form.getCalendarEvent().getCalendarId();
-        
-
-//        if(conferenceEntity!=null){
-//            googleConferenceDataVo = conferenceEntityToGoogeConferenceDataVoConverter.convert(conferenceEntity);
-//        }
-//        else
-//            throw new GoogleConferenceException(GoogleConferenceErrorType.CONFERENCE_SOLUTION_FORBIDDEN,new Object[]{calendarId});
+        ServerPreferenceDto serverPreferenceDto = serverPreferenceService.getServerPreferenceByUserId(calendarId);
+        String uuidInput = calendarId.concat(serverPreferenceDto.getServerUrl()).concat(Long.toString(System.currentTimeMillis()));
+        UUID conferenceId = UUID.nameUUIDFromBytes(uuidInput.getBytes());
+        ConferenceEntity conferenceEntity = ConferenceEntity.builder()
+                .userId(calendarId)
+                        .serverUrl(serverPreferenceDto.getServerUrl())
+                                .roomId(conferenceId.toString())
+                                        .status(ConferenceStatus.ACTIVE)
+                                                .build();
+        conferenceRepository.save(conferenceEntity);
+        GoogleConferenceDataVo googleConferenceDataVo = GoogleConferenceDataVo.builder()
+                .adminEmail(calendarId)
+                .videoUri(serverPreferenceDto.getServerUrl().concat("/").concat(conferenceEntity.getRoomId()))
+                .id(conferenceId.toString())
+                .build();
         return googleConferenceDataVo;
     }
 

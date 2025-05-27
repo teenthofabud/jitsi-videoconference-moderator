@@ -7,12 +7,14 @@ import com.teenthofabud.videoconference.mdr.conference.error.google.GoogleConfer
 import com.teenthofabud.videoconference.mdr.conference.form.google.GoogleCalendarEvent;
 import com.teenthofabud.videoconference.mdr.conference.vo.google.GoogleConferenceDataVo;
 import com.teenthofabud.videoconference.mdr.conference.form.google.GoogleConferenceForm;
+import com.teenthofabud.videoconference.mdr.serverpreference.error.ServerPreferenceException;
+import com.teenthofabud.videoconference.mdr.user.error.UserException;
 
 import java.util.List;
 
 public interface ConferenceService {
 
-    GoogleConferenceDataVo createNewGoogleConference(GoogleConferenceForm form) throws GoogleConferenceException;
+    GoogleConferenceDataVo createNewGoogleConference(GoogleConferenceForm form) throws GoogleConferenceException, UserException, ServerPreferenceException;
 
     ConferenceDto getConferenceById(Long conferenceId) throws ConferenceException;
 

@@ -9,6 +9,8 @@ import com.teenthofabud.videoconference.mdr.conference.form.google.GoogleCalenda
 import com.teenthofabud.videoconference.mdr.conference.vo.google.GoogleConferenceDataVo;
 import com.teenthofabud.videoconference.mdr.conference.form.google.GoogleConferenceForm;
 import com.teenthofabud.videoconference.mdr.constants.HttpMediaType;
+import com.teenthofabud.videoconference.mdr.serverpreference.error.ServerPreferenceException;
+import com.teenthofabud.videoconference.mdr.user.error.UserException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -34,7 +36,7 @@ public interface ConferenceAPI {
             ),
     })
     ResponseEntity<GoogleConferenceDataVo> createNewGoogleConference(@RequestBody(description = "UOM form", required = true,
-            content = @Content(schema = @Schema(implementation = GoogleConferenceForm.class))) GoogleConferenceForm form) throws GoogleConferenceException;
+            content = @Content(schema = @Schema(implementation = GoogleConferenceForm.class))) GoogleConferenceForm form) throws GoogleConferenceException, ServerPreferenceException, UserException;
 
 
     @Operation(method = "GET", summary = "Get conference by ID", description = "getConferenceByID")
