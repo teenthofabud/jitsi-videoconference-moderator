@@ -33,9 +33,8 @@ public class ConferenceController implements ConferenceAPI {
     @Override
     @PostMapping("/google")
     public ResponseEntity<GoogleConferenceDataVo> createNewGoogleConference(@RequestBody GoogleConferenceForm form) throws GoogleConferenceException, ServerPreferenceException, UserException {
-        log.info("Received request with body : {}",form);
-        GoogleConferenceDataVo googleConferenceDataVo = null;
-        googleConferenceDataVo = conferenceService.createNewGoogleConference(form);
+        log.debug("Received request with body : {}",form);
+        GoogleConferenceDataVo googleConferenceDataVo = conferenceService.createNewGoogleConference(form);
         return ResponseEntity.status(HttpStatus.CREATED).body(googleConferenceDataVo);
     }
 

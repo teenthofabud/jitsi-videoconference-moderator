@@ -27,7 +27,12 @@
 		<url/>
 	</scm>
 	<properties>
-		<java.version>24</java.version>
+		<java.version>21</java.version>
+		<googleapi.version>v3-rev20220715-2.0.0</googleapi.version>
+		<openapi.version>2.7.0</openapi.version>
+		<gson.version>2.9.1</gson.version>
+		<jsonpatch.version>1.13</jsonpatch.version>
+		<hibernate.validator.version>8.0.1.Final</hibernate.validator.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -63,32 +68,32 @@
 		<dependency>
 			<groupId>org.hibernate.validator</groupId>
 			<artifactId>hibernate-validator</artifactId>
-			<version>8.0.1.Final</version>
+			<version>${hibernate.validator.version}</version>
 		</dependency>
 		<!-- open api -->
 		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-			<version>2.7.0</version>
+			<version>${openapi.version}</version>
 		</dependency>
 		<!-- gson for JSON conversions -->
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
-			<version>2.9.1</version>
+			<version>${gson.version}</version>
 		</dependency>
 		<!-- calendar API -->
 		<!-- https://mvnrepository.com/artifact/com.google.apis/google-api-services-calendar -->
 		<dependency>
 			<groupId>com.google.apis</groupId>
 			<artifactId>google-api-services-calendar</artifactId>
-			<version>v3-rev20220715-2.0.0</version>
+			<version>${googleapi.version}</version>
 		</dependency>
 		<!-- json patch -->
 		<dependency>
 			<groupId>com.github.java-json-tools</groupId>
 			<artifactId>json-patch</artifactId>
-			<version>1.13</version>
+			<version>${jsonpatch.version}</version>
 		</dependency>
 	</dependencies>
 

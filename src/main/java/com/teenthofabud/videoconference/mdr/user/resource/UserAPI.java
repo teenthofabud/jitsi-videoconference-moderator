@@ -26,7 +26,7 @@ public interface UserAPI {
                     responseCode = "409", description = "User already created",
                     content = @Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorVo.class)))
     })
-    ResponseEntity<GoogleConferenceDataVo> createNewUser(@RequestBody(description = "User form", required = true,
+    ResponseEntity<Void> createNewUser(@RequestBody(description = "User form", required = true,
             content = @Content(schema = @Schema(implementation = UserForm.class))) UserForm form) throws UserException;
 
     @Operation(method = "GET", summary = "Get User By Id", description = "getUserById")

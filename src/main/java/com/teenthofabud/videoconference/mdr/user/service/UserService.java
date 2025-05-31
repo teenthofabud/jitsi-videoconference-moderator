@@ -2,6 +2,7 @@ package com.teenthofabud.videoconference.mdr.user.service;
 
 
 import com.teenthofabud.videoconference.mdr.user.dto.UserDto;
+import com.teenthofabud.videoconference.mdr.user.entity.UserEntity;
 import com.teenthofabud.videoconference.mdr.user.error.UserException;
 import com.teenthofabud.videoconference.mdr.user.form.UserForm;
 

@@ -7,12 +7,17 @@ import com.teenthofabud.videoconference.mdr.user.error.UserException;
 import com.teenthofabud.videoconference.mdr.user.form.UserForm;
 import com.teenthofabud.videoconference.mdr.user.resource.UserAPI;
 import com.teenthofabud.videoconference.mdr.user.service.UserService;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.net.URI;
 
 @Slf4j
 @RestController
@@ -22,9 +27,14 @@ public class UserController implements UserAPI {
     UserService userService;
 
     @Override
-    public ResponseEntity<GoogleConferenceDataVo> createNewUser(UserForm form) throws UserException {
+    public ResponseEntity<Void> createNewUser(@Valid UserForm form) throws UserException {
         userService.createNewUser(form);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(form.getUserId())
+                .toUri();
+        return ResponseEntity.created(location).build();
     }
 
     @Override

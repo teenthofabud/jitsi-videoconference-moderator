@@ -1,6 +1,5 @@
 package com.teenthofabud.videoconference.mdr.conference.service.impl;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.teenthofabud.videoconference.mdr.conference.constants.ConferenceStatus;
@@ -21,13 +20,14 @@ import com.teenthofabud.videoconference.mdr.serverpreference.dto.ServerPreferenc
 import com.teenthofabud.videoconference.mdr.serverpreference.error.ServerPreferenceException;
 import com.teenthofabud.videoconference.mdr.serverpreference.service.ServerPreferenceService;
 import com.teenthofabud.videoconference.mdr.user.error.UserException;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -45,9 +45,16 @@ public class ConferenceServiceImpl implements ConferenceService {
     ObjectMapper objectMapper;
     @Autowired
     ServerPreferenceService serverPreferenceService;
+    @Autowired
+    Validator validator;
 
     @Override
-    public GoogleConferenceDataVo createNewGoogleConference(GoogleConferenceForm form) throws GoogleConferenceException, GoogleConferenceException, UserException, ServerPreferenceException {
+    public GoogleConferenceDataVo createNewGoogleConference(GoogleConferenceForm form) throws GoogleConferenceException, UserException, ServerPreferenceException {
+        Set<ConstraintViolation<GoogleConferenceForm>> violations = validator.validate(form);
+        if (!violations.isEmpty()) {
+            ConstraintViolation<GoogleConferenceForm> firstViolation = violations.stream().findFirst().orElse(null);
+            throw new GoogleConferenceException(GoogleConferenceErrorType.TEMPORARY,new Object[]{firstViolation.getMessage()});
+        }
         String calendarId = form.getCalendarEvent().getCalendarId();
         ServerPreferenceDto serverPreferenceDto = serverPreferenceService.getServerPreferenceByUserId(calendarId);
         String uuidInput = calendarId.concat(serverPreferenceDto.getServerUrl()).concat(Long.toString(System.currentTimeMillis()));

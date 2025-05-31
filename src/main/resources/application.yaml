@@ -1,8 +1,8 @@
 spring:
  application:
-  name: jitsi-conference-moderator
-  version: 1.0
-  description : Jitsi Video Conference Moderator
+  name: "@project.build.finalName@"
+  version: "@project.version@"
+  description : "@project.description@"
 
  h2:
   console:

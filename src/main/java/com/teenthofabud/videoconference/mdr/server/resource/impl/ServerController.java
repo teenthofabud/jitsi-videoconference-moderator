@@ -6,6 +6,7 @@ import com.teenthofabud.videoconference.mdr.server.error.ServerException;
 import com.teenthofabud.videoconference.mdr.server.form.ServerForm;
 import com.teenthofabud.videoconference.mdr.server.resource.ServerAPI;
 import com.teenthofabud.videoconference.mdr.server.service.ServerService;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,7 +23,7 @@ public class ServerController implements ServerAPI {
     ServerService serverService;
 
     @Override
-    public ResponseEntity<Void> createNewServer(ServerForm form) throws ServerException {
+    public ResponseEntity<Void> createNewServer(@Valid ServerForm form) throws ServerException {
         serverService.createNewServer(form);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }

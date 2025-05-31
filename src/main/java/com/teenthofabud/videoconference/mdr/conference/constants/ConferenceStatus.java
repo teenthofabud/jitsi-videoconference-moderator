@@ -27,6 +27,9 @@ public enum ConferenceStatus {
     }
 
     public static String getName(ConferenceStatus status) {
-        return status != null ? status.name() : null;
+        if(status != null)
+            return status.name();
+        else
+            throw new NoSuchElementException("No Conference Status available by name: " + status);
     }
 }
