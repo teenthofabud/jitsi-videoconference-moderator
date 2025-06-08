@@ -20,13 +20,13 @@ public class GoogleExceptionToConferenceErrorVoConverter implements Converter<Go
             msg = String.format(msg, parameters.toArray(new Object[parameters.size()]));
         }
         if(source.getErrorType().equals(GoogleConferenceErrorType.AUTHENTICATION))
-            return GoogleConferenceErrorVo.builder()
+            return (GoogleConferenceErrorVo) GoogleConferenceErrorVo.builder()
                     .error(source.getErrorType().name())
                     .authenticationUrl("auth url here")
                     .message(msg)
                     .build();
         else
-            return GoogleConferenceErrorVo.builder()
+            return (GoogleConferenceErrorVo) GoogleConferenceErrorVo.builder()
                     .error(source.getErrorType().name())
                     .authenticationUrl(null)
                     .message(msg)

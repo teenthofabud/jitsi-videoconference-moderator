@@ -15,4 +15,6 @@ public abstract class MDRBaseException extends Exception {
         this.error = error;
         this.parameters = parameters;
     }
+
+
 }

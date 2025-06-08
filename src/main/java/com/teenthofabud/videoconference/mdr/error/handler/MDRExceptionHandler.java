@@ -1,14 +1,18 @@
 package com.teenthofabud.videoconference.mdr.error.handler;
 
+import com.teenthofabud.videoconference.mdr.conference.constants.google.GoogleConferenceErrorType;
 import com.teenthofabud.videoconference.mdr.conference.error.google.GoogleConferenceException;
+import com.teenthofabud.videoconference.mdr.conference.form.google.GoogleConferenceForm;
 import com.teenthofabud.videoconference.mdr.conference.vo.google.GoogleConferenceErrorVo;
 import com.teenthofabud.videoconference.mdr.error.converter.MDRExceptionToErrorVoConverter;
 import com.teenthofabud.videoconference.mdr.error.converter.google.GoogleExceptionToConferenceErrorVoConverter;
 import com.teenthofabud.videoconference.mdr.error.core.MDRBaseException;
+import com.teenthofabud.videoconference.mdr.error.core.MDRErrorCode;
 import com.teenthofabud.videoconference.mdr.vo.ErrorVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -22,15 +26,33 @@ public class MDRExceptionHandler {
     @Autowired
     GoogleExceptionToConferenceErrorVoConverter googleExceptionToConferenceErrorVoConverter;
 
+    @ExceptionHandler(value = { MethodArgumentNotValidException.class })
+    public ResponseEntity<ErrorVo> handleMethodArgumentNotValidException(MethodArgumentNotValidException e){
+        String violationMessage = e.getMessage();
+        ErrorVo errorVo = null;
+        if(e.getParameter().getClass().equals(GoogleConferenceForm.class)){
+            errorVo = GoogleConferenceErrorVo.builder()
+                    .error(GoogleConferenceErrorType.TEMPORARY.name())
+                    .message(violationMessage)
+                    .build();
+        }
+        errorVo = ErrorVo.builder()
+                    .errorCode(MDRErrorCode.MDR_ATTRIBUTE_INVALID.getErrorCode())
+                    .message(violationMessage)
+                    .build();
+        log.error(violationMessage,e);
+        return ResponseEntity.status(400).body(errorVo);
+    }
+
     @ExceptionHandler(value = { GoogleConferenceException.class })
     public ResponseEntity<GoogleConferenceErrorVo> handleGoogleConferenceException(GoogleConferenceException e){
-        ResponseEntity<GoogleConferenceErrorVo>  response = parseGoogleExceptionToResponse(e);
+        ResponseEntity<GoogleConferenceErrorVo>  response = parseExceptionToResponse(e);
         log.error(response.getBody().getMessage(),e);
         return response;
     }
 
-    @ExceptionHandler(value = { Exception.class })
-    public ResponseEntity<ErrorVo> handleUserNotFoundException(MDRBaseException e){
+    @ExceptionHandler(value = { MDRBaseException.class })
+    public ResponseEntity<ErrorVo> fallback(MDRBaseException e){
         ResponseEntity<ErrorVo>  response = parseExceptionToResponse(e);
         log.error(response.getBody().getMessage(),e);
         return response;
@@ -42,11 +64,10 @@ public class MDRExceptionHandler {
         return ResponseEntity.status(e.getError().getHttpStatusCode()).body(vo);
     }
 
-    public ResponseEntity<GoogleConferenceErrorVo> parseGoogleExceptionToResponse(GoogleConferenceException e) {
+    public ResponseEntity<GoogleConferenceErrorVo> parseExceptionToResponse(GoogleConferenceException e) {
         GoogleConferenceErrorVo vo = googleExceptionToConferenceErrorVoConverter.convert(e);
         log.debug("{}",vo);
-        //sending any other httpStatus leads to request failure in appScript
-        return ResponseEntity.status(200).body(vo);
+        return ResponseEntity.status(e.getError().getHttpStatusCode()).body(vo);
     }
 
 

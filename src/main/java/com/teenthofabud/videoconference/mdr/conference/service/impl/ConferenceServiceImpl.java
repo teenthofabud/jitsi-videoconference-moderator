@@ -21,10 +21,13 @@ import com.teenthofabud.videoconference.mdr.serverpreference.error.ServerPrefere
 import com.teenthofabud.videoconference.mdr.serverpreference.service.ServerPreferenceService;
 import com.teenthofabud.videoconference.mdr.user.error.UserException;
 import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Valid;
 import jakarta.validation.Validator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -49,12 +52,7 @@ public class ConferenceServiceImpl implements ConferenceService {
     Validator validator;
 
     @Override
-    public GoogleConferenceDataVo createNewGoogleConference(GoogleConferenceForm form) throws GoogleConferenceException, UserException, ServerPreferenceException {
-        Set<ConstraintViolation<GoogleConferenceForm>> violations = validator.validate(form);
-        if (!violations.isEmpty()) {
-            ConstraintViolation<GoogleConferenceForm> firstViolation = violations.stream().findFirst().orElse(null);
-            throw new GoogleConferenceException(GoogleConferenceErrorType.TEMPORARY,new Object[]{firstViolation.getMessage()});
-        }
+    public GoogleConferenceDataVo createNewGoogleConference(@Valid @RequestBody GoogleConferenceForm form) throws GoogleConferenceException, UserException, ServerPreferenceException {
         String calendarId = form.getCalendarEvent().getCalendarId();
         ServerPreferenceDto serverPreferenceDto = serverPreferenceService.getServerPreferenceByUserId(calendarId);
         String uuidInput = calendarId.concat(serverPreferenceDto.getServerUrl()).concat(Long.toString(System.currentTimeMillis()));
