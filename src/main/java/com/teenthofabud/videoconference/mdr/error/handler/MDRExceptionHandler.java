@@ -35,6 +35,7 @@ public class MDRExceptionHandler {
                     .error(GoogleConferenceErrorType.TEMPORARY.name())
                     .message(violationMessage)
                     .build();
+            return ResponseEntity.status(200).body(errorVo);
         }
         errorVo = ErrorVo.builder()
                     .errorCode(MDRErrorCode.MDR_ATTRIBUTE_INVALID.getErrorCode())
