@@ -13,6 +13,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.net.URI;
 
 @RestController
 @RequestMapping("/server")
@@ -25,7 +28,12 @@ public class ServerController implements ServerAPI {
     @Override
     public ResponseEntity<Void> createNewServer(@Valid ServerForm form) throws ServerException {
         serverService.createNewServer(form);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(form.getServerUrl())
+                .toUri();
+        return ResponseEntity.created(location).build();
     }
 
     @Override

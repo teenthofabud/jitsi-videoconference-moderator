@@ -29,20 +29,14 @@ public class MDRExceptionHandler {
     @ExceptionHandler(value = { MethodArgumentNotValidException.class })
     public ResponseEntity<ErrorVo> handleMethodArgumentNotValidException(MethodArgumentNotValidException e){
         String violationMessage = e.getMessage();
-        ErrorVo errorVo = null;
-        if(e.getParameter().getClass().equals(GoogleConferenceForm.class)){
-            errorVo = GoogleConferenceErrorVo.builder()
-                    .error(GoogleConferenceErrorType.TEMPORARY.name())
-                    .message(violationMessage)
-                    .build();
-            return ResponseEntity.status(200).body(errorVo);
-        }
-        errorVo = ErrorVo.builder()
-                    .errorCode(MDRErrorCode.MDR_ATTRIBUTE_INVALID.getErrorCode())
-                    .message(violationMessage)
-                    .build();
-        log.error(violationMessage,e);
-        return ResponseEntity.status(400).body(errorVo);
+        return e.getParameter().getClass().equals(GoogleConferenceForm.class) ?
+                 ResponseEntity.status(200).body(GoogleConferenceErrorVo.builder()
+                .error(GoogleConferenceErrorType.TEMPORARY.name())
+                .message(violationMessage)
+                .build()) : ResponseEntity.status(400).body( ErrorVo.builder()
+                .errorCode(MDRErrorCode.MDR_ATTRIBUTE_INVALID.getErrorCode())
+                .message(violationMessage)
+                .build());
     }
 
     @ExceptionHandler(value = { GoogleConferenceException.class })
