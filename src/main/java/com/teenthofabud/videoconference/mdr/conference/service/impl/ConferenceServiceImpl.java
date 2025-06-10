@@ -55,7 +55,7 @@ public class ConferenceServiceImpl implements ConferenceService {
     public GoogleConferenceDataVo createNewGoogleConference(@Valid @RequestBody GoogleConferenceForm form) throws GoogleConferenceException, UserException, ServerPreferenceException {
         String calendarId = form.getCalendarEvent().getCalendarId();
         ServerPreferenceDto serverPreferenceDto = serverPreferenceService.getServerPreferenceByUserId(calendarId);
-        String uuidInput = calendarId.concat(serverPreferenceDto.getServerUrl()).concat(Long.toString(System.currentTimeMillis()));
+        String uuidInput = String.format("%s%s%s",calendarId,serverPreferenceDto.getServerUrl(),Long.toString(System.currentTimeMillis()));
         UUID conferenceId = UUID.nameUUIDFromBytes(uuidInput.getBytes());
         ConferenceEntity conferenceEntity = ConferenceEntity.builder()
                 .userId(calendarId)
@@ -66,7 +66,7 @@ public class ConferenceServiceImpl implements ConferenceService {
         conferenceRepository.save(conferenceEntity);
         GoogleConferenceDataVo googleConferenceDataVo = GoogleConferenceDataVo.builder()
                 .adminEmail(calendarId)
-                .videoUri(serverPreferenceDto.getServerUrl().concat("/").concat(conferenceEntity.getRoomId()))
+                .videoUri(String.format("%s/%s",serverPreferenceDto.getServerUrl(),conferenceEntity.getRoomId()))
                 .id(conferenceId.toString())
                 .build();
         return googleConferenceDataVo;
@@ -89,7 +89,7 @@ public class ConferenceServiceImpl implements ConferenceService {
                 .stream()
                 .map(e->conferenceEntityToConferenceDtoConverter.convert(e))
                 .collect(Collectors.toList());
-        return List.of();
+        return conferenceDtoList;
     }
 
     @Override

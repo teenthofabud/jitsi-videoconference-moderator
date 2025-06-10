@@ -8,7 +8,7 @@ import java.util.NoSuchElementException;
 @Getter
 public enum ReferenceType {
 
-    GMAIL;
+    EMAIL;
 
     @Override
     public String toString() {

@@ -4,10 +4,12 @@ import com.teenthofabud.videoconference.mdr.serverpreference.entity.ServerPrefer
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface ServerPreferenceRepository extends JpaRepository<ServerPreferenceEntity,Long> {
 
-    ServerPreferenceEntity findByServerUrl(String serverUrl);
+    Optional<ServerPreferenceEntity> findByServerUrl(String serverUrl);
 
-    ServerPreferenceEntity findByUserId(String userId);
+    Optional<ServerPreferenceEntity> findByUserId(String userId);
 }

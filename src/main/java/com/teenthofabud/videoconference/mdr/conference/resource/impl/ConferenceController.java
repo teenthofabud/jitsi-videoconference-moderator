@@ -11,6 +11,7 @@ import com.teenthofabud.videoconference.mdr.conference.resource.ConferenceAPI;
 import com.teenthofabud.videoconference.mdr.conference.service.ConferenceService;
 import com.teenthofabud.videoconference.mdr.serverpreference.error.ServerPreferenceException;
 import com.teenthofabud.videoconference.mdr.user.error.UserException;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,7 +33,7 @@ public class ConferenceController implements ConferenceAPI {
 
     @Override
     @PostMapping("/google")
-    public ResponseEntity<GoogleConferenceDataVo> createNewGoogleConference(@RequestBody GoogleConferenceForm form) throws GoogleConferenceException, ServerPreferenceException, UserException {
+    public ResponseEntity<GoogleConferenceDataVo> createNewGoogleConference(GoogleConferenceForm form) throws GoogleConferenceException, ServerPreferenceException, UserException {
         log.debug("Received request with body : {}",form);
         GoogleConferenceDataVo googleConferenceDataVo = conferenceService.createNewGoogleConference(form);
         return ResponseEntity.status(HttpStatus.CREATED).body(googleConferenceDataVo);
@@ -52,12 +53,12 @@ public class ConferenceController implements ConferenceAPI {
 
     @Override
     public ResponseEntity<Void> patchGoogleConferenceByID(Long conferenceId, GoogleCalendarEvent form) {
-        return null;
+        throw new UnsupportedOperationException("API endpoint not implemented yet");
     }
 
     @Override
     public ResponseEntity<Void> patchConferenceByID(Long conferenceId, JsonPatch jsonPatch) {
-        return null;
+        throw new UnsupportedOperationException("API endpoint not implemented yet");
     }
 
     @Override

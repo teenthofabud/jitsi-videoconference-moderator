@@ -24,7 +24,7 @@ public class ServerServiceImpl implements ServerService {
 
     @Override
     public void createNewServer(ServerForm form) throws ServerException {
-        ServerEntity existingServer = serverRepository.findByServerUrl(form.getServerUrl());
+        ServerEntity existingServer = serverRepository.findByServerUrl(form.getServerUrl()).;
         if(existingServer!=null)
             throw new ServerException(MDRErrorCode.MDR_EXISTS,new Object[]{form.getServerUrl()});
         ServerEntity server = serverFormToEntityConverter.convert(form);
@@ -33,9 +33,6 @@ public class ServerServiceImpl implements ServerService {
 
     @Override
     public ServerDto getServerByUrl(String serverUrl) throws ServerException {
-        ServerEntity server = serverRepository.findByServerUrl(serverUrl);
-        if(server==null)
-            throw new ServerException(MDRErrorCode.MDR_NOT_FOUND,new Object[]{serverUrl});
-        return serverEntityToDtoConverter.convert(server);
+        return serverRepository.findByServerUrl(serverUrl).map(e->serverEntityToDtoConverter.convert(e)).orElseThrow(() -> new ServerException(MDRErrorCode.MDR_NOT_FOUND,new Object[]{serverUrl}));
     }
 }
