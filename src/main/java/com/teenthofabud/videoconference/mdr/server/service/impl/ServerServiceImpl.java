@@ -12,6 +12,8 @@ import com.teenthofabud.videoconference.mdr.server.service.ServerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class ServerServiceImpl implements ServerService {
 
@@ -24,8 +26,8 @@ public class ServerServiceImpl implements ServerService {
 
     @Override
     public void createNewServer(ServerForm form) throws ServerException {
-        ServerEntity existingServer = serverRepository.findByServerUrl(form.getServerUrl()).;
-        if(existingServer!=null)
+        Optional<ServerEntity> existingServer = serverRepository.findByServerUrl(form.getServerUrl());
+        if(existingServer.isPresent())
             throw new ServerException(MDRErrorCode.MDR_EXISTS,new Object[]{form.getServerUrl()});
         ServerEntity server = serverFormToEntityConverter.convert(form);
         serverRepository.save(server);
