@@ -1,11 +1,12 @@
 package com.teenthofabud.videoconference.mdr.server.resource;
 
-import com.teenthofabud.videoconference.mdr.conference.vo.google.GoogleConferenceDataVo;
-import com.teenthofabud.videoconference.mdr.server.dto.ServerDto;
+import com.teenthofabud.videoconference.mdr.server.vo.ServerVo;
 import com.teenthofabud.videoconference.mdr.server.error.ServerException;
 import com.teenthofabud.videoconference.mdr.server.form.ServerForm;
 import com.teenthofabud.videoconference.mdr.vo.ErrorVo;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
@@ -29,13 +30,14 @@ public interface ServerAPI {
     ResponseEntity<Void> createNewServer(@RequestBody(description = "Server form", required = true,
             content = @Content(schema = @Schema(implementation = ServerForm.class))) ServerForm form) throws ServerException;
 
-    @Operation(method = "GET", summary = "Get Server By Url", description = "getServerByUrl")
+    @Operation(method = "POST", summary = "Get Server By ID", description = "getServerByID")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Server retrieved",content = @Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = ServerDto.class))),
+            @ApiResponse(responseCode = "200", description = "Server retrieved",content = @Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = ServerVo.class))),
             @ApiResponse(
                     responseCode = "404", description = "Server not found",
                     content = @Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorVo.class)))
     })
-    ResponseEntity<ServerDto> getServerByUrl(String serverUrl) throws ServerException;
+    @Parameter(description = "Server ID (PK)",name = "serverID",required = true,in = ParameterIn.PATH, schema = @Schema(implementation = Long.class))
+    ResponseEntity<ServerVo> getServerByID(Long serverID) throws ServerException;
 
 }

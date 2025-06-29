@@ -1,6 +1,5 @@
 package com.teenthofabud.videoconference.mdr.user.entity;
 
-import com.teenthofabud.videoconference.mdr.serverpreference.entity.ServerPreferenceEntity;
 import com.teenthofabud.videoconference.mdr.user.constants.ReferenceType;
 import jakarta.persistence.*;
 import lombok.*;
@@ -13,22 +12,21 @@ import lombok.*;
 @Builder
 @Getter
 @Setter
+@Table(name = "principal")
 public class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @Column(name = "user_id", nullable = false, unique = true)
+    @Column(name = "subject", nullable = false, unique = true)
     String userId;
 
     @Column(name = "name", nullable = false)
     String name;
 
-    @Column(name = "referenceType", nullable = false)
+    @Column(name = "reference_type", nullable = false)
     ReferenceType referenceType;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    ServerPreferenceEntity serverPreference;
 
 }

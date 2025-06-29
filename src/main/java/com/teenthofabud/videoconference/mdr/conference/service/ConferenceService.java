@@ -1,7 +1,7 @@
 package com.teenthofabud.videoconference.mdr.conference.service;
 
 import com.github.fge.jsonpatch.JsonPatch;
-import com.teenthofabud.videoconference.mdr.conference.dto.ConferenceDto;
+import com.teenthofabud.videoconference.mdr.conference.vo.ConferenceVo;
 import com.teenthofabud.videoconference.mdr.conference.error.ConferenceException;
 import com.teenthofabud.videoconference.mdr.conference.error.google.GoogleConferenceException;
 import com.teenthofabud.videoconference.mdr.conference.form.google.GoogleCalendarEvent;
@@ -16,14 +16,13 @@ public interface ConferenceService {
 
     GoogleConferenceDataVo createNewGoogleConference(GoogleConferenceForm form) throws GoogleConferenceException, UserException, ServerPreferenceException;
 
-    ConferenceDto getConferenceById(Long conferenceId) throws ConferenceException;
+    ConferenceVo getGoogleConferenceById(Long conferenceId) throws ConferenceException;
 
-    List<ConferenceDto> getAllConferencesByUserId(String userId);
+    List<ConferenceVo> getAllConferencesByUserId(String userId) throws ServerPreferenceException;
 
     void patchGoogleConferenceById(Long conferenceId, GoogleCalendarEvent calendarEvent);
 
-    void patchConferenceById(Long conferenceId, JsonPatch patches);
 
-    void deleteConferenceById(Long conferenceId) throws ConferenceException;
+    void deleteGoogleConferenceById(Long conferenceId) throws ConferenceException;
 
 }

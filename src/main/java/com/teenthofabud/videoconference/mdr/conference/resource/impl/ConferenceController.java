@@ -1,7 +1,7 @@
 package com.teenthofabud.videoconference.mdr.conference.resource.impl;
 
 import com.github.fge.jsonpatch.JsonPatch;
-import com.teenthofabud.videoconference.mdr.conference.dto.ConferenceDto;
+import com.teenthofabud.videoconference.mdr.conference.vo.ConferenceVo;
 import com.teenthofabud.videoconference.mdr.conference.error.ConferenceException;
 import com.teenthofabud.videoconference.mdr.conference.error.google.GoogleConferenceException;
 import com.teenthofabud.videoconference.mdr.conference.form.google.GoogleCalendarEvent;
@@ -33,22 +33,22 @@ public class ConferenceController implements ConferenceAPI {
 
     @Override
     @PostMapping("/google")
-    public ResponseEntity<GoogleConferenceDataVo> createNewGoogleConference(GoogleConferenceForm form) throws GoogleConferenceException, ServerPreferenceException, UserException {
+    public ResponseEntity<GoogleConferenceDataVo> createNewGoogleConference(@Valid @RequestBody GoogleConferenceForm form) throws GoogleConferenceException, ServerPreferenceException, UserException {
         log.debug("Received request with body : {}",form);
         GoogleConferenceDataVo googleConferenceDataVo = conferenceService.createNewGoogleConference(form);
         return ResponseEntity.status(HttpStatus.CREATED).body(googleConferenceDataVo);
     }
 
     @Override
-    public ResponseEntity<ConferenceDto> getConferenceByID(Long conferenceId) throws ConferenceException {
-         ConferenceDto conferenceDto = conferenceService.getConferenceById(conferenceId);
-         return ResponseEntity.ok(conferenceDto);
+    public ResponseEntity<ConferenceVo> getGoogleConferenceByID(Long conferenceId) throws ConferenceException {
+         ConferenceVo conferenceVo = conferenceService.getGoogleConferenceById(conferenceId);
+         return ResponseEntity.ok(conferenceVo);
     }
 
     @Override
-    public ResponseEntity<List<ConferenceDto>> getAllConferencesByUser(String calendarId) {
-        List<ConferenceDto> conferenceDtoList = conferenceService.getAllConferencesByUserId(calendarId);
-        return ResponseEntity.ok(conferenceDtoList);
+    public ResponseEntity<List<ConferenceVo>> getAllConferencesByUser(String calendarId) throws ServerPreferenceException {
+        List<ConferenceVo> conferenceVoList = conferenceService.getAllConferencesByUserId(calendarId);
+        return ResponseEntity.ok(conferenceVoList);
     }
 
     @Override
@@ -57,13 +57,8 @@ public class ConferenceController implements ConferenceAPI {
     }
 
     @Override
-    public ResponseEntity<Void> patchConferenceByID(Long conferenceId, JsonPatch jsonPatch) {
-        throw new UnsupportedOperationException("API endpoint not implemented yet");
-    }
-
-    @Override
-    public ResponseEntity<Void> deleteConferenceByID(Long conferenceId) throws ConferenceException {
-        conferenceService.deleteConferenceById(conferenceId);
+    public ResponseEntity<Void> deleteGoogleConferenceByID(Long conferenceId) throws ConferenceException {
+        conferenceService.deleteGoogleConferenceById(conferenceId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

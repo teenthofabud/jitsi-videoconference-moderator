@@ -12,14 +12,12 @@ import lombok.*;
 @Setter
 public class UserDto {
 
-    @Schema(description = "Identifier for the user who created the conference")
-    String userId;
-
     @Schema(description = "Name of the user")
     String name;
 
-    @Schema(description = "User reference type, eg:- GMAIL")
-    String referenceType;
+    @Schema(description = "Identifier for the user")
+    String userId;
 
-
+    @Schema(description = "URL of the server which user prefers for conducting the conference ")
+    String preferredServerUrl;
 }

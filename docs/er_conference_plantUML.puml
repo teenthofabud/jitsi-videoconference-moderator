@@ -11,36 +11,48 @@ class Server {
   +id
   +name
   +serverUrl
+  +serverPreferences
 }
 
 class Meeting {
   +id
   +roomId
-  +userId
-  +baseUrl
+  +eventId
   +status
+  +serverPreferenceId
 }
 
 class ServerPreference {
   +id
   +serverUrl
   +userId
+  +sevrerPreferenceType
 }
 
 enum ReferenceType{
  +Email
 }
 
-User --> ReferenceType : referenceType
+enum ServerPreferenceType{
+ +Custom
+ +Default
+}
 
-User "1" <--> "N" Meeting : creates 
+User --> ReferenceType : reference type
+
+ServerPreference --> ServerPreferenceType : preference type
+
+User "1" <..> "N" Meeting : creates
 /'//cardinality changes if relationship becomes participates'/
-Meeting "N" <--> "1" Server : hosted on
+Meeting "N" <..> "1" Server : hosted on
 
-User "1" --> "1" ServerPreference : has
-ServerPreference "N" --> "1" Server : requires
+User "1" <..> "1" ServerPreference : has
+ServerPreference "N" <--> "1" Server : requires
 
 @enduml
+
+
+
 
 
 

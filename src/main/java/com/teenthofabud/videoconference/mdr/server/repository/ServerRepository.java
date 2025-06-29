@@ -10,4 +10,6 @@ import java.util.Optional;
 public interface ServerRepository extends JpaRepository<ServerEntity,Long>{
 
     Optional<ServerEntity> findByServerUrl(String serverUrl);
+
+
 }

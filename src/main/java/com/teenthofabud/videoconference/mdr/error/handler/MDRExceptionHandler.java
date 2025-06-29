@@ -28,7 +28,7 @@ public class MDRExceptionHandler {
 
     @ExceptionHandler(value = { MethodArgumentNotValidException.class })
     public ResponseEntity<ErrorVo> handleMethodArgumentNotValidException(MethodArgumentNotValidException e){
-        String violationMessage = e.getMessage();
+        String violationMessage = e.getBindingResult().getAllErrors().getFirst().getDefaultMessage();
         return e.getParameter().getClass().equals(GoogleConferenceForm.class) ?
                  ResponseEntity.status(200).body(GoogleConferenceErrorVo.builder()
                 .error(GoogleConferenceErrorType.TEMPORARY.name())

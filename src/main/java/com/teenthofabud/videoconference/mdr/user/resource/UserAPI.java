@@ -1,11 +1,13 @@
 package com.teenthofabud.videoconference.mdr.user.resource;
 
-import com.teenthofabud.videoconference.mdr.conference.vo.google.GoogleConferenceDataVo;
-import com.teenthofabud.videoconference.mdr.user.dto.UserDto;
+import com.teenthofabud.videoconference.mdr.serverpreference.error.ServerPreferenceException;
+import com.teenthofabud.videoconference.mdr.user.vo.UserVo;
 import com.teenthofabud.videoconference.mdr.user.error.UserException;
 import com.teenthofabud.videoconference.mdr.user.form.UserForm;
 import com.teenthofabud.videoconference.mdr.vo.ErrorVo;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
@@ -27,17 +29,18 @@ public interface UserAPI {
                     content = @Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorVo.class)))
     })
     ResponseEntity<Void> createNewUser(@RequestBody(description = "User form", required = true,
-            content = @Content(schema = @Schema(implementation = UserForm.class))) UserForm form) throws UserException;
+            content = @Content(schema = @Schema(implementation = UserForm.class))) UserForm form) throws UserException, ServerPreferenceException;
 
     @Operation(method = "GET", summary = "Get User By Id", description = "getUserById")
+    @Parameter(description = "User ID (PK)",name = "userID",required = true,in = ParameterIn.PATH, schema = @Schema(implementation = Long.class))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "User retrieved",
-                    content = @Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = UserDto.class))),
+                    content = @Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = UserVo.class))),
             @ApiResponse(
                     responseCode = "404", description = "User not found",
                     content = @Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorVo.class)))
     })
-    ResponseEntity<UserDto> getUserById(String userId) throws UserException;
+    ResponseEntity<UserVo> getUserById(Long Id) throws UserException;
 
 
 }

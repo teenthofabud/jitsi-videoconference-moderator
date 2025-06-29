@@ -3,34 +3,31 @@ package com.teenthofabud.videoconference.mdr.conference.service.impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.teenthofabud.videoconference.mdr.conference.constants.ConferenceStatus;
-import com.teenthofabud.videoconference.mdr.conference.constants.google.GoogleConferenceErrorType;
-import com.teenthofabud.videoconference.mdr.conference.converter.ConferenceEntityToConferenceDtoConverter;
+import com.teenthofabud.videoconference.mdr.conference.converter.ConferenceEntityToConferenceVoConverter;
 import com.teenthofabud.videoconference.mdr.conference.converter.google.ConferenceEntityToGoogeConferenceDataVoConverter;
-import com.teenthofabud.videoconference.mdr.conference.dto.ConferenceDto;
+import com.teenthofabud.videoconference.mdr.conference.entity.google.GoogleConferenceEntity;
+import com.teenthofabud.videoconference.mdr.conference.repository.google.GoogleConferenceRepository;
+import com.teenthofabud.videoconference.mdr.conference.vo.ConferenceVo;
 import com.teenthofabud.videoconference.mdr.conference.error.ConferenceException;
 import com.teenthofabud.videoconference.mdr.conference.error.google.GoogleConferenceException;
 import com.teenthofabud.videoconference.mdr.conference.form.google.GoogleCalendarEvent;
 import com.teenthofabud.videoconference.mdr.conference.vo.google.GoogleConferenceDataVo;
 import com.teenthofabud.videoconference.mdr.conference.entity.ConferenceEntity;
 import com.teenthofabud.videoconference.mdr.conference.form.google.GoogleConferenceForm;
-import com.teenthofabud.videoconference.mdr.conference.repository.ConferenceRepository;
 import com.teenthofabud.videoconference.mdr.conference.service.ConferenceService;
 import com.teenthofabud.videoconference.mdr.error.core.MDRErrorCode;
-import com.teenthofabud.videoconference.mdr.serverpreference.dto.ServerPreferenceDto;
+import com.teenthofabud.videoconference.mdr.serverpreference.vo.ServerPreferenceVo;
 import com.teenthofabud.videoconference.mdr.serverpreference.error.ServerPreferenceException;
 import com.teenthofabud.videoconference.mdr.serverpreference.service.ServerPreferenceService;
 import com.teenthofabud.videoconference.mdr.user.error.UserException;
-import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Valid;
 import jakarta.validation.Validator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
-
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -39,11 +36,11 @@ import java.util.stream.Collectors;
 public class ConferenceServiceImpl implements ConferenceService {
 
     @Autowired
-    ConferenceRepository conferenceRepository;
+    GoogleConferenceRepository googleConferenceRepository;
     @Autowired
     ConferenceEntityToGoogeConferenceDataVoConverter conferenceEntityToGoogeConferenceDataVoConverter;
     @Autowired
-    ConferenceEntityToConferenceDtoConverter conferenceEntityToConferenceDtoConverter;
+    ConferenceEntityToConferenceVoConverter conferenceEntityToConferenceVoConverter;
     @Autowired
     ObjectMapper objectMapper;
     @Autowired
@@ -52,44 +49,48 @@ public class ConferenceServiceImpl implements ConferenceService {
     Validator validator;
 
     @Override
-    public GoogleConferenceDataVo createNewGoogleConference(@Valid @RequestBody GoogleConferenceForm form) throws GoogleConferenceException, UserException, ServerPreferenceException {
+    public GoogleConferenceDataVo createNewGoogleConference(GoogleConferenceForm form) throws GoogleConferenceException, UserException, ServerPreferenceException {
+        log.info("{}",form);
         String calendarId = form.getCalendarEvent().getCalendarId();
-        ServerPreferenceDto serverPreferenceDto = serverPreferenceService.getServerPreferenceByUserId(calendarId);
-        String uuidInput = String.format("%s%s%s",calendarId,serverPreferenceDto.getServerUrl(),Long.toString(System.currentTimeMillis()));
+        String eventId = form.getCalendarEvent().getEventId();
+        ServerPreferenceVo serverPreferenceVo = serverPreferenceService.getServerPreferenceByUserId(calendarId);
+        String uuidInput = String.format("%s%s%s",calendarId,serverPreferenceVo.getServerUrl(),Long.toString(System.currentTimeMillis()));
         UUID conferenceId = UUID.nameUUIDFromBytes(uuidInput.getBytes());
-        ConferenceEntity conferenceEntity = ConferenceEntity.builder()
-                .userId(calendarId)
-                        .serverUrl(serverPreferenceDto.getServerUrl())
-                                .roomId(conferenceId.toString())
-                                        .status(ConferenceStatus.ACTIVE)
-                                                .build();
-        conferenceRepository.save(conferenceEntity);
+        GoogleConferenceEntity conferenceEntity = GoogleConferenceEntity.builder()
+                .serverPreferenceId(serverPreferenceVo.getId())
+                .roomId(conferenceId.toString())
+                .eventId(eventId)
+                .status(ConferenceStatus.ACTIVE)
+                .build();
+        googleConferenceRepository.save(conferenceEntity);
         GoogleConferenceDataVo googleConferenceDataVo = GoogleConferenceDataVo.builder()
                 .adminEmail(calendarId)
-                .videoUri(String.format("%s/%s",serverPreferenceDto.getServerUrl(),conferenceEntity.getRoomId()))
+                .eventId(eventId)
+                .videoUri(String.format("%s/%s",serverPreferenceVo.getServerUrl(),conferenceEntity.getRoomId()))
                 .id(conferenceId.toString())
                 .build();
         return googleConferenceDataVo;
     }
 
     @Override
-    public ConferenceDto getConferenceById(Long conferenceId) throws ConferenceException {
-        Optional<ConferenceEntity> optionalConferenceEntity = conferenceRepository.findById(conferenceId);
-        ConferenceDto conferenceDto = null;
+    public ConferenceVo getGoogleConferenceById(Long conferenceId) throws ConferenceException {
+        Optional<GoogleConferenceEntity> optionalConferenceEntity = googleConferenceRepository.findById(conferenceId);
+        ConferenceVo conferenceVo = null;
         if(optionalConferenceEntity.isEmpty())
             throw new ConferenceException(MDRErrorCode.MDR_NOT_FOUND,new Object[]{conferenceId});
         else
-            conferenceDto = conferenceEntityToConferenceDtoConverter.convert(optionalConferenceEntity.get());
-        return conferenceDto;
+            conferenceVo = conferenceEntityToConferenceVoConverter.convert(optionalConferenceEntity.get());
+        return conferenceVo;
     }
 
     @Override
-    public List<ConferenceDto> getAllConferencesByUserId(String userId) {
-        List<ConferenceDto> conferenceDtoList = conferenceRepository.findByUserId(userId)
+    public List<ConferenceVo> getAllConferencesByUserId(String userId) throws ServerPreferenceException {
+        ServerPreferenceVo serverPreferenceVo = serverPreferenceService.getServerPreferenceByUserId(userId);
+        List<ConferenceVo> conferenceVoList = googleConferenceRepository.findByServerPreferenceId(serverPreferenceVo.getId())
                 .stream()
-                .map(e->conferenceEntityToConferenceDtoConverter.convert(e))
+                .map(e-> conferenceEntityToConferenceVoConverter.convert(e))
                 .collect(Collectors.toList());
-        return conferenceDtoList;
+        return conferenceVoList;
     }
 
     @Override
@@ -99,17 +100,11 @@ public class ConferenceServiceImpl implements ConferenceService {
     }
 
     @Override
-    public void patchConferenceById(Long conferenceId, JsonPatch patches) {
-        throw new UnsupportedOperationException("not implemented");
-    }
-
-    @Override
-    public void deleteConferenceById(Long conferenceId) throws ConferenceException {
-        Optional<ConferenceEntity> optionalConferenceEntity = conferenceRepository.findById(conferenceId);
-        ConferenceDto conferenceDto = null;
+    public void deleteGoogleConferenceById(Long conferenceId) throws ConferenceException {
+        Optional<GoogleConferenceEntity> optionalConferenceEntity = googleConferenceRepository.findById(conferenceId);
         if(optionalConferenceEntity.isEmpty())
             throw new ConferenceException(MDRErrorCode.MDR_NOT_FOUND,new Object[]{conferenceId});
-        else conferenceRepository.deleteById(conferenceId);
+        else googleConferenceRepository.deleteById(conferenceId);
 
     }
 }

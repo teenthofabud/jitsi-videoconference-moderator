@@ -1,14 +1,23 @@
 package com.teenthofabud.videoconference.mdr.user.service;
 
 
-import com.teenthofabud.videoconference.mdr.user.dto.UserDto;
-import com.teenthofabud.videoconference.mdr.user.entity.UserEntity;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.github.fge.jsonpatch.JsonPatch;
+import com.github.fge.jsonpatch.JsonPatchException;
+import com.teenthofabud.videoconference.mdr.serverpreference.error.ServerPreferenceException;
+import com.teenthofabud.videoconference.mdr.user.vo.UserVo;
 import com.teenthofabud.videoconference.mdr.user.error.UserException;
 import com.teenthofabud.videoconference.mdr.user.form.UserForm;
 
+import javax.naming.OperationNotSupportedException;
+
 public interface UserService {
 
-    void createNewUser(UserForm form) throws UserException;
+    UserVo createNewUser(UserForm form) throws UserException, ServerPreferenceException;
 
-    UserDto getUserById(String userId) throws UserException;
+    UserVo getUserById(Long id) throws UserException;
+
+    void patchUser(String userId, JsonPatch patches) throws UserException, JsonPatchException, JsonProcessingException;
+
+    void deleteUser(String userId) throws UserException;
 }

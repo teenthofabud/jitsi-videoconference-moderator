@@ -2,7 +2,7 @@ package com.teenthofabud.videoconference.mdr.conference.resource;
 
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchOperation;
-import com.teenthofabud.videoconference.mdr.conference.dto.ConferenceDto;
+import com.teenthofabud.videoconference.mdr.conference.vo.ConferenceVo;
 import com.teenthofabud.videoconference.mdr.conference.error.ConferenceException;
 import com.teenthofabud.videoconference.mdr.conference.error.google.GoogleConferenceException;
 import com.teenthofabud.videoconference.mdr.conference.form.google.GoogleCalendarEvent;
@@ -42,17 +42,17 @@ public interface ConferenceAPI {
     @Operation(method = "GET", summary = "Get conference by ID", description = "getConferenceByID")
     @Parameter(name = "Id",description = "Conference Identifier",schema = @Schema(implementation = Long.class), in = ParameterIn.PATH, required = true)
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Conference for given id",content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ConferenceDto.class))),
+            @ApiResponse(responseCode = "200", description = "Conference for given id",content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ConferenceVo.class))),
     })
-    ResponseEntity<ConferenceDto> getConferenceByID(Long conferenceId) throws ConferenceException;
+    ResponseEntity<ConferenceVo> getGoogleConferenceByID(Long conferenceId) throws ConferenceException;
 
 
     @Operation(method = "GET", summary = "Get all conferences", description = "getAllConferencesByUser")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "List of conferences for the user",
-            content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, array = @ArraySchema(schema = @Schema(implementation = ConferenceDto.class))))
+            content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, array = @ArraySchema(schema = @Schema(implementation = ConferenceVo.class))))
     })
-    ResponseEntity<List<ConferenceDto>> getAllConferencesByUser(String calendarId);
+    ResponseEntity<List<ConferenceVo>> getAllConferencesByUser(String calendarId) throws ServerPreferenceException;
 
 
     @Operation(method = "PATCH", summary = "Update Google conference by ID", description = "patchGoogleConferenceByID")
@@ -63,24 +63,12 @@ public interface ConferenceAPI {
     ResponseEntity<Void> patchGoogleConferenceByID(Long conferenceId,@RequestBody(description = "GoogleCalendarEvent form", required = true,
             content = @Content(schema = @Schema(implementation = GoogleCalendarEvent.class))) GoogleCalendarEvent form);
 
-
-    @Operation(method = "PATCH", summary = "Update conference by ID", description = "patchConferenceByID")
-    @Parameter(name = "Id",description = "Conference Identifier",schema = @Schema(implementation = Long.class), in = ParameterIn.PATH, required = true)
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Conference edited")
-    })
-    ResponseEntity<Void> patchConferenceByID(Long conferenceId,@RequestBody(description = "JsonPatch", required = true,
-            content = @Content(mediaType = HttpMediaType.APPLICATION_JSON_PATCH,
-                    array = @ArraySchema(
-                            schema = @Schema(implementation = JsonPatchOperation.class)
-                    ))) JsonPatch jsonPatch);
-
-    @Operation(method = "DELETE", summary = "Delete conference by ID", description = "deleteConferenceByID")
+    @Operation(method = "DELETE", summary = "Delete Google conference by ID", description = "deleteConferenceByID")
     @Parameter(name = "Id",description = "Conference Identifier",schema = @Schema(implementation = Long.class), in = ParameterIn.PATH, required = true)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Conference deleted")
     })
-    ResponseEntity<Void> deleteConferenceByID(Long conferenceId) throws ConferenceException;
+    ResponseEntity<Void> deleteGoogleConferenceByID(Long conferenceId) throws ConferenceException;
 
 
 }

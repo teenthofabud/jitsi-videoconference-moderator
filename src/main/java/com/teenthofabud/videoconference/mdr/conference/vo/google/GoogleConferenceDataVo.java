@@ -15,6 +15,9 @@ public class GoogleConferenceDataVo {
     @Schema(description = "Room identifier for the conference")
     String id;
 
+    @Schema(description = "Event ID for the conference generated from Google calendar on createConference")
+    String eventId;
+
     @Schema(description = "Identifier for the user who created the conference")
     String adminEmail;
 
