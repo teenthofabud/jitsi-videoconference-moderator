@@ -24,7 +24,5 @@ public class ServerVo {
     @Schema(description = "Base Url for the server")
     String serverUrl;
 
-    @Schema(description = "Server Preference list")
-    List<ServerPreferenceVo> serverPreferences;
 
 }

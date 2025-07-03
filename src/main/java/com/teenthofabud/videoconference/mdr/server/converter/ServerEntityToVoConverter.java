@@ -19,15 +19,11 @@ public class ServerEntityToVoConverter implements Converter<ServerEntity, Server
 
     @Override
     public ServerVo convert(ServerEntity source) {
-        List<ServerPreferenceVo> serverPreferences = new ArrayList<>();
-        if(source.getServerPreferences()!=null)
-            serverPreferences = source.getServerPreferences().stream().map(e->serverPreferenceEntityToVoConverter.convert(e)).toList();
 
         return ServerVo.builder()
                 .name(source.getName())
                 .id(source.getId())
                 .serverUrl(source.getServerUrl())
-                .serverPreferences(serverPreferences)
                 .build();
     }
 }

@@ -29,7 +29,5 @@ public class ConferenceVo {
     @Schema(description = "Whether the conference is still ACTIVE (upcoming/ongoing) or INACTIVE(canceled/deleted)")
     ConferenceStatus status;
 
-    @Schema(description = "Error message in case any")
-    String error;
 
 }

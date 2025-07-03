@@ -1,5 +1,6 @@
 package com.teenthofabud.videoconference.mdr.user.form;
 
+import com.teenthofabud.videoconference.mdr.user.constants.ReferenceType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -22,7 +23,7 @@ public class UserForm {
 
     @Schema(description = "User reference type, eg:- GMAIL",required = true)
     @NotNull(message = "reference type can't be null")
-    String referenceType;
+    ReferenceType referenceType;
 
     @Schema(description = "Server preference type whether DEFAULT or CUSTOM", required = true, allowableValues = {"DEFAULT","CUSTOM"})
     String serverPreferenceType;

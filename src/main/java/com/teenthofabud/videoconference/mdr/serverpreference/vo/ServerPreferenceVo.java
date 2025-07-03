@@ -1,5 +1,6 @@
 package com.teenthofabud.videoconference.mdr.serverpreference.vo;
 
+import com.teenthofabud.videoconference.mdr.serverpreference.constants.ServerPreferenceType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
@@ -22,7 +23,7 @@ public class ServerPreferenceVo {
     String userId;
 
     @Schema(description = "Server preference type whether DEFAULT or CUSTOM")
-    String serverPreferenceType;
+    ServerPreferenceType serverPreferenceType;
 
 
 }

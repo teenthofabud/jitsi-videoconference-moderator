@@ -36,7 +36,7 @@ public interface ConferenceAPI {
             ),
     })
     ResponseEntity<GoogleConferenceDataVo> createNewGoogleConference(@RequestBody(description = "UOM form", required = true,
-            content = @Content(schema = @Schema(implementation = GoogleConferenceForm.class))) GoogleConferenceForm form) throws GoogleConferenceException, ServerPreferenceException, UserException;
+            content = @Content(schema = @Schema(implementation = GoogleConferenceForm.class))) GoogleConferenceForm form) throws GoogleConferenceException, ConferenceException;
 
 
     @Operation(method = "GET", summary = "Get conference by ID", description = "getConferenceByID")
@@ -44,7 +44,7 @@ public interface ConferenceAPI {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Conference for given id",content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ConferenceVo.class))),
     })
-    ResponseEntity<ConferenceVo> getGoogleConferenceByID(Long conferenceId) throws ConferenceException;
+    ResponseEntity<ConferenceVo> getGoogleConferenceByID(Long conferenceId) throws ConferenceException, GoogleConferenceException;
 
 
     @Operation(method = "GET", summary = "Get all conferences", description = "getAllConferencesByUser")
@@ -52,7 +52,7 @@ public interface ConferenceAPI {
             @ApiResponse(responseCode = "200", description = "List of conferences for the user",
             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, array = @ArraySchema(schema = @Schema(implementation = ConferenceVo.class))))
     })
-    ResponseEntity<List<ConferenceVo>> getAllConferencesByUser(String calendarId) throws ServerPreferenceException;
+    ResponseEntity<List<ConferenceVo>> getAllGoogleConferencesByUser(String calendarId) throws GoogleConferenceException;
 
 
     @Operation(method = "PATCH", summary = "Update Google conference by ID", description = "patchGoogleConferenceByID")
@@ -68,7 +68,7 @@ public interface ConferenceAPI {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Conference deleted")
     })
-    ResponseEntity<Void> deleteGoogleConferenceByID(Long conferenceId) throws ConferenceException;
+    ResponseEntity<Void> deleteGoogleConferenceByID(Long conferenceId) throws ConferenceException, GoogleConferenceException;
 
 
 }

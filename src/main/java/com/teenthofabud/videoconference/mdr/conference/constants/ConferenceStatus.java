@@ -3,6 +3,7 @@ package com.teenthofabud.videoconference.mdr.conference.constants;
 import lombok.Getter;
 import lombok.experimental.FieldNameConstants;
 
+import java.util.Arrays;
 import java.util.NoSuchElementException;
 
 @Getter
@@ -18,18 +19,8 @@ public enum ConferenceStatus {
     }
 
     public static ConferenceStatus getByName(String name) throws NoSuchElementException {
-        for (ConferenceStatus status : ConferenceStatus.values()) {
-            if (status.name().equals(name)) {
-                return status;
-            }
-        }
-        throw new NoSuchElementException("No Conference Status available by name: " + name);
+
+        return Arrays.stream(ConferenceStatus.values()).filter(e->e.name().equals(name)).findFirst().orElseThrow(()-> new NoSuchElementException("No Conference status available by name : "+name));
     }
 
-    public static String getName(ConferenceStatus status) {
-        if(status != null)
-            return status.name();
-        else
-            throw new NoSuchElementException("No Conference Status available by name: " + status);
-    }
 }

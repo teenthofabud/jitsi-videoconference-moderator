@@ -1,5 +1,6 @@
 package com.teenthofabud.videoconference.mdr.user.vo;
 
+import com.teenthofabud.videoconference.mdr.user.constants.ReferenceType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
@@ -23,7 +24,7 @@ public class UserVo {
     String name;
 
     @Schema(description = "User reference type, eg:- GMAIL")
-    String referenceType;
+    ReferenceType referenceType;
 
 
 

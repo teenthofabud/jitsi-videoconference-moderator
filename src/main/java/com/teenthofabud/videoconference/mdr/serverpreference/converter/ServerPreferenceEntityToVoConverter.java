@@ -13,7 +13,7 @@ public class ServerPreferenceEntityToVoConverter implements Converter<ServerPref
                 .userId(source.getUserId())
                 .id(source.getId())
                 .serverUrl(source.getServerUrl())
-                .serverPreferenceType(source.getServerPreferenceType().name())
+                .serverPreferenceType(source.getServerPreferenceType())
                 .build();
     }
 }

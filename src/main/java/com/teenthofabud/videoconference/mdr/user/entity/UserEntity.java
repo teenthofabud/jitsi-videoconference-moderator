@@ -26,6 +26,7 @@ public class UserEntity {
     String name;
 
     @Column(name = "reference_type", nullable = false)
+    @Enumerated(EnumType.STRING)
     ReferenceType referenceType;
 
 

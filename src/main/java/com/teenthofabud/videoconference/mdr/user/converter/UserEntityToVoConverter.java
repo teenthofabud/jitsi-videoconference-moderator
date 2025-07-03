@@ -15,7 +15,7 @@ public class UserEntityToVoConverter implements Converter<UserEntity, UserVo> {
                 .userId(source.getUserId())
                 .id(source.getId())
                 .name(source.getName())
-                .referenceType(source.getReferenceType().name())
+                .referenceType(source.getReferenceType())
                 .build();
     }
 }

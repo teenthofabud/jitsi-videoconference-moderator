@@ -14,15 +14,15 @@ import java.util.List;
 
 public interface ConferenceService {
 
-    GoogleConferenceDataVo createNewGoogleConference(GoogleConferenceForm form) throws GoogleConferenceException, UserException, ServerPreferenceException;
+    GoogleConferenceDataVo createNewGoogleConference(GoogleConferenceForm form) throws GoogleConferenceException;
 
-    ConferenceVo getGoogleConferenceById(Long conferenceId) throws ConferenceException;
+    ConferenceVo getGoogleConferenceById(Long conferenceId) throws GoogleConferenceException;
 
-    List<ConferenceVo> getAllConferencesByUserId(String userId) throws ServerPreferenceException;
+    List<ConferenceVo> getAllGoogleConferencesByUserId(String userId) throws GoogleConferenceException;
 
     void patchGoogleConferenceById(Long conferenceId, GoogleCalendarEvent calendarEvent);
 
 
-    void deleteGoogleConferenceById(Long conferenceId) throws ConferenceException;
+    void deleteGoogleConferenceById(Long conferenceId) throws GoogleConferenceException;
 
 }

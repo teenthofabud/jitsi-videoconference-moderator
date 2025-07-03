@@ -8,7 +8,6 @@ import com.teenthofabud.videoconference.mdr.error.core.MDRErrorCode;
 import com.teenthofabud.videoconference.mdr.serverpreference.error.ServerPreferenceException;
 import com.teenthofabud.videoconference.mdr.serverpreference.form.ServerPreferenceForm;
 import com.teenthofabud.videoconference.mdr.serverpreference.service.ServerPreferenceService;
-import com.teenthofabud.videoconference.mdr.user.converter.UserEntityToDtoConverter;
 import com.teenthofabud.videoconference.mdr.user.converter.UserEntityToVoConverter;
 import com.teenthofabud.videoconference.mdr.user.converter.UserFormToUserEntityConverter;
 import com.teenthofabud.videoconference.mdr.user.vo.UserVo;
@@ -34,8 +33,6 @@ public class UserServiceImpl implements UserService {
     UserFormToUserEntityConverter userFormToUserEntityConverter;
     @Autowired
     UserEntityToVoConverter userEntityToVoConverter;
-    @Autowired
-    UserEntityToDtoConverter userEntityToDtoConverter;
     @Autowired
     ServerPreferenceService serverPreferenceService;
     @Autowired
@@ -66,7 +63,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void patchUser(String userId, JsonPatch patches) throws UserException, JsonPatchException, JsonProcessingException {
 //        UserEntity userEntity = userRepository.findByUserId(userId).orElseThrow(()-> new UserException(MDRErrorCode.MDR_NOT_FOUND,new Object[]{userId}));
-//        UserDto userDto = userEntityToDtoConverter.convert(userEntity).orElseThrow(()-> new UserException(MDRErrorCode.MDR_ATTRIBUTE_INVALID,new Object[]{userEntity.getServerPreferenceId()}));
+//        UserDto userDto = null;
 //        JsonNode original = mapper.valueToTree(userDto);
 //        JsonNode patched = patches.apply(original);
 //        UserDto patchedUserDto = mapper.treeToValue(patched,UserDto.class);

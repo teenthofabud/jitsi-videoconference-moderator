@@ -1,6 +1,5 @@
 package com.teenthofabud.videoconference.mdr.conference.resource.impl;
 
-import com.github.fge.jsonpatch.JsonPatch;
 import com.teenthofabud.videoconference.mdr.conference.vo.ConferenceVo;
 import com.teenthofabud.videoconference.mdr.conference.error.ConferenceException;
 import com.teenthofabud.videoconference.mdr.conference.error.google.GoogleConferenceException;
@@ -9,8 +8,6 @@ import com.teenthofabud.videoconference.mdr.conference.vo.google.GoogleConferenc
 import com.teenthofabud.videoconference.mdr.conference.form.google.GoogleConferenceForm;
 import com.teenthofabud.videoconference.mdr.conference.resource.ConferenceAPI;
 import com.teenthofabud.videoconference.mdr.conference.service.ConferenceService;
-import com.teenthofabud.videoconference.mdr.serverpreference.error.ServerPreferenceException;
-import com.teenthofabud.videoconference.mdr.user.error.UserException;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,29 +22,29 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/conference")
+@RequestMapping("/google/conference")
 public class ConferenceController implements ConferenceAPI {
 
     @Autowired
     ConferenceService conferenceService;
 
     @Override
-    @PostMapping("/google")
-    public ResponseEntity<GoogleConferenceDataVo> createNewGoogleConference(@Valid @RequestBody GoogleConferenceForm form) throws GoogleConferenceException, ServerPreferenceException, UserException {
+    @PostMapping
+    public ResponseEntity<GoogleConferenceDataVo> createNewGoogleConference(@Valid @RequestBody GoogleConferenceForm form) throws GoogleConferenceException {
         log.debug("Received request with body : {}",form);
         GoogleConferenceDataVo googleConferenceDataVo = conferenceService.createNewGoogleConference(form);
         return ResponseEntity.status(HttpStatus.CREATED).body(googleConferenceDataVo);
     }
 
     @Override
-    public ResponseEntity<ConferenceVo> getGoogleConferenceByID(Long conferenceId) throws ConferenceException {
+    public ResponseEntity<ConferenceVo> getGoogleConferenceByID(Long conferenceId) throws ConferenceException, GoogleConferenceException {
          ConferenceVo conferenceVo = conferenceService.getGoogleConferenceById(conferenceId);
          return ResponseEntity.ok(conferenceVo);
     }
 
     @Override
-    public ResponseEntity<List<ConferenceVo>> getAllConferencesByUser(String calendarId) throws ServerPreferenceException {
-        List<ConferenceVo> conferenceVoList = conferenceService.getAllConferencesByUserId(calendarId);
+    public ResponseEntity<List<ConferenceVo>> getAllGoogleConferencesByUser(String calendarId) throws GoogleConferenceException {
+        List<ConferenceVo> conferenceVoList = conferenceService.getAllGoogleConferencesByUserId(calendarId);
         return ResponseEntity.ok(conferenceVoList);
     }
 
@@ -57,7 +54,7 @@ public class ConferenceController implements ConferenceAPI {
     }
 
     @Override
-    public ResponseEntity<Void> deleteGoogleConferenceByID(Long conferenceId) throws ConferenceException {
+    public ResponseEntity<Void> deleteGoogleConferenceByID(Long conferenceId) throws GoogleConferenceException {
         conferenceService.deleteGoogleConferenceById(conferenceId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

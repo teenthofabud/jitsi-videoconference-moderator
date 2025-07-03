@@ -1,7 +1,10 @@
 package com.teenthofabud.videoconference.mdr.user.constants;
 
+import com.teenthofabud.videoconference.mdr.conference.constants.ConferenceStatus;
 import lombok.Getter;
 import lombok.experimental.FieldNameConstants;
+
+import java.util.Arrays;
 import java.util.NoSuchElementException;
 
 @FieldNameConstants(onlyExplicitlyIncluded = true)
@@ -16,17 +19,7 @@ public enum ReferenceType {
     }
 
     public static ReferenceType getByName(String name) throws NoSuchElementException {
-        ReferenceType x = null;
-        for(ReferenceType t : ReferenceType.values()) {
-            if(t.name().compareTo(name) == 0) {
-                x = t;
-                break;
-            }
-        }
-        if(x != null) {
-            return x;
-        } else {
-            throw new NoSuchElementException("No Reference Type available by name: " + name);
-        }
+        return Arrays.stream(ReferenceType.values()).filter(e -> e.name().equals(name)).findFirst().orElseThrow(() -> new NoSuchElementException("No such Reference type available by name : " + name));
     }
+
 }
