@@ -6,6 +6,8 @@ import com.teenthofabud.videoconference.mdr.conference.constants.google.GoogleCo
 import com.teenthofabud.videoconference.mdr.conference.converter.ConferenceEntityToConferenceVoConverter;
 import com.teenthofabud.videoconference.mdr.conference.entity.ConferenceEntity;
 import com.teenthofabud.videoconference.mdr.conference.entity.google.GoogleConferenceEntity;
+import com.teenthofabud.videoconference.mdr.conference.reducer.GoogleConferenceEntityToGoogleConferenceDataVoReducer;
+import com.teenthofabud.videoconference.mdr.conference.reducer.GoogleConferenceFormToGoogleConferenceEntityReducer;
 import com.teenthofabud.videoconference.mdr.conference.repository.google.GoogleConferenceRepository;
 import com.teenthofabud.videoconference.mdr.conference.vo.ConferenceVo;
 import com.teenthofabud.videoconference.mdr.conference.error.google.GoogleConferenceException;
@@ -23,7 +25,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -38,32 +39,23 @@ public class ConferenceServiceImpl implements ConferenceService {
     ObjectMapper objectMapper;
     @Autowired
     ServerPreferenceService serverPreferenceService;
+    @Autowired
+    GoogleConferenceFormToGoogleConferenceEntityReducer googleConferenceFormToGoogleConferenceEntityReducer;
+    @Autowired
+    GoogleConferenceEntityToGoogleConferenceDataVoReducer googleConferenceEntityToGoogleConferenceDataVoReducer;
 
     @Override
     public GoogleConferenceDataVo createNewGoogleConference(GoogleConferenceForm form) throws GoogleConferenceException {
         String calendarId = form.getCalendarEvent().getCalendarId();
-        String eventId = form.getCalendarEvent().getEventId();
         ServerPreferenceVo serverPreferenceVo = null;
         try {
             serverPreferenceVo = serverPreferenceService.getServerPreferenceByUserId(calendarId);
         } catch (ServerPreferenceException e) {
             throw new GoogleConferenceException(GoogleConferenceErrorType.TEMPORARY, MDRErrorCode.MDR_ATTRIBUTE_INVALID,new Object[]{calendarId});
         }
-        String uuidInput = String.format("%s:%s:%s",calendarId,serverPreferenceVo.getServerUrl(),Long.toString(System.currentTimeMillis()));
-        UUID conferenceId = UUID.nameUUIDFromBytes(uuidInput.getBytes());
-        GoogleConferenceEntity conferenceEntity = GoogleConferenceEntity.builder()
-                .serverPreferenceId(serverPreferenceVo.getId())
-                .roomId(conferenceId.toString())
-                .eventId(eventId)
-                .status(ConferenceStatus.ACTIVE)
-                .build();
+        GoogleConferenceEntity conferenceEntity = googleConferenceFormToGoogleConferenceEntityReducer.reduce(form,serverPreferenceVo);
         googleConferenceRepository.save(conferenceEntity);
-        GoogleConferenceDataVo googleConferenceDataVo = GoogleConferenceDataVo.builder()
-                .adminEmail(calendarId)
-                .eventId(eventId)
-                .videoUri(String.format("%s/%s",serverPreferenceVo.getServerUrl(),conferenceEntity.getRoomId()))
-                .id(conferenceId.toString())
-                .build();
+        GoogleConferenceDataVo googleConferenceDataVo = googleConferenceEntityToGoogleConferenceDataVoReducer.reduce(conferenceEntity,serverPreferenceVo);
         return googleConferenceDataVo;
     }
 
