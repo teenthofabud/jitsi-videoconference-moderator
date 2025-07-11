@@ -23,6 +23,7 @@ public class GoogleCalendarEvent {
 
     @JsonProperty("id")
     @Schema(description = "Event id")
+    @NotNull(message = "eventId can't be null")
     String eventId;
 
     //unknown for now

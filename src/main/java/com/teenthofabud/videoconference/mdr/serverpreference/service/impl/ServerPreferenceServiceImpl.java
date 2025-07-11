@@ -49,6 +49,7 @@ public class ServerPreferenceServiceImpl implements ServerPreferenceService {
     @Transactional
     public void createServerPreference(ServerPreferenceForm form) throws ServerPreferenceException {
 
+        // For now a user can only have on server preference, more might be allowed later
         Optional<ServerPreferenceEntity> optionalServerPreferenceEntity = serverPreferenceRepository.findByUserId(form.getUserId());
         if(optionalServerPreferenceEntity.isPresent())
             throw new ServerPreferenceException(MDRErrorCode.MDR_EXISTS, new Object[]{form.getUserId()});

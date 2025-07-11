@@ -1,16 +1,11 @@
-package com.teenthofabud.videoconference.mdr.conference.resource;
+package com.teenthofabud.videoconference.mdr.conference.resource.google;
 
-import com.github.fge.jsonpatch.JsonPatch;
-import com.github.fge.jsonpatch.JsonPatchOperation;
 import com.teenthofabud.videoconference.mdr.conference.vo.ConferenceVo;
 import com.teenthofabud.videoconference.mdr.conference.error.ConferenceException;
 import com.teenthofabud.videoconference.mdr.conference.error.google.GoogleConferenceException;
 import com.teenthofabud.videoconference.mdr.conference.form.google.GoogleCalendarEvent;
 import com.teenthofabud.videoconference.mdr.conference.vo.google.GoogleConferenceDataVo;
 import com.teenthofabud.videoconference.mdr.conference.form.google.GoogleConferenceForm;
-import com.teenthofabud.videoconference.mdr.constants.HttpMediaType;
-import com.teenthofabud.videoconference.mdr.serverpreference.error.ServerPreferenceException;
-import com.teenthofabud.videoconference.mdr.user.error.UserException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -26,8 +21,8 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
-@Tag(name = "ConferenceAPI", description = "Conference Management")
-public interface ConferenceAPI {
+@Tag(name = "GoogleConferenceAPI", description = "Google Conference Management")
+public interface GoogleConferenceAPI {
 
     @Operation(method = "POST", summary = "Google Conference creation", description = "createNewGoogleConference")
     @ApiResponses(value = {

@@ -1,4 +1,4 @@
-package com.teenthofabud.videoconference.mdr.conference.resource.impl;
+package com.teenthofabud.videoconference.mdr.conference.resource.google.impl;
 
 import com.teenthofabud.videoconference.mdr.conference.vo.ConferenceVo;
 import com.teenthofabud.videoconference.mdr.conference.error.ConferenceException;
@@ -6,7 +6,7 @@ import com.teenthofabud.videoconference.mdr.conference.error.google.GoogleConfer
 import com.teenthofabud.videoconference.mdr.conference.form.google.GoogleCalendarEvent;
 import com.teenthofabud.videoconference.mdr.conference.vo.google.GoogleConferenceDataVo;
 import com.teenthofabud.videoconference.mdr.conference.form.google.GoogleConferenceForm;
-import com.teenthofabud.videoconference.mdr.conference.resource.ConferenceAPI;
+import com.teenthofabud.videoconference.mdr.conference.resource.google.GoogleConferenceAPI;
 import com.teenthofabud.videoconference.mdr.conference.service.ConferenceService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +23,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/google/conference")
-public class ConferenceController implements ConferenceAPI {
+public class GoogleGoogleConferenceController implements GoogleConferenceAPI {
 
     @Autowired
     ConferenceService conferenceService;
