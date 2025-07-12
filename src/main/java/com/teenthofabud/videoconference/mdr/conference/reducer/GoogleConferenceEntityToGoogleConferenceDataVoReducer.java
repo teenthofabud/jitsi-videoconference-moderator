@@ -13,7 +13,7 @@ public class GoogleConferenceEntityToGoogleConferenceDataVoReducer {
         return GoogleConferenceDataVo.builder()
                 .adminEmail(serverPreferenceVo.getUserId())
                 .eventId(conferenceEntity.getEventId())
-                .videoUri(String.format("%s/%s",serverPreferenceVo.getServerUrl(),conferenceEntity.getRoomId()))
+                .videoUri(String.format("https://%s/%s",serverPreferenceVo.getServerUrl(),conferenceEntity.getRoomId()))
                 .id(conferenceEntity.getRoomId())
                 .build();
     }
