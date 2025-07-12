@@ -18,6 +18,6 @@ import lombok.experimental.SuperBuilder;
 @Table(name = "google_conference")
 public class GoogleConferenceEntity extends ConferenceEntity {
 
-    @Column(name = "event_id", nullable = false, unique = true)
+    @Column(name = "event_id", nullable = false)
     String eventId;
 }

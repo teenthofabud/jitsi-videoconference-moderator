@@ -23,7 +23,7 @@ public abstract class ConferenceEntity {
     @Column(name = "room_id", nullable = false, unique = true)
     String roomId;
 
-    @Column(name = "server_preference_id", nullable = false, unique = true)
+    @Column(name = "server_preference_id", nullable = false)
     Long serverPreferenceId;
 
     @Column(name = "status", nullable = false)
