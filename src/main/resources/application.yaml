@@ -1,6 +1,8 @@
 spring:
  application:
-  name: jitsi-conference-moderator
+  name: "@project.build.finalName@"
+  version: "@project.version@"
+  description : "@project.description@"
 
  h2:
   console:
@@ -25,3 +27,16 @@ spring:
   properties:
    hibernate:
     format_sql: true
+#   jakarta:
+#    persistence:
+#     schema-generation:
+#      create-source: metadata
+#      scripts:
+#       action: drop-and-create
+#       drop-target: src/main/resources/sql/dev-drop.sql
+#       create-target: src/main/resources/sql/dev-ddl.sql
+
+logging:
+ level:
+  org.hibernate.orm.jdbc.bind: trace
+  org.hibernate.type.descriptor.sql.BasicBinder: TRACE

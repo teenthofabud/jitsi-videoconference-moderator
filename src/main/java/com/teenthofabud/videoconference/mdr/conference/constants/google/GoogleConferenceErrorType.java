@@ -1,9 +1,10 @@
 package com.teenthofabud.videoconference.mdr.conference.constants.google;
 
+import com.teenthofabud.videoconference.mdr.error.core.MDRError;
 import lombok.Getter;
 
 @Getter
-public enum GoogleConferenceErrorType {
+public enum GoogleConferenceErrorType implements MDRError {
 
 
     AUTHENTICATION("Authentication error occurred during conference data generation"),
@@ -27,4 +28,14 @@ public enum GoogleConferenceErrorType {
         return name();
     }
 
+    @Override
+    public String getErrorCode() {
+        return this.name();
+    }
+
+    @Override
+    public Integer getHttpStatusCode() {
+        //sending any other http status leads to request failure in Google calendar
+        return 200;
+    }
 }

@@ -1,35 +1,33 @@
 package com.teenthofabud.videoconference.mdr.conference.entity;
 
 import com.teenthofabud.videoconference.mdr.conference.constants.ConferenceStatus;
-import com.teenthofabud.videoconference.mdr.conference.converter.ConferenceStatusAttributeConverter;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
-@Entity
+
 @ToString
 @EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@SuperBuilder
 @Getter
 @Setter
-public class ConferenceEntity {
+@MappedSuperclass
+public abstract class ConferenceEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @Column(name = "room_id", nullable = false)
+    @Column(name = "room_id", nullable = false, unique = true)
     String roomId;
 
-    @Column(name = "user_id", nullable = false)
-    String userId;
-
-    @Column(name = "server_url", nullable = false)
-    String serverUrl;
+    @Column(name = "server_preference_id", nullable = false)
+    Long serverPreferenceId;
 
     @Column(name = "status", nullable = false)
-    @Convert(converter = ConferenceStatusAttributeConverter.class  )
+    @Enumerated(EnumType.STRING)
     ConferenceStatus status;
 
 
