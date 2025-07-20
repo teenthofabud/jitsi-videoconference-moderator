@@ -13,7 +13,7 @@ public class ServerPreferenceFormToEntityConverter implements Converter<ServerPr
         return ServerPreferenceEntity.builder()
                 .serverUrl(source.getServerUrl())
                 .serverPreferenceType(ServerPreferenceType.valueOf(source.getServerPreferenceType()))
-                .userId(source.getUserId())
+                .userIdHash(source.getUserIdHash())
                 .build();
     }
 }

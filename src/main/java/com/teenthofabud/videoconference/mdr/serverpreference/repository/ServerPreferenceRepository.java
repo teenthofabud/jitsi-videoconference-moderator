@@ -9,7 +9,6 @@ import java.util.Optional;
 @Repository
 public interface ServerPreferenceRepository extends JpaRepository<ServerPreferenceEntity,Long> {
 
-    Optional<ServerPreferenceEntity> findByUserId(String userId);
+    Optional<ServerPreferenceEntity> findByUserIdHash(String userIdHash);
 
-    Optional<ServerPreferenceEntity> findByServerUrl(String serverUrl);
 }

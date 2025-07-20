@@ -61,6 +61,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserVo getUserByIdHash(Long id) throws UserException {
+        return return userRepository.findById(id).map(e-> userEntityToVoConverter.convert(e)).orElseThrow(()->new UserException(MDRErrorCode.MDR_NOT_FOUND,new Object[]{id}));;
+    }
+
+    @Override
     public void patchUser(String userId, JsonPatch patches) throws UserException, JsonPatchException, JsonProcessingException {
 //        UserEntity userEntity = userRepository.findByUserId(userId).orElseThrow(()-> new UserException(MDRErrorCode.MDR_NOT_FOUND,new Object[]{userId}));
 //        UserDto userDto = null;

@@ -19,8 +19,8 @@ public class ServerPreferenceVo {
     @Schema(description = "Base URL of the server the user prefers")
     String serverUrl;
 
-    @Schema(description = "Identifier for the user")
-    String userId;
+    @Schema(description = "Hash of the Identifier for the user")
+    String userIdHash;
 
     @Schema(description = "Server preference type whether DEFAULT or CUSTOM")
     ServerPreferenceType serverPreferenceType;

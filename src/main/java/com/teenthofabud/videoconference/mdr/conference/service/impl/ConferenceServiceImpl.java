@@ -23,6 +23,9 @@ import jakarta.validation.Validator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.DigestUtils;
+
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -47,9 +50,10 @@ public class ConferenceServiceImpl implements ConferenceService {
     @Override
     public GoogleConferenceDataVo createNewGoogleConference(GoogleConferenceForm form) throws GoogleConferenceException {
         String calendarId = form.getCalendarEvent().getCalendarId();
+        String userIdHash = DigestUtils.md5DigestAsHex(calendarId.getBytes(StandardCharsets.UTF_8));
         ServerPreferenceVo serverPreferenceVo = null;
         try {
-            serverPreferenceVo = serverPreferenceService.getServerPreferenceByUserId(calendarId);
+            serverPreferenceVo = serverPreferenceService.getServerPreferenceByUserIdHash(userIdHash);
         } catch (ServerPreferenceException e) {
             throw new GoogleConferenceException(GoogleConferenceErrorType.TEMPORARY, MDRErrorCode.MDR_ATTRIBUTE_INVALID,new Object[]{calendarId});
         }
@@ -81,7 +85,7 @@ public class ConferenceServiceImpl implements ConferenceService {
     public List<ConferenceVo> getAllGoogleConferencesByUserId(String userId) throws GoogleConferenceException {
         ServerPreferenceVo serverPreferenceVo = null;
         try {
-            serverPreferenceVo = serverPreferenceService.getServerPreferenceByUserId(userId);
+            serverPreferenceVo = serverPreferenceService.getServerPreferenceByUserIdHash(userId);
         } catch (ServerPreferenceException e) {
             throw new GoogleConferenceException(GoogleConferenceErrorType.TEMPORARY,MDRErrorCode.MDR_ATTRIBUTE_INVALID,new Object[]{userId});
         }
