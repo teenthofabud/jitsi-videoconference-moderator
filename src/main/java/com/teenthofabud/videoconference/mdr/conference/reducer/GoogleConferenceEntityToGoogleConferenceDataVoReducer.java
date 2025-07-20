@@ -14,15 +14,13 @@ public class GoogleConferenceEntityToGoogleConferenceDataVoReducer {
     @Autowired
     UserService userService;
 
-    public GoogleConferenceDataVo reduce(GoogleConferenceEntity conferenceEntity, ServerPreferenceVo serverPreferenceVo){
+    public GoogleConferenceDataVo reduce(GoogleConferenceEntity conferenceEntity, String serverUrl, String userId){
 
-        UserVo userVo = userService.getUserById(serverPreferenceVo.getUserIdHash());
-
-        return GoogleConferenceDataVo.builder()
-                .adminEmail(serverPreferenceVo.getUserId())
-                .eventId(conferenceEntity.getEventId())
-                .videoUri(String.format("https://%s/%s",serverPreferenceVo.getServerUrl(),conferenceEntity.getRoomId()))
-                .id(conferenceEntity.getRoomId())
-                .build();
+            return GoogleConferenceDataVo.builder()
+                    .adminEmail(userId)
+                    .eventId(conferenceEntity.getEventId())
+                    .videoUri(String.format("https://%s/%s",serverUrl, conferenceEntity.getRoomId()))
+                    .id(conferenceEntity.getRoomId())
+                    .build();
     }
 }

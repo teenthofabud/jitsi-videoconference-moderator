@@ -20,6 +20,9 @@ public class UserVo {
     @Schema(description = "Hash of the identifier for the user who created the conference")
     String userIdHash;
 
+    @Schema(description = "Identifier for the user who created the conference")
+    String userId;
+
     @Schema(description = "Name of the user")
     String name;
 

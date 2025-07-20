@@ -12,7 +12,8 @@ public class UserEntityToVoConverter implements Converter<UserEntity, UserVo> {
     @Override
     public UserVo convert(UserEntity source) {
         return UserVo.builder()
-                .userIdHash(source.getUserId())
+                .userIdHash(source.getUserIdHash())
+                .userId(source.getUserId())
                 .id(source.getId())
                 .name(source.getName())
                 .referenceType(source.getReferenceType())

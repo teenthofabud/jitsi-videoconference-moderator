@@ -48,7 +48,7 @@ public class UserServiceImpl implements UserService {
         userRepository.save(userEntity);
         ServerPreferenceForm serverPreferenceForm = ServerPreferenceForm.builder()
                 .serverUrl(form.getPreferredServerUrl())
-                .userId(form.getUserId())
+                .userIdHash(userEntity.getUserIdHash())
                 .serverPreferenceType(form.getServerPreferenceType())
                 .build();
         serverPreferenceService.createServerPreference(serverPreferenceForm);
@@ -61,8 +61,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserVo getUserByIdHash(Long id) throws UserException {
-        return return userRepository.findById(id).map(e-> userEntityToVoConverter.convert(e)).orElseThrow(()->new UserException(MDRErrorCode.MDR_NOT_FOUND,new Object[]{id}));;
+    public UserVo getUserByUserIdHash(String userIdHash) throws UserException {
+        return userRepository.findByUserIdHash(userIdHash).map(e-> userEntityToVoConverter.convert(e)).orElseThrow(()->new UserException(MDRErrorCode.MDR_NOT_FOUND,new Object[]{userIdHash}));
+    }
+
+    @Override
+    public UserVo getUserByUserId(String userId) throws UserException {
+        return userRepository.findByUserIdHash(userId).map(e-> userEntityToVoConverter.convert(e)).orElseThrow(()->new UserException(MDRErrorCode.MDR_NOT_FOUND,new Object[]{userId}));
     }
 
     @Override

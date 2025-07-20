@@ -17,12 +17,6 @@ public class ConferenceVo {
     @Schema(description = "Room identifier for the conference")
     String roomId;
 
-    @Schema(description = "Identifier for the user who created the conference")
-    String userId;
-
-    @Schema(description = "Base URL of the server")
-    String serverUrl;
-
     @Schema(description = "Identifier for the server preference which has the userId and serverId details")
     Long serverPreferenceId;
 
