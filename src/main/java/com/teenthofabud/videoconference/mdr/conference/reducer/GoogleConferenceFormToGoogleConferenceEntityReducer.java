@@ -12,7 +12,7 @@ import java.util.UUID;
 public class GoogleConferenceFormToGoogleConferenceEntityReducer {
 
     public GoogleConferenceEntity reduce(GoogleConferenceForm form, ServerPreferenceVo serverPreferenceVo){
-        String uuidInput = String.format("%s:%s:%s",serverPreferenceVo.getUserId(),serverPreferenceVo.getServerUrl(),Long.toString(System.currentTimeMillis()));
+        String uuidInput = String.format("%s:%s:%s",serverPreferenceVo.getUserIdHash(),serverPreferenceVo.getServerUrl(),Long.toString(System.currentTimeMillis()));
         String conferenceId = UUID.nameUUIDFromBytes(uuidInput.getBytes()).toString();
         return GoogleConferenceEntity.builder()
                 .eventId(form.getCalendarEvent().getEventId())

@@ -14,9 +14,9 @@ import lombok.*;
 @EqualsAndHashCode
 public class ServerPreferenceForm {
 
-    @Schema(name = "userId", description = "Identifier for the user, eg:- email", required = true)
-    @NotNull(message = "userId is required")
-    String userId;
+    @Schema(name = "userIdHash", description = "Hash of the identifier for the user, eg:- email", required = true)
+    @NotNull(message = "userIdHash is required")
+    String userIdHash;
 
     @Schema(name = "serverUrl", description = "Identifier/base URL for the server", required = true )
     @NotNull(message = "serverUrl is required")

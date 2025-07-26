@@ -24,9 +24,9 @@ public class ServerPreferenceEntity {
     @EqualsAndHashCode.Include
     String serverUrl;
 
-    @Column(name = "user_id", nullable = false, unique = true)
+    @Column(name = "user_id_hash", nullable = false, unique = true)
     @EqualsAndHashCode.Include
-    String userId;
+    String userIdHash;
 
     @ManyToOne(fetch = FetchType.LAZY)
     ServerEntity server;

@@ -4,6 +4,7 @@ class User {
   +id
   +name
   +userId
+  +userIdHash
   +referenceType
 }
 
@@ -25,7 +26,7 @@ class Meeting {
 class ServerPreference {
   +id
   +serverUrl
-  +userId
+  +userIdHash
   +sevrerPreferenceType
 }
 
@@ -50,6 +51,7 @@ User "1" <..> "1" ServerPreference : has
 ServerPreference "N" <--> "1" Server : requires
 
 @enduml
+
 
 
 

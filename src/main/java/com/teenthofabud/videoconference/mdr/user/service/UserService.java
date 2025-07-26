@@ -17,6 +17,10 @@ public interface UserService {
 
     UserVo getUserById(Long id) throws UserException;
 
+    UserVo getUserByUserIdHash(String userIdHash) throws UserException;
+
+    UserVo getUserByUserId(String userId) throws UserException;
+
     void patchUser(String userId, JsonPatch patches) throws UserException, JsonPatchException, JsonProcessingException;
 
     void deleteUser(String userId) throws UserException;

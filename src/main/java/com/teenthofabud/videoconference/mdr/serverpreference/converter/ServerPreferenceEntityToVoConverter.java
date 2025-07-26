@@ -10,7 +10,7 @@ public class ServerPreferenceEntityToVoConverter implements Converter<ServerPref
     @Override
     public ServerPreferenceVo convert(ServerPreferenceEntity source) {
         return ServerPreferenceVo.builder()
-                .userId(source.getUserId())
+                .userIdHash(source.getUserIdHash())
                 .id(source.getId())
                 .serverUrl(source.getServerUrl())
                 .serverPreferenceType(source.getServerPreferenceType())

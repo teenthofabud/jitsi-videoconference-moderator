@@ -22,6 +22,9 @@ public class UserEntity {
     @Column(name = "subject", nullable = false, unique = true)
     String userId;
 
+    @Column(name = "subject_hash", nullable = false, unique = true)
+    String userIdHash;
+
     @Column(name = "name", nullable = false)
     String name;
 

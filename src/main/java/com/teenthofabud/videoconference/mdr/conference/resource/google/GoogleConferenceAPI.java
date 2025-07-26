@@ -1,5 +1,6 @@
 package com.teenthofabud.videoconference.mdr.conference.resource.google;
 
+import com.teenthofabud.videoconference.mdr.conference.form.google.ConferenceSearchForm;
 import com.teenthofabud.videoconference.mdr.conference.vo.ConferenceVo;
 import com.teenthofabud.videoconference.mdr.conference.error.ConferenceException;
 import com.teenthofabud.videoconference.mdr.conference.error.google.GoogleConferenceException;
@@ -42,12 +43,13 @@ public interface GoogleConferenceAPI {
     ResponseEntity<ConferenceVo> getGoogleConferenceByID(Long conferenceId) throws ConferenceException, GoogleConferenceException;
 
 
-    @Operation(method = "GET", summary = "Get all conferences", description = "getAllConferencesByUser")
+    @Operation(method = "POST", summary = "Get all conferences", description = "getAllConferencesByUser")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "List of conferences for the user",
             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, array = @ArraySchema(schema = @Schema(implementation = ConferenceVo.class))))
     })
-    ResponseEntity<List<ConferenceVo>> getAllGoogleConferencesByUser(String calendarId) throws GoogleConferenceException;
+    ResponseEntity<List<ConferenceVo>> getAllGoogleConferencesByUser(@RequestBody(description = "Conference Search form", required = true,
+            content = @Content(schema = @Schema(implementation = ConferenceSearchForm.class))) ConferenceSearchForm form) throws GoogleConferenceException;
 
 
     @Operation(method = "PATCH", summary = "Update Google conference by ID", description = "patchGoogleConferenceByID")

@@ -1,5 +1,6 @@
 package com.teenthofabud.videoconference.mdr.conference.resource.google.impl;
 
+import com.teenthofabud.videoconference.mdr.conference.form.google.ConferenceSearchForm;
 import com.teenthofabud.videoconference.mdr.conference.vo.ConferenceVo;
 import com.teenthofabud.videoconference.mdr.conference.error.ConferenceException;
 import com.teenthofabud.videoconference.mdr.conference.error.google.GoogleConferenceException;
@@ -13,10 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -37,24 +35,28 @@ public class GoogleGoogleConferenceController implements GoogleConferenceAPI {
     }
 
     @Override
-    public ResponseEntity<ConferenceVo> getGoogleConferenceByID(Long conferenceId) throws ConferenceException, GoogleConferenceException {
+    @GetMapping("/{id}")
+    public ResponseEntity<ConferenceVo> getGoogleConferenceByID(@PathVariable Long conferenceId) throws ConferenceException, GoogleConferenceException {
          ConferenceVo conferenceVo = conferenceService.getGoogleConferenceById(conferenceId);
          return ResponseEntity.ok(conferenceVo);
     }
 
     @Override
-    public ResponseEntity<List<ConferenceVo>> getAllGoogleConferencesByUser(String calendarId) throws GoogleConferenceException {
-        List<ConferenceVo> conferenceVoList = conferenceService.getAllGoogleConferencesByUserId(calendarId);
+    @PostMapping("/search")
+    public ResponseEntity<List<ConferenceVo>> getAllGoogleConferencesByUser(@Valid @RequestBody ConferenceSearchForm form) throws GoogleConferenceException {
+        List<ConferenceVo> conferenceVoList = conferenceService.getAllGoogleConferencesByUserId(form.getCalendarId());
         return ResponseEntity.ok(conferenceVoList);
     }
 
     @Override
-    public ResponseEntity<Void> patchGoogleConferenceByID(Long conferenceId, GoogleCalendarEvent form) {
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> patchGoogleConferenceByID(@PathVariable Long conferenceId, GoogleCalendarEvent form) {
         throw new UnsupportedOperationException("API endpoint not implemented yet");
     }
 
     @Override
-    public ResponseEntity<Void> deleteGoogleConferenceByID(Long conferenceId) throws GoogleConferenceException {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteGoogleConferenceByID(@PathVariable Long conferenceId) throws GoogleConferenceException {
         conferenceService.deleteGoogleConferenceById(conferenceId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

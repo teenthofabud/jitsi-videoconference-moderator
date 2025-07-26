@@ -6,7 +6,7 @@ import com.teenthofabud.videoconference.mdr.serverpreference.form.ServerPreferen
 
 public interface ServerPreferenceService {
 
-    ServerPreferenceVo getServerPreferenceByUserId(String userId) throws ServerPreferenceException;
+    ServerPreferenceVo getServerPreferenceByUserIdHash(String userId) throws ServerPreferenceException;
 
     ServerPreferenceVo getServerPreferenceById(Long id) throws ServerPreferenceException;
 
