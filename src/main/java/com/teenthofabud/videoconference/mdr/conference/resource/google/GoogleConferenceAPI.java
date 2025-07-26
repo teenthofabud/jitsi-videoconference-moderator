@@ -43,7 +43,7 @@ public interface GoogleConferenceAPI {
     ResponseEntity<ConferenceVo> getGoogleConferenceByID(Long conferenceId) throws ConferenceException, GoogleConferenceException;
 
 
-    @Operation(method = "GET", summary = "Get all conferences", description = "getAllConferencesByUser")
+    @Operation(method = "POST", summary = "Get all conferences", description = "getAllConferencesByUser")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "List of conferences for the user",
             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, array = @ArraySchema(schema = @Schema(implementation = ConferenceVo.class))))

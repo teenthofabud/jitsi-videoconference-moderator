@@ -11,9 +11,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class GoogleConferenceEntityToGoogleConferenceDataVoReducer {
 
-    @Autowired
-    UserService userService;
-
     public GoogleConferenceDataVo reduce(GoogleConferenceEntity conferenceEntity, String serverUrl, String userId){
 
             return GoogleConferenceDataVo.builder()

@@ -1,6 +1,5 @@
 package com.teenthofabud.videoconference.mdr.user.converter;
 
-import com.teenthofabud.videoconference.mdr.core.util.UserIdHasher;
 import com.teenthofabud.videoconference.mdr.user.constants.ReferenceType;
 import com.teenthofabud.videoconference.mdr.user.entity.UserEntity;
 import com.teenthofabud.videoconference.mdr.user.form.UserForm;
@@ -15,12 +14,9 @@ import java.nio.charset.StandardCharsets;
 @Slf4j
 public class UserFormToUserEntityConverter implements Converter<UserForm, UserEntity> {
 
-    @Autowired
-    UserIdHasher userIdHasher;
-
     @Override
     public UserEntity convert(UserForm source) {
-            String userIdHash = userIdHasher.hash(source.getUserId());
+            String userIdHash = DigestUtils.md5DigestAsHex(source.getUserId().getBytes(StandardCharsets.UTF_8));
             return UserEntity.builder()
                     .userId(source.getUserId())
                     .name(source.getName())

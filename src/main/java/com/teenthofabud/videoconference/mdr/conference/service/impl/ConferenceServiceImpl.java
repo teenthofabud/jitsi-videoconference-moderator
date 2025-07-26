@@ -15,14 +15,11 @@ import com.teenthofabud.videoconference.mdr.conference.form.google.GoogleCalenda
 import com.teenthofabud.videoconference.mdr.conference.vo.google.GoogleConferenceDataVo;
 import com.teenthofabud.videoconference.mdr.conference.form.google.GoogleConferenceForm;
 import com.teenthofabud.videoconference.mdr.conference.service.ConferenceService;
-import com.teenthofabud.videoconference.mdr.core.util.UserIdHasher;
 import com.teenthofabud.videoconference.mdr.error.core.MDRErrorCode;
 import com.teenthofabud.videoconference.mdr.serverpreference.vo.ServerPreferenceVo;
 import com.teenthofabud.videoconference.mdr.serverpreference.error.ServerPreferenceException;
 import com.teenthofabud.videoconference.mdr.serverpreference.service.ServerPreferenceService;
-import jakarta.validation.Validator;
 import lombok.extern.slf4j.Slf4j;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
@@ -48,13 +45,12 @@ public class ConferenceServiceImpl implements ConferenceService {
     GoogleConferenceFormToGoogleConferenceEntityReducer googleConferenceFormToGoogleConferenceEntityReducer;
     @Autowired
     GoogleConferenceEntityToGoogleConferenceDataVoReducer googleConferenceEntityToGoogleConferenceDataVoReducer;
-    @Autowired
-    UserIdHasher userIdHasher;
+
 
     @Override
     public GoogleConferenceDataVo createNewGoogleConference(GoogleConferenceForm form) throws GoogleConferenceException {
         String calendarId = form.getCalendarEvent().getCalendarId();
-        String userIdHash = userIdHasher.hash(calendarId);
+        String userIdHash = DigestUtils.md5DigestAsHex(calendarId.getBytes(StandardCharsets.UTF_8));
         ServerPreferenceVo serverPreferenceVo = null;
         try {
             serverPreferenceVo = serverPreferenceService.getServerPreferenceByUserIdHash(userIdHash);
@@ -88,7 +84,7 @@ public class ConferenceServiceImpl implements ConferenceService {
     @Override
     public List<ConferenceVo> getAllGoogleConferencesByUserId(String userId) throws GoogleConferenceException {
         ServerPreferenceVo serverPreferenceVo = null;
-        String userIdHash = userIdHasher.hash(userId);
+        String userIdHash = DigestUtils.md5DigestAsHex(userId.getBytes(StandardCharsets.UTF_8));
         try {
             serverPreferenceVo = serverPreferenceService.getServerPreferenceByUserIdHash(userIdHash);
         } catch (ServerPreferenceException e) {

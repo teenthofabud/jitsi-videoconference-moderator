@@ -67,7 +67,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserVo getUserByUserId(String userId) throws UserException {
-        return userRepository.findByUserIdHash(userId).map(e-> userEntityToVoConverter.convert(e)).orElseThrow(()->new UserException(MDRErrorCode.MDR_NOT_FOUND,new Object[]{userId}));
+        return userRepository.findByUserId(userId).map(e-> userEntityToVoConverter.convert(e)).orElseThrow(()->new UserException(MDRErrorCode.MDR_NOT_FOUND,new Object[]{userId}));
     }
 
     @Override
