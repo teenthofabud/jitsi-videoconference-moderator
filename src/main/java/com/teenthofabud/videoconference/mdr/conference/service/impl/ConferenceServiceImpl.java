@@ -1,7 +1,6 @@
 package com.teenthofabud.videoconference.mdr.conference.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.teenthofabud.videoconference.mdr.conference.constants.ConferenceStatus;
 import com.teenthofabud.videoconference.mdr.conference.constants.google.GoogleConferenceErrorType;
 import com.teenthofabud.videoconference.mdr.conference.converter.ConferenceEntityToConferenceVoConverter;
 import com.teenthofabud.videoconference.mdr.conference.entity.ConferenceEntity;
@@ -90,7 +89,7 @@ public class ConferenceServiceImpl implements ConferenceService {
         } catch (ServerPreferenceException e) {
             throw new GoogleConferenceException(GoogleConferenceErrorType.TEMPORARY,MDRErrorCode.MDR_ATTRIBUTE_INVALID,new Object[]{userId});
         }
-        List<ConferenceVo> conferenceVoList = googleConferenceRepository.findByServerPreferenceId(serverPreferenceVo.getId())
+        List<ConferenceVo> conferenceVoList = googleConferenceRepository.findAllByServerPreferenceId(serverPreferenceVo.getId())
                 .stream()
                 .map(e-> conferenceEntityToConferenceVoConverter.convert(e))
                 .collect(Collectors.toList());

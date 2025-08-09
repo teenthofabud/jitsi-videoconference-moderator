@@ -17,6 +17,7 @@ public class GoogleConferenceForm {
     GoogleCalendarEvent calendarEvent;
 
     @JsonProperty("authorizationEventObject")
+    @Deprecated
     @Schema(description = "Authentication details")
     GoogleAuthObject authEventObject;
 }
