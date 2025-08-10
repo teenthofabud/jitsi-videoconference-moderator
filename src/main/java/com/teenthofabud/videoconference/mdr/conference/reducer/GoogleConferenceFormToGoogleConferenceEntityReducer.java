@@ -15,7 +15,7 @@ public class GoogleConferenceFormToGoogleConferenceEntityReducer {
         String uuidInput = String.format("%s:%s:%s",serverPreferenceVo.getUserIdHash(),serverPreferenceVo.getServerUrl(),Long.toString(System.currentTimeMillis()));
         String conferenceId = UUID.nameUUIDFromBytes(uuidInput.getBytes()).toString();
         return GoogleConferenceEntity.builder()
-                .eventId(form.getCalendarEvent().getEventId())
+                .eventId(form.getEventData().getEventId())
                 .status(ConferenceStatus.ACTIVE)
                 .serverPreferenceId(serverPreferenceVo.getId())
                 .roomId(conferenceId)

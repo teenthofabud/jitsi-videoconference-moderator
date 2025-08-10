@@ -8,7 +8,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 @Entity
-@ToString
+@ToString(callSuper = true)
 @EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor
@@ -18,6 +18,6 @@ import lombok.experimental.SuperBuilder;
 @Table(name = "google_conference")
 public class GoogleConferenceEntity extends ConferenceEntity {
 
-    @Column(name = "event_id", nullable = false)
+    @Column(name = "event_id", nullable = false, unique = true)
     String eventId;
 }

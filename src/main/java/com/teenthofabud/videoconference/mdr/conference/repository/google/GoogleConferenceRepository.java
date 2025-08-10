@@ -9,4 +9,8 @@ import java.util.Optional;
 public interface GoogleConferenceRepository extends JpaRepository<GoogleConferenceEntity,Long> {
 
     List<GoogleConferenceEntity> findAllByServerPreferenceId(Long serverPreferenceId);
+
+    Optional<GoogleConferenceEntity> findByServerPreferenceIdAndEventId(Long serverPreferenceId, String roomId);
+
+    Optional<GoogleConferenceEntity> findByEventId(String eventId);
 }

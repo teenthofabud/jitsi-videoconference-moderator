@@ -1,6 +1,10 @@
 package com.teenthofabud.videoconference.mdr.conference.service.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.fge.jsonpatch.JsonPatch;
+import com.github.fge.jsonpatch.JsonPatchException;
 import com.teenthofabud.videoconference.mdr.conference.constants.google.GoogleConferenceErrorType;
 import com.teenthofabud.videoconference.mdr.conference.converter.ConferenceEntityToConferenceVoConverter;
 import com.teenthofabud.videoconference.mdr.conference.entity.ConferenceEntity;
@@ -49,6 +53,7 @@ public class ConferenceServiceImpl implements ConferenceService {
     @Override
     public GoogleConferenceDataVo createNewGoogleConference(GoogleConferenceForm form) throws GoogleConferenceException {
         String calendarId = form.getCalendarEvent().getCalendarId();
+        String eventId = form.getEventData().getEventId();
         String userIdHash = DigestUtils.md5DigestAsHex(calendarId.getBytes(StandardCharsets.UTF_8));
         ServerPreferenceVo serverPreferenceVo = null;
         try {
@@ -56,32 +61,40 @@ public class ConferenceServiceImpl implements ConferenceService {
         } catch (ServerPreferenceException e) {
             throw new GoogleConferenceException(GoogleConferenceErrorType.TEMPORARY, MDRErrorCode.MDR_ATTRIBUTE_INVALID,new Object[]{calendarId});
         }
-        GoogleConferenceEntity conferenceEntity = googleConferenceFormToGoogleConferenceEntityReducer.reduce(form,serverPreferenceVo);
-        googleConferenceRepository.save(conferenceEntity);
+        GoogleConferenceEntity conferenceEntity = null;
+        Optional<GoogleConferenceEntity> optionalGoogleConferenceEntity = googleConferenceRepository.findByEventId(eventId);
+        if(optionalGoogleConferenceEntity.isEmpty()){
+            conferenceEntity = googleConferenceFormToGoogleConferenceEntityReducer.reduce(form,serverPreferenceVo);
+            googleConferenceRepository.save(conferenceEntity);
+        }
+        else
+            conferenceEntity = optionalGoogleConferenceEntity.get();
         GoogleConferenceDataVo googleConferenceDataVo = googleConferenceEntityToGoogleConferenceDataVoReducer.reduce(conferenceEntity,serverPreferenceVo.getServerUrl(),calendarId);
         return googleConferenceDataVo;
     }
 
     @Override
-    public ConferenceVo getGoogleConferenceById(Long conferenceId) throws GoogleConferenceException {
-        Optional<GoogleConferenceEntity> optionalConferenceEntity = googleConferenceRepository.findById(conferenceId);
+    public ConferenceVo getGoogleConferenceByUserAndEventId(String eventId, String userId) throws GoogleConferenceException {
+        String userIdHash = DigestUtils.md5DigestAsHex(userId.getBytes(StandardCharsets.UTF_8));
         ConferenceVo conferenceVo = null;
+        ServerPreferenceVo serverPreferenceVo = null;
+        try {
+            serverPreferenceVo = serverPreferenceService.getServerPreferenceByUserIdHash(userIdHash);
+        } catch (ServerPreferenceException e) {
+            throw new GoogleConferenceException(GoogleConferenceErrorType.TEMPORARY,MDRErrorCode.MDR_ATTRIBUTE_INVALID,new Object[]{userId});
+        }
+        Optional<GoogleConferenceEntity> optionalConferenceEntity = googleConferenceRepository.findByServerPreferenceIdAndEventId(serverPreferenceVo.getId(), eventId);
         if(optionalConferenceEntity.isEmpty())
-            throw new GoogleConferenceException(GoogleConferenceErrorType.TEMPORARY,MDRErrorCode.MDR_NOT_FOUND,new Object[]{conferenceId});
+            throw new GoogleConferenceException(GoogleConferenceErrorType.TEMPORARY,MDRErrorCode.MDR_NOT_FOUND,new Object[]{userId});
         else{
-            ConferenceEntity conferenceEntity = optionalConferenceEntity.get();
-            try {
-                ServerPreferenceVo serverPreferenceVo = serverPreferenceService.getServerPreferenceById(conferenceEntity.getServerPreferenceId());
-                conferenceVo = conferenceEntityToConferenceVoConverter.convert(optionalConferenceEntity.get());
-            } catch (ServerPreferenceException e) {
-                throw new GoogleConferenceException(GoogleConferenceErrorType.TEMPORARY,MDRErrorCode.MDR_ATTRIBUTE_INVALID,new Object[]{conferenceEntity.getServerPreferenceId()});
-            }
+            conferenceVo = conferenceEntityToConferenceVoConverter.convert(optionalConferenceEntity.get());
         }
         return conferenceVo;
     }
 
     @Override
     public List<ConferenceVo> getAllGoogleConferencesByUserId(String userId) throws GoogleConferenceException {
+
         ServerPreferenceVo serverPreferenceVo = null;
         String userIdHash = DigestUtils.md5DigestAsHex(userId.getBytes(StandardCharsets.UTF_8));
         try {
@@ -97,17 +110,40 @@ public class ConferenceServiceImpl implements ConferenceService {
     }
 
     @Override
-    public void patchGoogleConferenceById(Long conferenceId, GoogleCalendarEvent calendarEvent) {
-        //TO-DECIDE the parameters involved
-        throw new UnsupportedOperationException("not implemented");
+    public void patchGoogleConferenceByUserAndEventId(String eventId, String userId, JsonPatch patches) throws GoogleConferenceException, JsonPatchException, JsonProcessingException {
+        String userIdHash = DigestUtils.md5DigestAsHex(userId.getBytes(StandardCharsets.UTF_8));
+        ServerPreferenceVo serverPreferenceVo = null;
+        try {
+            serverPreferenceVo = serverPreferenceService.getServerPreferenceByUserIdHash(userIdHash);
+        } catch (ServerPreferenceException e) {
+            throw new GoogleConferenceException(GoogleConferenceErrorType.TEMPORARY,MDRErrorCode.MDR_ATTRIBUTE_INVALID,new Object[]{userId});
+        }
+        Optional<GoogleConferenceEntity> optionalConferenceEntity = googleConferenceRepository.findByServerPreferenceIdAndEventId(serverPreferenceVo.getId(), eventId);
+        if(optionalConferenceEntity.isEmpty())
+            throw new GoogleConferenceException(GoogleConferenceErrorType.TEMPORARY,MDRErrorCode.MDR_NOT_FOUND,new Object[]{userId});
+        GoogleConferenceEntity conferenceEntity = optionalConferenceEntity.get();
+        JsonNode jsonNode = objectMapper.valueToTree(conferenceEntity);
+        log.info("Before patch : {}",objectMapper.writeValueAsString(conferenceEntity));
+        JsonNode patchedNode = patches.apply(jsonNode);
+        conferenceEntity = objectMapper.treeToValue(patchedNode,GoogleConferenceEntity.class);
+        log.info("after patching : {}",conferenceEntity);
+        googleConferenceRepository.save(conferenceEntity);
     }
 
     @Override
-    public void deleteGoogleConferenceById(Long conferenceId) throws GoogleConferenceException {
-        Optional<GoogleConferenceEntity> optionalConferenceEntity = googleConferenceRepository.findById(conferenceId);
+    public void deleteGoogleConferenceByUserAndEventId(String eventId, String userId) throws GoogleConferenceException {
+        String userIdHash = DigestUtils.md5DigestAsHex(userId.getBytes(StandardCharsets.UTF_8));
+        ConferenceVo conferenceVo = null;
+        ServerPreferenceVo serverPreferenceVo = null;
+        try {
+            serverPreferenceVo = serverPreferenceService.getServerPreferenceByUserIdHash(userIdHash);
+        } catch (ServerPreferenceException e) {
+            throw new GoogleConferenceException(GoogleConferenceErrorType.TEMPORARY,MDRErrorCode.MDR_ATTRIBUTE_INVALID,new Object[]{userIdHash});
+        }
+        Optional<GoogleConferenceEntity> optionalConferenceEntity = googleConferenceRepository.findByServerPreferenceIdAndEventId(serverPreferenceVo.getId(),eventId);
         if(optionalConferenceEntity.isEmpty())
-            throw new GoogleConferenceException(GoogleConferenceErrorType.TEMPORARY,MDRErrorCode.MDR_NOT_FOUND,new Object[]{conferenceId});
-        else googleConferenceRepository.deleteById(conferenceId);
+            throw new GoogleConferenceException(GoogleConferenceErrorType.TEMPORARY,MDRErrorCode.MDR_NOT_FOUND,new Object[]{userId});
+        else googleConferenceRepository.deleteById(optionalConferenceEntity.get().getId());
 
     }
 }
