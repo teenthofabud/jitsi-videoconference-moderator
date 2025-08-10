@@ -62,7 +62,7 @@ public class ConferenceServiceImpl implements ConferenceService {
             throw new GoogleConferenceException(GoogleConferenceErrorType.TEMPORARY, MDRErrorCode.MDR_ATTRIBUTE_INVALID,new Object[]{calendarId});
         }
         GoogleConferenceEntity conferenceEntity = null;
-        Optional<GoogleConferenceEntity> optionalGoogleConferenceEntity = googleConferenceRepository.findByEventId(eventId);
+        Optional<GoogleConferenceEntity> optionalGoogleConferenceEntity = googleConferenceRepository.findByServerPreferenceIdAndEventId(serverPreferenceVo.getId(),eventId);
         if(optionalGoogleConferenceEntity.isEmpty()){
             conferenceEntity = googleConferenceFormToGoogleConferenceEntityReducer.reduce(form,serverPreferenceVo);
             googleConferenceRepository.save(conferenceEntity);
