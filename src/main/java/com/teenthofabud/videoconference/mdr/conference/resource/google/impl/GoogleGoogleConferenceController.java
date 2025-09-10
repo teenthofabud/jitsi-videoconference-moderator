@@ -11,6 +11,7 @@ import com.teenthofabud.videoconference.mdr.conference.vo.google.GoogleConferenc
 import com.teenthofabud.videoconference.mdr.conference.form.google.GoogleConferenceForm;
 import com.teenthofabud.videoconference.mdr.conference.resource.google.GoogleConferenceAPI;
 import com.teenthofabud.videoconference.mdr.conference.service.ConferenceService;
+import com.teenthofabud.videoconference.mdr.conference.vo.google.GoogleConferenceVo;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,15 +40,15 @@ public class GoogleGoogleConferenceController implements GoogleConferenceAPI {
 
     @Override
     @GetMapping("/event/{eventId}")
-    public ResponseEntity<ConferenceVo> getGoogleConferenceByUserAndEventId(@PathVariable String eventId,@RequestParam String userId) throws ConferenceException, GoogleConferenceException {
-         ConferenceVo conferenceVo = conferenceService.getGoogleConferenceByUserAndEventId(eventId,userId);
+    public ResponseEntity<GoogleConferenceVo> getGoogleConferenceByUserAndEventId(@PathVariable String eventId,@RequestParam String userId) throws ConferenceException, GoogleConferenceException {
+         GoogleConferenceVo conferenceVo = conferenceService.getGoogleConferenceByUserAndEventId(eventId,userId);
          return ResponseEntity.ok(conferenceVo);
     }
 
     @Override
     @GetMapping
-    public ResponseEntity<List<ConferenceVo>> getAllGoogleConferencesByUser(@RequestParam String userId) throws GoogleConferenceException {
-        List<ConferenceVo> conferenceVoList = conferenceService.getAllGoogleConferencesByUserId(userId);
+    public ResponseEntity<List<GoogleConferenceVo>> getAllGoogleConferencesByUser(@RequestParam String userId) throws GoogleConferenceException {
+        List<GoogleConferenceVo> conferenceVoList = conferenceService.getAllGoogleConferencesByUserId(userId);
         return ResponseEntity.ok(conferenceVoList);
     }
 

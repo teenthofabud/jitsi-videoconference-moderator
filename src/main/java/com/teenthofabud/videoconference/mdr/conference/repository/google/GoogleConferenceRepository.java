@@ -11,5 +11,5 @@ public interface GoogleConferenceRepository extends JpaRepository<GoogleConferen
     List<GoogleConferenceEntity> findAllByServerPreferenceId(Long serverPreferenceId);
 
     Optional<GoogleConferenceEntity> findByServerPreferenceIdAndEventId(Long serverPreferenceId, String roomId);
-    
+
 }
