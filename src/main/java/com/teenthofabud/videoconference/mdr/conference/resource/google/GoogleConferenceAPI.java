@@ -9,6 +9,7 @@ import com.teenthofabud.videoconference.mdr.conference.error.google.GoogleConfer
 import com.teenthofabud.videoconference.mdr.conference.form.google.GoogleCalendarEvent;
 import com.teenthofabud.videoconference.mdr.conference.vo.google.GoogleConferenceDataVo;
 import com.teenthofabud.videoconference.mdr.conference.form.google.GoogleConferenceForm;
+import com.teenthofabud.videoconference.mdr.conference.vo.google.GoogleConferenceVo;
 import com.teenthofabud.videoconference.mdr.constants.HttpMediaType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -42,18 +43,18 @@ public interface GoogleConferenceAPI {
     @Parameter(name = "eventId",description = "Calendar Event Identifier",schema = @Schema(implementation = String.class), in = ParameterIn.PATH, required = true)
     @Parameter(name = "userId",description = "User Identifier",schema = @Schema(implementation = String.class), in = ParameterIn.QUERY, required = true)
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Conference for given id",content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ConferenceVo.class))),
+            @ApiResponse(responseCode = "200", description = "Conference for given id",content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = GoogleConferenceVo.class))),
     })
-    ResponseEntity<ConferenceVo> getGoogleConferenceByUserAndEventId(String eventId, String userId) throws ConferenceException, GoogleConferenceException;
+    ResponseEntity<GoogleConferenceVo> getGoogleConferenceByUserAndEventId(String eventId, String userId) throws ConferenceException, GoogleConferenceException;
 
 
     @Operation(method = "POST", summary = "Get all conferences", description = "getAllConferencesByUser")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "List of conferences for the user",
-            content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, array = @ArraySchema(schema = @Schema(implementation = ConferenceVo.class))))
+            content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, array = @ArraySchema(schema = @Schema(implementation = GoogleConferenceVo.class))))
     })
     @Parameter(name = "userId",description = "User Identifier",schema = @Schema(implementation = String.class), in = ParameterIn.QUERY, required = true)
-    ResponseEntity<List<ConferenceVo>> getAllGoogleConferencesByUser(String userId) throws GoogleConferenceException;
+    ResponseEntity<List<GoogleConferenceVo>> getAllGoogleConferencesByUser(String userId) throws GoogleConferenceException;
 
 
     @Operation(method = "PATCH", summary = "Update Google conference by ID", description = "patchGoogleConferenceByID")

@@ -7,17 +7,17 @@ import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
 import com.teenthofabud.videoconference.mdr.conference.constants.google.GoogleConferenceErrorType;
 import com.teenthofabud.videoconference.mdr.conference.converter.ConferenceEntityToConferenceVoConverter;
-import com.teenthofabud.videoconference.mdr.conference.entity.ConferenceEntity;
+import com.teenthofabud.videoconference.mdr.conference.converter.google.GoogleConferenceEntityToGoogleConferenceVoConverter;
 import com.teenthofabud.videoconference.mdr.conference.entity.google.GoogleConferenceEntity;
 import com.teenthofabud.videoconference.mdr.conference.reducer.GoogleConferenceEntityToGoogleConferenceDataVoReducer;
 import com.teenthofabud.videoconference.mdr.conference.reducer.GoogleConferenceFormToGoogleConferenceEntityReducer;
 import com.teenthofabud.videoconference.mdr.conference.repository.google.GoogleConferenceRepository;
 import com.teenthofabud.videoconference.mdr.conference.vo.ConferenceVo;
 import com.teenthofabud.videoconference.mdr.conference.error.google.GoogleConferenceException;
-import com.teenthofabud.videoconference.mdr.conference.form.google.GoogleCalendarEvent;
 import com.teenthofabud.videoconference.mdr.conference.vo.google.GoogleConferenceDataVo;
 import com.teenthofabud.videoconference.mdr.conference.form.google.GoogleConferenceForm;
-import com.teenthofabud.videoconference.mdr.conference.service.ConferenceService;
+import com.teenthofabud.videoconference.mdr.conference.service.GoogleConferenceService;
+import com.teenthofabud.videoconference.mdr.conference.vo.google.GoogleConferenceVo;
 import com.teenthofabud.videoconference.mdr.error.core.MDRErrorCode;
 import com.teenthofabud.videoconference.mdr.serverpreference.vo.ServerPreferenceVo;
 import com.teenthofabud.videoconference.mdr.serverpreference.error.ServerPreferenceException;
@@ -34,12 +34,14 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-public class ConferenceServiceImpl implements ConferenceService {
+public class GoogleConferenceServiceImpl implements GoogleConferenceService {
 
     @Autowired
     GoogleConferenceRepository googleConferenceRepository;
     @Autowired
     ConferenceEntityToConferenceVoConverter conferenceEntityToConferenceVoConverter;
+    @Autowired
+    GoogleConferenceEntityToGoogleConferenceVoConverter googleConferenceEntityToGoogleConferenceVoConverter;
     @Autowired
     ObjectMapper objectMapper;
     @Autowired
@@ -74,9 +76,9 @@ public class ConferenceServiceImpl implements ConferenceService {
     }
 
     @Override
-    public ConferenceVo getGoogleConferenceByUserAndEventId(String eventId, String userId) throws GoogleConferenceException {
+    public GoogleConferenceVo getGoogleConferenceByUserAndEventId(String eventId, String userId) throws GoogleConferenceException {
         String userIdHash = DigestUtils.md5DigestAsHex(userId.getBytes(StandardCharsets.UTF_8));
-        ConferenceVo conferenceVo = null;
+        GoogleConferenceVo conferenceVo = null;
         ServerPreferenceVo serverPreferenceVo = null;
         try {
             serverPreferenceVo = serverPreferenceService.getServerPreferenceByUserIdHash(userIdHash);
@@ -87,13 +89,13 @@ public class ConferenceServiceImpl implements ConferenceService {
         if(optionalConferenceEntity.isEmpty())
             throw new GoogleConferenceException(GoogleConferenceErrorType.TEMPORARY,MDRErrorCode.MDR_NOT_FOUND,new Object[]{userId});
         else{
-            conferenceVo = conferenceEntityToConferenceVoConverter.convert(optionalConferenceEntity.get());
+            conferenceVo = googleConferenceEntityToGoogleConferenceVoConverter.convert(optionalConferenceEntity.get());
         }
         return conferenceVo;
     }
 
     @Override
-    public List<ConferenceVo> getAllGoogleConferencesByUserId(String userId) throws GoogleConferenceException {
+    public List<GoogleConferenceVo> getAllGoogleConferencesByUserId(String userId) throws GoogleConferenceException {
 
         ServerPreferenceVo serverPreferenceVo = null;
         String userIdHash = DigestUtils.md5DigestAsHex(userId.getBytes(StandardCharsets.UTF_8));
@@ -102,9 +104,9 @@ public class ConferenceServiceImpl implements ConferenceService {
         } catch (ServerPreferenceException e) {
             throw new GoogleConferenceException(GoogleConferenceErrorType.TEMPORARY,MDRErrorCode.MDR_ATTRIBUTE_INVALID,new Object[]{userId});
         }
-        List<ConferenceVo> conferenceVoList = googleConferenceRepository.findAllByServerPreferenceId(serverPreferenceVo.getId())
+        List<GoogleConferenceVo> conferenceVoList = googleConferenceRepository.findAllByServerPreferenceId(serverPreferenceVo.getId())
                 .stream()
-                .map(e-> conferenceEntityToConferenceVoConverter.convert(e))
+                .map(e-> googleConferenceEntityToGoogleConferenceVoConverter.convert(e))
                 .collect(Collectors.toList());
         return conferenceVoList;
     }
