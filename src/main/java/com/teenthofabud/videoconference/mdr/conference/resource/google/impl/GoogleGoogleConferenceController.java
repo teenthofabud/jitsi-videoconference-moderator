@@ -53,7 +53,7 @@ public class GoogleGoogleConferenceController implements GoogleConferenceAPI {
     @PatchMapping("/event/{eventId}")
     public ResponseEntity<Void> patchGoogleConferenceByUserAndEventId(@PathVariable String eventId, @RequestParam String userId, @RequestBody JsonPatch patches) throws GoogleConferenceException, JsonPatchException, JsonProcessingException {
         googleConferenceService.patchGoogleConferenceByUserAndEventId(eventId,userId,patches);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @Override

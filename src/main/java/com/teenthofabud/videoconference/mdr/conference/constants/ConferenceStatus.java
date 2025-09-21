@@ -11,6 +11,7 @@ import java.util.NoSuchElementException;
 public enum ConferenceStatus {
 
     ACTIVE,
+    PENDING,
     INACTIVE;
 
     @Override
