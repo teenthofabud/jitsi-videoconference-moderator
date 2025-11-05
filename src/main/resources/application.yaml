@@ -3,6 +3,8 @@ spring:
   name: "@project.build.finalName@"
   version: "@project.version@"
   description : "@project.description@"
+ profiles:
+  active: dev
 
  h2:
   console:
