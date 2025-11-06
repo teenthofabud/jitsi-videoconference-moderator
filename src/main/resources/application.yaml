@@ -3,6 +3,8 @@ spring:
   name: "@project.build.finalName@"
   version: "@project.version@"
   description : "@project.description@"
+ profiles:
+  active: dev
 
  h2:
   console:
@@ -40,3 +42,6 @@ logging:
  level:
   org.hibernate.orm.jdbc.bind: trace
   org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+server:
+ port: 8091
