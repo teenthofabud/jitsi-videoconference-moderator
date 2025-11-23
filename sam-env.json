@@ -1,0 +1,8 @@
+{
+  "Parameters": {
+    "JITSI_DB_URL": "jdbc:postgresql://host.docker.internal:5432/jitsi_db?currentSchema=jitsi",
+    "JITSI_DB_USERNAME": "shahad",
+    "JITSI_DB_PASSWORD": "6492",
+    "JITSI_DB_DRIVER_CLASS": "org.postgresql.Driver"
+  }
+}
