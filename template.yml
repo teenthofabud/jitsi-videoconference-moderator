@@ -16,6 +16,8 @@ Parameters:
     Type: String
   JITSI_DB_PASSWORD:
     Type: String
+  JITSI_DB_DIALECT:
+    Type: String
 
 Resources:
   MainFunction:
@@ -39,6 +41,7 @@ Resources:
           JITSI_DB_USERNAME : !Ref JITSI_DB_USERNAME
           JITSI_DB_DRIVER_CLASS : !Ref JITSI_DB_DRIVER_CLASS
           JITSI_DB_PASSWORD : !Ref JITSI_DB_PASSWORD
+          JITSI_DB_DIALECT: !Ref JITSI_DB_DIALECT
 
 
 Outputs:

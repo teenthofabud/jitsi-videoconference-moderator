@@ -1,21 +1,18 @@
+server:
+ port: 8091
+
 spring:
  application:
   name: "@project.build.finalName@"
   version: "@project.version@"
-  description : "@project.description@"
+  description: "@project.description@"
+ config:
+  import: classpath:additional-config.yaml
  sql:
   init:
-   mode: always
-
- datasource:
-  url: ${JITSI_DB_URL}
-  username: ${JITSI_DB_USERNAME}
-  password: ${JITSI_DB_PASSWORD}
-  driverClassName: ${JITSI_DB_DRIVER_CLASS}
-
+   mode: never
  jpa:
   defer-datasource-initialization: true
-  database-platform: org.hibernate.dialect.H2Dialect
   hibernate:
    ddl-auto: update
   show-sql: true
@@ -36,5 +33,3 @@ logging:
   org.hibernate.orm.jdbc.bind: trace
   org.hibernate.type.descriptor.sql.BasicBinder: TRACE
 
-server:
- port: 8091
