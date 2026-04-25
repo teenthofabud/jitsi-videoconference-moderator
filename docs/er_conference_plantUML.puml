@@ -4,7 +4,6 @@ class User {
   +id
   +name
   +userId
-  +userIdHash
   +referenceType
 }
 
@@ -15,11 +14,11 @@ class Server {
   +severType
 }
 
-class Meeting {
+class Conference {
   +id
   +roomId
   +eventId
-  +status
+  +conferenceStatus
   +userId
   +serverId
 }
@@ -33,15 +32,24 @@ enum ServerType{
  +Default
 }
 
+enum ConferenceStatus{
+ +Active
+ +Pending
+ +Cancelled
+}
+
+
 User --> ReferenceType : reference type
 
 Server --> ServerType : server type
 
-User "1" <..> "N" Meeting : creates
+User "1" <..> "N" Conference : creates
 /'//cardinality changes if relationship becomes participates'/
-Meeting "N" <..> "1" Server : hosted on
+Conference "N" <..> "1" Server : hosted on
 
 User "1" <..> "N" Server : brings
+
+Conference --> ConferenceStatus : conference status
 
 @enduml
 
