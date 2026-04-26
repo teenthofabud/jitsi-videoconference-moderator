@@ -12,7 +12,6 @@ public class GoogleConferenceEntityToGoogleConferenceVoConverter implements Conv
         return GoogleConferenceVo.builder()
                 .eventId(source.getEventId())
                 .roomId(source.getRoomId())
-                .serverPreferenceId(source.getServerPreferenceId())
                 .status(source.getStatus())
                 .build();
 

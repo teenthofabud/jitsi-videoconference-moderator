@@ -11,6 +11,7 @@ import lombok.*;
 @EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor
+@Deprecated
 public class GoogleConferenceForm {
 
     @JsonProperty("calendar")

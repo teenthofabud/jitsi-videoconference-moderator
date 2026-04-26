@@ -1,5 +1,7 @@
 package com.teenthofabud.videoconference.mdr.server.resource.impl;
 
+import com.teenthofabud.videoconference.mdr.server.converter.ServerEntityToVoConverter;
+import com.teenthofabud.videoconference.mdr.server.entity.ServerEntity;
 import com.teenthofabud.videoconference.mdr.server.vo.ServerVo;
 import com.teenthofabud.videoconference.mdr.server.error.ServerException;
 import com.teenthofabud.videoconference.mdr.server.form.ServerForm;
@@ -21,11 +23,15 @@ public class ServerController implements ServerAPI {
 
     @Autowired
     ServerService serverService;
+    @Autowired
+    ServerEntityToVoConverter serverEntityToVoConverter;
 
     @Override
     @PostMapping
-    public ResponseEntity<Void> createNewServer(@Valid @RequestBody ServerForm form) throws ServerException {
-        ServerVo serverVo = serverService.createNewServer(form);
+    // internal endpoint
+    public ResponseEntity<Void> createNewDefaultServer(@Valid @RequestBody ServerForm form) throws ServerException {
+        ServerEntity serverEntity = serverService.createNewDefaultServer(form);
+        ServerVo serverVo = serverEntityToVoConverter.convert(serverEntity);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
@@ -35,9 +41,10 @@ public class ServerController implements ServerAPI {
     }
 
     @Override
-    @GetMapping("/{serverID}")
-    public ResponseEntity<ServerVo> getServerByID(@PathVariable Long serverID) throws ServerException {
-        ServerVo serverVo = serverService.getServerByID(serverID);
+    @GetMapping("/{serverId}")
+    public ResponseEntity<ServerVo> getServerById(@PathVariable Long serverId) throws ServerException {
+        ServerEntity serverEntity = serverService.getServerById(serverId);
+        ServerVo serverVo = serverEntityToVoConverter.convert(serverEntity);
         return ResponseEntity.ok(serverVo);
     }
 

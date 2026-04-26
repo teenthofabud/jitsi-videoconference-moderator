@@ -46,8 +46,7 @@ public class OpenAPIConfiguration {
         String[] packagedToMatch = {
                 "com.teenthofabud.videoconference.mdr.conference",
                 "com.teenthofabud.videoconference.mdr.user",
-                "com.teenthofabud.videoconference.mdr.server",
-                "com.teenthofabud.videoconference.mdr.serverpreference"
+                "com.teenthofabud.videoconference.mdr.server"
 
         };
         return GroupedOpenApi

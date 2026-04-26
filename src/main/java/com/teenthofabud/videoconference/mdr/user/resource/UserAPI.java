@@ -1,6 +1,7 @@
 package com.teenthofabud.videoconference.mdr.user.resource;
 
-import com.teenthofabud.videoconference.mdr.serverpreference.error.ServerPreferenceException;
+import com.teenthofabud.videoconference.mdr.server.error.ServerException;
+import com.teenthofabud.videoconference.mdr.user.form.ServerPreferenceForm;
 import com.teenthofabud.videoconference.mdr.user.vo.UserVo;
 import com.teenthofabud.videoconference.mdr.user.error.UserException;
 import com.teenthofabud.videoconference.mdr.user.form.UserForm;
@@ -29,7 +30,7 @@ public interface UserAPI {
                     content = @Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorVo.class)))
     })
     ResponseEntity<Void> createNewUser(@RequestBody(description = "User form", required = true,
-            content = @Content(schema = @Schema(implementation = UserForm.class))) UserForm form) throws UserException, ServerPreferenceException;
+            content = @Content(schema = @Schema(implementation = UserForm.class))) UserForm form) throws UserException;
 
     @Operation(method = "GET", summary = "Get User By Id", description = "getUserById")
     @Parameter(description = "User ID (PK)",name = "userID",required = true,in = ParameterIn.PATH, schema = @Schema(implementation = Long.class))
@@ -41,6 +42,15 @@ public interface UserAPI {
                     content = @Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorVo.class)))
     })
     ResponseEntity<UserVo> getUserById(Long Id) throws UserException;
+
+    @Operation(method = "POST", summary = "Add new Server preference for the user", description = "addServerPreference")
+    @ApiResponses( value = {
+            @ApiResponse(responseCode = "201",description = "Successfully added server preference"),
+            @ApiResponse(responseCode = "404", description = "User not found",
+            content = @Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorVo.class)))
+
+    })
+    ResponseEntity<Void> addServerPreference(ServerPreferenceForm form) throws UserException, ServerException;
 
 
 }

@@ -1,6 +1,9 @@
 package com.teenthofabud.videoconference.mdr.user.resource.impl;
 
-import com.teenthofabud.videoconference.mdr.serverpreference.error.ServerPreferenceException;
+import com.teenthofabud.videoconference.mdr.server.error.ServerException;
+import com.teenthofabud.videoconference.mdr.user.converter.UserEntityToVoConverter;
+import com.teenthofabud.videoconference.mdr.user.entity.UserEntity;
+import com.teenthofabud.videoconference.mdr.user.form.ServerPreferenceForm;
 import com.teenthofabud.videoconference.mdr.user.vo.UserVo;
 import com.teenthofabud.videoconference.mdr.user.error.UserException;
 import com.teenthofabud.videoconference.mdr.user.form.UserForm;
@@ -19,13 +22,17 @@ import java.net.URI;
 @RestController
 @RequestMapping("/user")
 public class UserController implements UserAPI {
+
     @Autowired
     UserService userService;
+    @Autowired
+    UserEntityToVoConverter userEntityToVoConverter;
 
     @Override
     @PostMapping
-    public ResponseEntity<Void> createNewUser(@Valid @RequestBody UserForm form) throws UserException, ServerPreferenceException {
-        UserVo userVo = userService.createNewUser(form);
+    public ResponseEntity<Void> createNewUser(@Valid @RequestBody UserForm form) throws UserException {
+        UserEntity userEntity = userService.createNewUser(form);
+        UserVo userVo = userEntityToVoConverter.convert(userEntity);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
@@ -37,7 +44,16 @@ public class UserController implements UserAPI {
     @Override
     @GetMapping("/{id}")
     public ResponseEntity<UserVo> getUserById(@PathVariable Long id) throws UserException {
-        UserVo userDto = userService.getUserById(id);
-        return ResponseEntity.ok(userDto);
+        UserEntity userEntity = userService.getUserById(id);
+        UserVo userVo = userEntityToVoConverter.convert(userEntity);
+        return ResponseEntity.ok(userVo);
     }
+
+    @Override
+    @PostMapping("/preferred-servers")
+    public ResponseEntity<Void> addServerPreference(ServerPreferenceForm form) throws UserException, ServerException {
+        userService.addServerPreference(form);
+        return ResponseEntity.ok().build();
+    }
+
 }

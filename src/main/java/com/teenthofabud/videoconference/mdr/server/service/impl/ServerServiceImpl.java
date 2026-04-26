@@ -1,6 +1,7 @@
 package com.teenthofabud.videoconference.mdr.server.service.impl;
 
 import com.teenthofabud.videoconference.mdr.error.core.MDRErrorCode;
+import com.teenthofabud.videoconference.mdr.server.constants.ServerType;
 import com.teenthofabud.videoconference.mdr.server.converter.ServerEntityToVoConverter;
 import com.teenthofabud.videoconference.mdr.server.converter.ServerFormToEntityConverter;
 import com.teenthofabud.videoconference.mdr.server.vo.ServerVo;
@@ -20,23 +21,38 @@ public class ServerServiceImpl implements ServerService {
     @Autowired
     ServerRepository serverRepository;
     @Autowired
-    ServerEntityToVoConverter serverEntityToVoConverter;
-    @Autowired
     ServerFormToEntityConverter serverFormToEntityConverter;
 
     @Override
-    public ServerVo createNewServer(ServerForm form) throws ServerException {
+    public ServerEntity createNewCustomServer(ServerForm form) throws ServerException {
+        return createNewServer(form,ServerType.CUSTOM);
+    }
+
+    @Override
+    public ServerEntity createNewDefaultServer(ServerForm form) throws ServerException {
+        return createNewServer(form,ServerType.DEFAULT);
+    }
+
+    private ServerEntity createNewServer(ServerForm form, ServerType type) throws ServerException {
         Optional<ServerEntity> existingServer = serverRepository.findByServerUrl(form.getServerUrl());
         if(existingServer.isPresent())
             throw new ServerException(MDRErrorCode.MDR_EXISTS,new Object[]{form.getServerUrl()});
         ServerEntity server = serverFormToEntityConverter.convert(form);
+        server.setServerType(type);
         server = serverRepository.save(server);
-        return serverEntityToVoConverter.convert(server);
+        return server;
     }
 
     @Override
-    public ServerVo getServerByID(Long id) throws ServerException {
-        return serverRepository.findById(id).map(e-> serverEntityToVoConverter.convert(e)).orElseThrow(() -> new ServerException(MDRErrorCode.MDR_NOT_FOUND,new Object[]{id}));
+    public ServerEntity getServerById(Long id) throws ServerException {
+        return serverRepository.findById(id)
+                .orElseThrow(() -> new ServerException(MDRErrorCode.MDR_NOT_FOUND,new Object[]{id}));
+    }
+
+    @Override
+    public ServerEntity getServerByUrl(String url) throws ServerException {
+        return serverRepository.findByServerUrl(url)
+                .orElseThrow(() -> new ServerException(MDRErrorCode.MDR_NOT_FOUND,new Object[]{url}));
     }
 
 }

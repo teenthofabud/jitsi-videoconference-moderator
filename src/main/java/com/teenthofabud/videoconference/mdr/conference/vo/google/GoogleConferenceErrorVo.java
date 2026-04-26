@@ -1,6 +1,5 @@
 package com.teenthofabud.videoconference.mdr.conference.vo.google;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.teenthofabud.videoconference.mdr.vo.ErrorVo;
 import lombok.Data;

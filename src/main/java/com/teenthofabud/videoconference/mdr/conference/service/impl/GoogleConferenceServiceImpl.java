@@ -9,6 +9,7 @@ import com.teenthofabud.videoconference.mdr.conference.constants.google.GoogleCo
 import com.teenthofabud.videoconference.mdr.conference.converter.ConferenceEntityToConferenceVoConverter;
 import com.teenthofabud.videoconference.mdr.conference.converter.google.GoogleConferenceEntityToGoogleConferenceVoConverter;
 import com.teenthofabud.videoconference.mdr.conference.entity.google.GoogleConferenceEntity;
+import com.teenthofabud.videoconference.mdr.conference.form.google.GoogleConferenceFormV2;
 import com.teenthofabud.videoconference.mdr.conference.reducer.GoogleConferenceEntityToGoogleConferenceDataVoReducer;
 import com.teenthofabud.videoconference.mdr.conference.reducer.GoogleConferenceFormToGoogleConferenceEntityReducer;
 import com.teenthofabud.videoconference.mdr.conference.repository.google.GoogleConferenceRepository;
@@ -19,9 +20,12 @@ import com.teenthofabud.videoconference.mdr.conference.form.google.GoogleConfere
 import com.teenthofabud.videoconference.mdr.conference.service.GoogleConferenceService;
 import com.teenthofabud.videoconference.mdr.conference.vo.google.GoogleConferenceVo;
 import com.teenthofabud.videoconference.mdr.error.core.MDRErrorCode;
-import com.teenthofabud.videoconference.mdr.serverpreference.vo.ServerPreferenceVo;
-import com.teenthofabud.videoconference.mdr.serverpreference.error.ServerPreferenceException;
-import com.teenthofabud.videoconference.mdr.serverpreference.service.ServerPreferenceService;
+import com.teenthofabud.videoconference.mdr.server.entity.ServerEntity;
+import com.teenthofabud.videoconference.mdr.server.error.ServerException;
+import com.teenthofabud.videoconference.mdr.server.service.ServerService;
+import com.teenthofabud.videoconference.mdr.user.entity.UserEntity;
+import com.teenthofabud.videoconference.mdr.user.error.UserException;
+import com.teenthofabud.videoconference.mdr.user.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,49 +49,47 @@ public class GoogleConferenceServiceImpl implements GoogleConferenceService {
     @Autowired
     ObjectMapper objectMapper;
     @Autowired
-    ServerPreferenceService serverPreferenceService;
-    @Autowired
     GoogleConferenceFormToGoogleConferenceEntityReducer googleConferenceFormToGoogleConferenceEntityReducer;
     @Autowired
     GoogleConferenceEntityToGoogleConferenceDataVoReducer googleConferenceEntityToGoogleConferenceDataVoReducer;
-
+    @Autowired
+    UserService userService;
+    @Autowired
+    ServerService serverService;
 
     @Override
-    public GoogleConferenceDataVo createNewGoogleConference(GoogleConferenceForm form) throws GoogleConferenceException {
-        String calendarId = form.getCalendarEvent().getCalendarId();
-        String eventId = form.getEventData().getEventId();
-        String userIdHash = DigestUtils.md5DigestAsHex(calendarId.getBytes(StandardCharsets.UTF_8));
-        ServerPreferenceVo serverPreferenceVo = null;
-        try {
-            serverPreferenceVo = serverPreferenceService.getServerPreferenceByUserIdHash(userIdHash);
-        } catch (ServerPreferenceException e) {
-            throw new GoogleConferenceException(GoogleConferenceErrorType.TEMPORARY, MDRErrorCode.MDR_ATTRIBUTE_INVALID,new Object[]{calendarId});
-        }
+    public GoogleConferenceDataVo createNewGoogleConference(GoogleConferenceFormV2 form) throws GoogleConferenceException {
+        String email = form.getEmail();
+        String eventId = form.getEventId();
+        String serverUrl = form.getServerUrl();
         GoogleConferenceEntity conferenceEntity = null;
-        Optional<GoogleConferenceEntity> optionalGoogleConferenceEntity = googleConferenceRepository.findByServerPreferenceIdAndEventId(serverPreferenceVo.getId(),eventId);
+        UserEntity userEntity = null;
+        ServerEntity serverEntity = null;
+        try{
+            userEntity = userService.getUserByEmail(email);
+            serverEntity = serverService.getServerByUrl(serverUrl);
+        }
+        catch (UserException | ServerException e) {
+            throw new GoogleConferenceException(GoogleConferenceErrorType.TEMPORARY, MDRErrorCode.MDR_ATTRIBUTE_INVALID,new Object[]{email+":"+serverUrl});
+        }
+        Optional<GoogleConferenceEntity> optionalGoogleConferenceEntity = googleConferenceRepository.findByCreatedByAndEventId(userEntity,eventId);
         if(optionalGoogleConferenceEntity.isEmpty()){
-            conferenceEntity = googleConferenceFormToGoogleConferenceEntityReducer.reduce(form,serverPreferenceVo);
+            conferenceEntity = googleConferenceFormToGoogleConferenceEntityReducer.reduce(form,userEntity,serverEntity);
             googleConferenceRepository.save(conferenceEntity);
         }
         else
             conferenceEntity = optionalGoogleConferenceEntity.get();
-        GoogleConferenceDataVo googleConferenceDataVo = googleConferenceEntityToGoogleConferenceDataVoReducer.reduce(conferenceEntity,serverPreferenceVo.getServerUrl(),calendarId);
+        GoogleConferenceDataVo googleConferenceDataVo = googleConferenceEntityToGoogleConferenceDataVoReducer.reduce(conferenceEntity,serverUrl,email);
         return googleConferenceDataVo;
     }
 
     @Override
-    public GoogleConferenceVo getGoogleConferenceByUserAndEventId(String eventId, String userId) throws GoogleConferenceException {
-        String userIdHash = DigestUtils.md5DigestAsHex(userId.getBytes(StandardCharsets.UTF_8));
+    public GoogleConferenceVo getGoogleConferenceByUserEmailAndEventId(String email, String eventId) throws GoogleConferenceException, UserException {
         GoogleConferenceVo conferenceVo = null;
-        ServerPreferenceVo serverPreferenceVo = null;
-        try {
-            serverPreferenceVo = serverPreferenceService.getServerPreferenceByUserIdHash(userIdHash);
-        } catch (ServerPreferenceException e) {
-            throw new GoogleConferenceException(GoogleConferenceErrorType.TEMPORARY,MDRErrorCode.MDR_ATTRIBUTE_INVALID,new Object[]{userId});
-        }
-        Optional<GoogleConferenceEntity> optionalConferenceEntity = googleConferenceRepository.findByServerPreferenceIdAndEventId(serverPreferenceVo.getId(), eventId);
+        UserEntity userEntity = userService.getUserByEmail(email);
+        Optional<GoogleConferenceEntity> optionalConferenceEntity = googleConferenceRepository.findByCreatedByAndEventId(userEntity,eventId);
         if(optionalConferenceEntity.isEmpty())
-            throw new GoogleConferenceException(GoogleConferenceErrorType.TEMPORARY,MDRErrorCode.MDR_NOT_FOUND,new Object[]{userId});
+            throw new GoogleConferenceException(GoogleConferenceErrorType.TEMPORARY,MDRErrorCode.MDR_NOT_FOUND,new Object[]{eventId});
         else{
             conferenceVo = googleConferenceEntityToGoogleConferenceVoConverter.convert(optionalConferenceEntity.get());
         }
@@ -95,16 +97,9 @@ public class GoogleConferenceServiceImpl implements GoogleConferenceService {
     }
 
     @Override
-    public List<GoogleConferenceVo> getAllGoogleConferencesByUserId(String userId) throws GoogleConferenceException {
-
-        ServerPreferenceVo serverPreferenceVo = null;
-        String userIdHash = DigestUtils.md5DigestAsHex(userId.getBytes(StandardCharsets.UTF_8));
-        try {
-            serverPreferenceVo = serverPreferenceService.getServerPreferenceByUserIdHash(userIdHash);
-        } catch (ServerPreferenceException e) {
-            throw new GoogleConferenceException(GoogleConferenceErrorType.TEMPORARY,MDRErrorCode.MDR_ATTRIBUTE_INVALID,new Object[]{userId});
-        }
-        List<GoogleConferenceVo> conferenceVoList = googleConferenceRepository.findAllByServerPreferenceId(serverPreferenceVo.getId())
+    public List<GoogleConferenceVo> getAllGoogleConferencesByUserEmail(String email) throws GoogleConferenceException, UserException {
+        UserEntity userEntity = userService.getUserByEmail(email);
+        List<GoogleConferenceVo> conferenceVoList = googleConferenceRepository.findAllByUser(userEntity)
                 .stream()
                 .map(e-> googleConferenceEntityToGoogleConferenceVoConverter.convert(e))
                 .collect(Collectors.toList());
@@ -112,17 +107,11 @@ public class GoogleConferenceServiceImpl implements GoogleConferenceService {
     }
 
     @Override
-    public void patchGoogleConferenceByUserAndEventId(String eventId, String userId, JsonPatch patches) throws GoogleConferenceException, JsonPatchException, JsonProcessingException {
-        String userIdHash = DigestUtils.md5DigestAsHex(userId.getBytes(StandardCharsets.UTF_8));
-        ServerPreferenceVo serverPreferenceVo = null;
-        try {
-            serverPreferenceVo = serverPreferenceService.getServerPreferenceByUserIdHash(userIdHash);
-        } catch (ServerPreferenceException e) {
-            throw new GoogleConferenceException(GoogleConferenceErrorType.TEMPORARY,MDRErrorCode.MDR_ATTRIBUTE_INVALID,new Object[]{userId});
-        }
-        Optional<GoogleConferenceEntity> optionalConferenceEntity = googleConferenceRepository.findByServerPreferenceIdAndEventId(serverPreferenceVo.getId(), eventId);
+    public void patchGoogleConferenceByUserEmailAndEventId(String email, String eventId, JsonPatch patches) throws GoogleConferenceException, JsonPatchException, JsonProcessingException, UserException {
+        UserEntity userEntity = userService.getUserByEmail(email);
+        Optional<GoogleConferenceEntity> optionalConferenceEntity = googleConferenceRepository.findByCreatedByAndEventId(userEntity,eventId);
         if(optionalConferenceEntity.isEmpty())
-            throw new GoogleConferenceException(GoogleConferenceErrorType.TEMPORARY,MDRErrorCode.MDR_NOT_FOUND,new Object[]{userId});
+            throw new GoogleConferenceException(GoogleConferenceErrorType.TEMPORARY,MDRErrorCode.MDR_NOT_FOUND,new Object[]{eventId});
         GoogleConferenceEntity conferenceEntity = optionalConferenceEntity.get();
         JsonNode jsonNode = objectMapper.valueToTree(conferenceEntity);
         log.info("Before patch : {}",objectMapper.writeValueAsString(conferenceEntity));
@@ -133,19 +122,12 @@ public class GoogleConferenceServiceImpl implements GoogleConferenceService {
     }
 
     @Override
-    public void deleteGoogleConferenceByUserAndEventId(String eventId, String userId) throws GoogleConferenceException {
-        String userIdHash = DigestUtils.md5DigestAsHex(userId.getBytes(StandardCharsets.UTF_8));
-        ConferenceVo conferenceVo = null;
-        ServerPreferenceVo serverPreferenceVo = null;
-        try {
-            serverPreferenceVo = serverPreferenceService.getServerPreferenceByUserIdHash(userIdHash);
-        } catch (ServerPreferenceException e) {
-            throw new GoogleConferenceException(GoogleConferenceErrorType.TEMPORARY,MDRErrorCode.MDR_ATTRIBUTE_INVALID,new Object[]{userIdHash});
-        }
-        Optional<GoogleConferenceEntity> optionalConferenceEntity = googleConferenceRepository.findByServerPreferenceIdAndEventId(serverPreferenceVo.getId(),eventId);
+    public void deleteGoogleConferenceByUserEmailAndEventId(String email, String eventId) throws GoogleConferenceException, UserException {
+        UserEntity userEntity = userService.getUserByEmail(email);
+        Optional<GoogleConferenceEntity> optionalConferenceEntity = googleConferenceRepository.findByCreatedByAndEventId(userEntity,eventId);
         if(optionalConferenceEntity.isEmpty())
-            throw new GoogleConferenceException(GoogleConferenceErrorType.TEMPORARY,MDRErrorCode.MDR_NOT_FOUND,new Object[]{userId});
+            throw new GoogleConferenceException(GoogleConferenceErrorType.TEMPORARY,MDRErrorCode.MDR_NOT_FOUND,new Object[]{email});
         else googleConferenceRepository.deleteById(optionalConferenceEntity.get().getId());
-
     }
+
 }

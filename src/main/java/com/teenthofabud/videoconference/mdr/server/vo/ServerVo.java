@@ -1,10 +1,8 @@
 package com.teenthofabud.videoconference.mdr.server.vo;
 
-import com.teenthofabud.videoconference.mdr.serverpreference.vo.ServerPreferenceVo;
+import com.teenthofabud.videoconference.mdr.server.constants.ServerType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
-
-import java.util.List;
 
 @EqualsAndHashCode
 @ToString
@@ -21,8 +19,14 @@ public class ServerVo {
     @Schema(description = "Server name")
     String name;
 
+    @Schema(description = "Owner name")
+    String owner;
+
     @Schema(description = "Base Url for the server")
     String serverUrl;
+
+    @Schema(description = "Whether the server is default or custom")
+    ServerType serverType;
 
 
 }

@@ -1,6 +1,8 @@
 package com.teenthofabud.videoconference.mdr.conference.entity;
 
 import com.teenthofabud.videoconference.mdr.conference.constants.ConferenceStatus;
+import com.teenthofabud.videoconference.mdr.server.entity.ServerEntity;
+import com.teenthofabud.videoconference.mdr.user.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -23,8 +25,13 @@ public abstract class ConferenceEntity {
     @Column(name = "room_id", nullable = false)
     String roomId;
 
-    @Column(name = "server_preference_id", nullable = false)
-    Long serverPreferenceId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "created_by")
+    UserEntity createdBy;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "server_id")
+    ServerEntity server;
 
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)

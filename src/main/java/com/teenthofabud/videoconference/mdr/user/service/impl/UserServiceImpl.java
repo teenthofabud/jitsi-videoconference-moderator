@@ -5,13 +5,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
 import com.teenthofabud.videoconference.mdr.error.core.MDRErrorCode;
-import com.teenthofabud.videoconference.mdr.serverpreference.error.ServerPreferenceException;
-import com.teenthofabud.videoconference.mdr.serverpreference.form.ServerPreferenceForm;
-import com.teenthofabud.videoconference.mdr.serverpreference.service.ServerPreferenceService;
+import com.teenthofabud.videoconference.mdr.server.entity.ServerEntity;
+import com.teenthofabud.videoconference.mdr.server.error.ServerException;
+import com.teenthofabud.videoconference.mdr.server.form.ServerForm;
+import com.teenthofabud.videoconference.mdr.server.service.ServerService;
 import com.teenthofabud.videoconference.mdr.user.converter.UserEntityToVoConverter;
 import com.teenthofabud.videoconference.mdr.user.converter.UserFormToUserEntityConverter;
-import com.teenthofabud.videoconference.mdr.user.vo.UserVo;
 import com.teenthofabud.videoconference.mdr.user.entity.UserEntity;
+import com.teenthofabud.videoconference.mdr.user.form.ServerPreferenceForm;
 import com.teenthofabud.videoconference.mdr.user.error.UserException;
 import com.teenthofabud.videoconference.mdr.user.form.UserForm;
 import com.teenthofabud.videoconference.mdr.user.repository.UserRepository;
@@ -19,7 +20,6 @@ import com.teenthofabud.videoconference.mdr.user.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -32,42 +32,45 @@ public class UserServiceImpl implements UserService {
     @Autowired
     UserFormToUserEntityConverter userFormToUserEntityConverter;
     @Autowired
-    UserEntityToVoConverter userEntityToVoConverter;
-    @Autowired
-    ServerPreferenceService serverPreferenceService;
-    @Autowired
     ObjectMapper mapper;
+    @Autowired
+    ServerService serverService;
 
     @Override
-    @Transactional(rollbackFor = ServerPreferenceException.class)
-    public UserVo createNewUser(UserForm form) throws UserException, ServerPreferenceException {
-        Optional<UserEntity> existingUser = userRepository.findByUserId(form.getUserId());
+    public UserEntity createNewUser(UserForm form) throws UserException {
+        Optional<com.teenthofabud.videoconference.mdr.user.entity.UserEntity> existingUser = userRepository.findByEmail(form.getEmail());
         if(existingUser.isPresent())
-            throw new UserException(MDRErrorCode.MDR_EXISTS,new Object[]{form.getUserId()});
-        UserEntity userEntity = userFormToUserEntityConverter.convert(form);
+            throw new UserException(MDRErrorCode.MDR_EXISTS,new Object[]{form.getEmail()});
+        com.teenthofabud.videoconference.mdr.user.entity.UserEntity userEntity = userFormToUserEntityConverter.convert(form);
         userRepository.save(userEntity);
-        ServerPreferenceForm serverPreferenceForm = ServerPreferenceForm.builder()
+        return userEntity;
+    }
+
+    @Override
+    public UserEntity getUserById(Long id) throws UserException {
+        return userRepository.findById(id)
+                .orElseThrow(()->new UserException(MDRErrorCode.MDR_NOT_FOUND,new Object[]{id}));
+    }
+
+    @Override
+    public UserEntity getUserByEmail(String email) throws UserException {
+        return userRepository.findByEmail(email)
+                .orElseThrow(()->new UserException(MDRErrorCode.MDR_NOT_FOUND,new Object[]{email}));
+    }
+
+    @Override
+    public void addServerPreference(ServerPreferenceForm form) throws UserException, ServerException {
+        com.teenthofabud.videoconference.mdr.user.entity.UserEntity user = userRepository.findByEmail(form.getEmail())
+                .orElseThrow(() -> new UserException(MDRErrorCode.MDR_NOT_FOUND,
+                        new Object[]{form.getEmail()}));
+        ServerForm serverForm = ServerForm.builder()
                 .serverUrl(form.getPreferredServerUrl())
-                .userIdHash(userEntity.getUserIdHash())
-                .serverPreferenceType(form.getServerPreferenceType())
+                .name(form.getName())
                 .build();
-        serverPreferenceService.createServerPreference(serverPreferenceForm);
-        return userEntityToVoConverter.convert(userEntity);
-    }
-
-    @Override
-    public UserVo getUserById(Long id) throws UserException {
-        return userRepository.findById(id).map(e-> userEntityToVoConverter.convert(e)).orElseThrow(()->new UserException(MDRErrorCode.MDR_NOT_FOUND,new Object[]{id}));
-    }
-
-    @Override
-    public UserVo getUserByUserIdHash(String userIdHash) throws UserException {
-        return userRepository.findByUserIdHash(userIdHash).map(e-> userEntityToVoConverter.convert(e)).orElseThrow(()->new UserException(MDRErrorCode.MDR_NOT_FOUND,new Object[]{userIdHash}));
-    }
-
-    @Override
-    public UserVo getUserByUserId(String userId) throws UserException {
-        return userRepository.findByUserId(userId).map(e-> userEntityToVoConverter.convert(e)).orElseThrow(()->new UserException(MDRErrorCode.MDR_NOT_FOUND,new Object[]{userId}));
+        ServerEntity server = serverService.createNewCustomServer(serverForm);
+        user.addNewPreferredServer(server);
+        server.setOwner(user);
+        userRepository.save(user);
     }
 
     @Override

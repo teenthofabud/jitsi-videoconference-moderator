@@ -13,22 +13,16 @@ import lombok.*;
 @Setter
 public class UserVo {
 
-
     @Schema(description = "user ID (PK)")
     Long id;
 
-    @Schema(description = "Hash of the identifier for the user who created the conference")
-    String userIdHash;
-
-    @Schema(description = "Identifier for the user who created the conference")
-    String userId;
+    @Schema(description = "Email of the user who created the conference")
+    String email;
 
     @Schema(description = "Name of the user")
     String name;
 
     @Schema(description = "User reference type, eg:- GMAIL")
     ReferenceType referenceType;
-
-
 
 }
