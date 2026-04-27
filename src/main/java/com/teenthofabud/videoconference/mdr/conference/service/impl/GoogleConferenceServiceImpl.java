@@ -9,14 +9,12 @@ import com.teenthofabud.videoconference.mdr.conference.constants.google.GoogleCo
 import com.teenthofabud.videoconference.mdr.conference.converter.ConferenceEntityToConferenceVoConverter;
 import com.teenthofabud.videoconference.mdr.conference.converter.google.GoogleConferenceEntityToGoogleConferenceVoConverter;
 import com.teenthofabud.videoconference.mdr.conference.entity.google.GoogleConferenceEntity;
-import com.teenthofabud.videoconference.mdr.conference.form.google.GoogleConferenceFormV2;
+import com.teenthofabud.videoconference.mdr.conference.form.google.GoogleConferenceForm;
 import com.teenthofabud.videoconference.mdr.conference.reducer.GoogleConferenceEntityToGoogleConferenceDataVoReducer;
 import com.teenthofabud.videoconference.mdr.conference.reducer.GoogleConferenceFormToGoogleConferenceEntityReducer;
 import com.teenthofabud.videoconference.mdr.conference.repository.google.GoogleConferenceRepository;
-import com.teenthofabud.videoconference.mdr.conference.vo.ConferenceVo;
 import com.teenthofabud.videoconference.mdr.conference.error.google.GoogleConferenceException;
 import com.teenthofabud.videoconference.mdr.conference.vo.google.GoogleConferenceDataVo;
-import com.teenthofabud.videoconference.mdr.conference.form.google.GoogleConferenceForm;
 import com.teenthofabud.videoconference.mdr.conference.service.GoogleConferenceService;
 import com.teenthofabud.videoconference.mdr.conference.vo.google.GoogleConferenceVo;
 import com.teenthofabud.videoconference.mdr.error.core.MDRErrorCode;
@@ -29,9 +27,7 @@ import com.teenthofabud.videoconference.mdr.user.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.DigestUtils;
 
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -58,19 +54,21 @@ public class GoogleConferenceServiceImpl implements GoogleConferenceService {
     ServerService serverService;
 
     @Override
-    public GoogleConferenceDataVo createNewGoogleConference(GoogleConferenceFormV2 form) throws GoogleConferenceException {
-        String email = form.getEmail();
-        String eventId = form.getEventId();
-        String serverUrl = form.getServerUrl();
+    public GoogleConferenceDataVo createNewGoogleConference(GoogleConferenceForm form) throws GoogleConferenceException {
+        String email = form.getEventData().getCalendarId();
+        String eventId = form.getEventData().getEventId();
         GoogleConferenceEntity conferenceEntity = null;
         UserEntity userEntity = null;
         ServerEntity serverEntity = null;
         try{
             userEntity = userService.getUserByEmail(email);
-            serverEntity = serverService.getServerByUrl(serverUrl);
+            serverEntity = serverService.getServerById(userEntity.getId());
         }
-        catch (UserException | ServerException e) {
-            throw new GoogleConferenceException(GoogleConferenceErrorType.TEMPORARY, MDRErrorCode.MDR_ATTRIBUTE_INVALID,new Object[]{email+":"+serverUrl});
+        catch (UserException e) {
+            throw new GoogleConferenceException(GoogleConferenceErrorType.TEMPORARY, MDRErrorCode.MDR_ATTRIBUTE_INVALID,new Object[]{email});
+        }
+        catch (ServerException e){
+            throw new GoogleConferenceException(GoogleConferenceErrorType.TEMPORARY, MDRErrorCode.MDR_ATTRIBUTE_INVALID,new Object[]{userEntity.getId()});
         }
         Optional<GoogleConferenceEntity> optionalGoogleConferenceEntity = googleConferenceRepository.findByCreatedByAndEventId(userEntity,eventId);
         if(optionalGoogleConferenceEntity.isEmpty()){
@@ -79,7 +77,7 @@ public class GoogleConferenceServiceImpl implements GoogleConferenceService {
         }
         else
             conferenceEntity = optionalGoogleConferenceEntity.get();
-        GoogleConferenceDataVo googleConferenceDataVo = googleConferenceEntityToGoogleConferenceDataVoReducer.reduce(conferenceEntity,serverUrl,email);
+        GoogleConferenceDataVo googleConferenceDataVo = googleConferenceEntityToGoogleConferenceDataVoReducer.reduce(conferenceEntity,serverEntity.getServerUrl(),email);
         return googleConferenceDataVo;
     }
 

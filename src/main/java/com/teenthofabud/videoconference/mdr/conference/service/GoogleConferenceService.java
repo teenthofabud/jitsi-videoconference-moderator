@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
 import com.teenthofabud.videoconference.mdr.conference.error.google.GoogleConferenceException;
-import com.teenthofabud.videoconference.mdr.conference.form.google.GoogleConferenceFormV2;
+import com.teenthofabud.videoconference.mdr.conference.form.google.GoogleConferenceForm;
 import com.teenthofabud.videoconference.mdr.conference.vo.google.GoogleConferenceDataVo;
 import com.teenthofabud.videoconference.mdr.conference.vo.google.GoogleConferenceVo;
 import com.teenthofabud.videoconference.mdr.user.error.UserException;
@@ -13,7 +13,7 @@ import java.util.List;
 
 public interface GoogleConferenceService {
 
-    GoogleConferenceDataVo createNewGoogleConference(GoogleConferenceFormV2 form) throws GoogleConferenceException;
+    GoogleConferenceDataVo createNewGoogleConference(GoogleConferenceForm form) throws GoogleConferenceException;
 
     GoogleConferenceVo getGoogleConferenceByUserEmailAndEventId(String email, String eventId) throws GoogleConferenceException, UserException;
 

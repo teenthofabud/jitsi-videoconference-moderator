@@ -5,9 +5,8 @@ import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
 import com.teenthofabud.videoconference.mdr.conference.error.ConferenceException;
 import com.teenthofabud.videoconference.mdr.conference.error.google.GoogleConferenceException;
-import com.teenthofabud.videoconference.mdr.conference.form.google.GoogleConferenceFormV2;
-import com.teenthofabud.videoconference.mdr.conference.vo.google.GoogleConferenceDataVo;
 import com.teenthofabud.videoconference.mdr.conference.form.google.GoogleConferenceForm;
+import com.teenthofabud.videoconference.mdr.conference.vo.google.GoogleConferenceDataVo;
 import com.teenthofabud.videoconference.mdr.conference.resource.google.GoogleConferenceAPI;
 import com.teenthofabud.videoconference.mdr.conference.service.GoogleConferenceService;
 import com.teenthofabud.videoconference.mdr.conference.vo.google.GoogleConferenceVo;
@@ -31,7 +30,7 @@ public class GoogleGoogleConferenceController implements GoogleConferenceAPI {
 
     @Override
     @PostMapping
-    public ResponseEntity<GoogleConferenceDataVo> createNewGoogleConference(@Valid @RequestBody GoogleConferenceFormV2 form) throws GoogleConferenceException {
+    public ResponseEntity<GoogleConferenceDataVo> createNewGoogleConference(@Valid @RequestBody GoogleConferenceForm form) throws GoogleConferenceException {
         log.debug("Received request with body : {}",form);
         GoogleConferenceDataVo googleConferenceDataVo = googleConferenceService.createNewGoogleConference(form);
         return ResponseEntity.status(HttpStatus.CREATED).body(googleConferenceDataVo);

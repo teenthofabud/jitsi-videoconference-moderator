@@ -5,9 +5,8 @@ import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
 import com.teenthofabud.videoconference.mdr.conference.error.ConferenceException;
 import com.teenthofabud.videoconference.mdr.conference.error.google.GoogleConferenceException;
-import com.teenthofabud.videoconference.mdr.conference.form.google.GoogleConferenceFormV2;
-import com.teenthofabud.videoconference.mdr.conference.vo.google.GoogleConferenceDataVo;
 import com.teenthofabud.videoconference.mdr.conference.form.google.GoogleConferenceForm;
+import com.teenthofabud.videoconference.mdr.conference.vo.google.GoogleConferenceDataVo;
 import com.teenthofabud.videoconference.mdr.conference.vo.google.GoogleConferenceVo;
 import com.teenthofabud.videoconference.mdr.constants.HttpMediaType;
 import com.teenthofabud.videoconference.mdr.user.error.UserException;
@@ -36,7 +35,7 @@ public interface GoogleConferenceAPI {
             ),
     })
     ResponseEntity<GoogleConferenceDataVo> createNewGoogleConference(@RequestBody(description = "Google conference form", required = true,
-            content = @Content(schema = @Schema(implementation = GoogleConferenceFormV2.class))) GoogleConferenceFormV2 form) throws GoogleConferenceException, ConferenceException;
+            content = @Content(schema = @Schema(implementation = GoogleConferenceForm.class))) GoogleConferenceForm form) throws GoogleConferenceException, ConferenceException;
 
 
     @Operation(method = "GET", summary = "Get conference by ID", description = "getGoogleConferenceByUserEmailAndEventId")
