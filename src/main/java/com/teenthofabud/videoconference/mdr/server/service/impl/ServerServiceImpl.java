@@ -10,6 +10,9 @@ import com.teenthofabud.videoconference.mdr.server.error.ServerException;
 import com.teenthofabud.videoconference.mdr.server.form.ServerForm;
 import com.teenthofabud.videoconference.mdr.server.repository.ServerRepository;
 import com.teenthofabud.videoconference.mdr.server.service.ServerService;
+import com.teenthofabud.videoconference.mdr.user.entity.UserEntity;
+import com.teenthofabud.videoconference.mdr.user.error.UserException;
+import com.teenthofabud.videoconference.mdr.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -39,6 +42,7 @@ public class ServerServiceImpl implements ServerService {
             throw new ServerException(MDRErrorCode.MDR_EXISTS,new Object[]{form.getServerUrl()});
         ServerEntity server = serverFormToEntityConverter.convert(form);
         server.setServerType(type);
+//        server.setOwner(userEntity);
         server = serverRepository.save(server);
         return server;
     }

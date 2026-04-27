@@ -1,6 +1,7 @@
 package com.teenthofabud.videoconference.mdr.user.entity;
 
 import com.teenthofabud.videoconference.mdr.conference.entity.ConferenceEntity;
+import com.teenthofabud.videoconference.mdr.conference.entity.google.GoogleConferenceEntity;
 import com.teenthofabud.videoconference.mdr.server.entity.ServerEntity;
 import com.teenthofabud.videoconference.mdr.user.constants.ReferenceType;
 import jakarta.persistence.*;
@@ -34,18 +35,21 @@ public class UserEntity {
     @Enumerated(EnumType.STRING)
     ReferenceType referenceType;
 
+    @OneToOne(mappedBy = "owner", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    private ServerEntity preferredServer;
+
     @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "createdBy")
     @ToString.Exclude
-    List<ConferenceEntity> conferences = new ArrayList<>();
+    List<GoogleConferenceEntity> conferences = new ArrayList<>();
 
-    public void addConference(ConferenceEntity conference){
+    public void addConference(GoogleConferenceEntity conference){
         if(conference == null)
             return;
         conferences.add(conference);
         conference.setCreatedBy(this);
     }
 
-    public void removeConference(ConferenceEntity conference){
+    public void removeConference(GoogleConferenceEntity conference){
         if(conference == null)
             return;
         conferences.remove(conference);

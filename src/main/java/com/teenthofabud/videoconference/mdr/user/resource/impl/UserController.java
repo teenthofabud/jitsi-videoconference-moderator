@@ -50,7 +50,7 @@ public class UserController implements UserAPI {
     }
 
     @Override
-    @PostMapping("/preferred-servers")
+    @PostMapping("/preferred-server")
     public ResponseEntity<Void> addServerPreference(ServerPreferenceForm form) throws UserException, ServerException {
         userService.addServerPreference(form);
         return ResponseEntity.ok().build();

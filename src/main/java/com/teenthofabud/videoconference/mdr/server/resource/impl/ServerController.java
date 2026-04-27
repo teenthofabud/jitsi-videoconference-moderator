@@ -7,6 +7,7 @@ import com.teenthofabud.videoconference.mdr.server.error.ServerException;
 import com.teenthofabud.videoconference.mdr.server.form.ServerForm;
 import com.teenthofabud.videoconference.mdr.server.resource.ServerAPI;
 import com.teenthofabud.videoconference.mdr.server.service.ServerService;
+import com.teenthofabud.videoconference.mdr.user.error.UserException;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

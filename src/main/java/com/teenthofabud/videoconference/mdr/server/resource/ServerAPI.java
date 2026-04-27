@@ -3,7 +3,9 @@ package com.teenthofabud.videoconference.mdr.server.resource;
 import com.teenthofabud.videoconference.mdr.server.vo.ServerVo;
 import com.teenthofabud.videoconference.mdr.server.error.ServerException;
 import com.teenthofabud.videoconference.mdr.server.form.ServerForm;
+import com.teenthofabud.videoconference.mdr.user.error.UserException;
 import com.teenthofabud.videoconference.mdr.vo.ErrorVo;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -20,6 +22,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @Tag(name = "ServerAPI", description = "Server Management")
 public interface ServerAPI {
 
+    @Hidden
     @Operation(method = "POST", summary = "Default Server creation", description = "createNewDefaultServer")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Server created"),

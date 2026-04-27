@@ -97,7 +97,7 @@ public class GoogleConferenceServiceImpl implements GoogleConferenceService {
     @Override
     public List<GoogleConferenceVo> getAllGoogleConferencesByUserEmail(String email) throws GoogleConferenceException, UserException {
         UserEntity userEntity = userService.getUserByEmail(email);
-        List<GoogleConferenceVo> conferenceVoList = googleConferenceRepository.findAllByUser(userEntity)
+        List<GoogleConferenceVo> conferenceVoList = googleConferenceRepository.findAllByCreatedBy(userEntity)
                 .stream()
                 .map(e-> googleConferenceEntityToGoogleConferenceVoConverter.convert(e))
                 .collect(Collectors.toList());
