@@ -38,10 +38,6 @@ public class UserEntity {
     @ToString.Exclude
     List<ConferenceEntity> conferences = new ArrayList<>();
 
-    @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "owner")
-    @ToString.Exclude
-    List<ServerEntity> preferredServers = new ArrayList<>();
-
     public void addConference(ConferenceEntity conference){
         if(conference == null)
             return;
@@ -56,17 +52,4 @@ public class UserEntity {
         conference.setCreatedBy(null);
     }
 
-    public void addNewPreferredServer(ServerEntity server){
-        if(server == null)
-            return;
-        preferredServers.add(server);
-        server.setOwner(this);
-    }
-
-    public void removePreferredServer(ServerEntity server){
-        if(server == null)
-            return;
-        preferredServers.remove(server);
-        server.setOwner(null);
-    }
 }

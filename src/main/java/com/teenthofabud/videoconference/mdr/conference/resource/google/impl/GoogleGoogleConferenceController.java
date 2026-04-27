@@ -30,11 +30,7 @@ public class GoogleGoogleConferenceController implements GoogleConferenceAPI {
     GoogleConferenceService googleConferenceService;
 
     @Override
-    @PostMapping("/manual")
-    // invoke this api endpoint manually and update the conferenceData in
-    // calendar UI manually using CardService.newCalendarEventActionResponseBuilder()
-    // In onCreateConference function in appscript better to return an error or placeholder data
-    // temporarily unless there is a better solution
+    @PostMapping
     public ResponseEntity<GoogleConferenceDataVo> createNewGoogleConference(@Valid @RequestBody GoogleConferenceFormV2 form) throws GoogleConferenceException {
         log.debug("Received request with body : {}",form);
         GoogleConferenceDataVo googleConferenceDataVo = googleConferenceService.createNewGoogleConference(form);

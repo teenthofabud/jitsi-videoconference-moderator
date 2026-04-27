@@ -9,7 +9,6 @@ import com.teenthofabud.videoconference.mdr.server.entity.ServerEntity;
 import com.teenthofabud.videoconference.mdr.server.error.ServerException;
 import com.teenthofabud.videoconference.mdr.server.form.ServerForm;
 import com.teenthofabud.videoconference.mdr.server.service.ServerService;
-import com.teenthofabud.videoconference.mdr.user.converter.UserEntityToVoConverter;
 import com.teenthofabud.videoconference.mdr.user.converter.UserFormToUserEntityConverter;
 import com.teenthofabud.videoconference.mdr.user.entity.UserEntity;
 import com.teenthofabud.videoconference.mdr.user.form.ServerPreferenceForm;
@@ -60,7 +59,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void addServerPreference(ServerPreferenceForm form) throws UserException, ServerException {
-        com.teenthofabud.videoconference.mdr.user.entity.UserEntity user = userRepository.findByEmail(form.getEmail())
+        UserEntity user = userRepository.findByEmail(form.getEmail())
                 .orElseThrow(() -> new UserException(MDRErrorCode.MDR_NOT_FOUND,
                         new Object[]{form.getEmail()}));
         ServerForm serverForm = ServerForm.builder()
@@ -68,7 +67,6 @@ public class UserServiceImpl implements UserService {
                 .name(form.getName())
                 .build();
         ServerEntity server = serverService.createNewCustomServer(serverForm);
-        user.addNewPreferredServer(server);
         server.setOwner(user);
         userRepository.save(user);
     }
@@ -81,7 +79,6 @@ public class UserServiceImpl implements UserService {
 //        JsonNode patched = patches.apply(original);
 //        UserDto patchedUserDto = mapper.treeToValue(patched,UserDto.class);
         throw new UnsupportedOperationException("not implemented yet");
-
     }
 
     @Override

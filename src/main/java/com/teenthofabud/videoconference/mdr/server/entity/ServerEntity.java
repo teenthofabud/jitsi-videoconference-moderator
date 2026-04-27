@@ -39,8 +39,9 @@ public class ServerEntity {
     @ToString.Exclude
     List<ConferenceEntity> conferences = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "owner")
+    @OneToOne(fetch = FetchType.LAZY)
+    @MapsId
+    @JoinColumn(name = "owner_id")
     UserEntity owner;
 
     public void addConference(ConferenceEntity conference){
