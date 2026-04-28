@@ -36,7 +36,7 @@ public class UserEntity {
     ReferenceType referenceType;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "preferred_server_id", nullable = false)
+    @JoinColumn(name = "preferred_server_id")
     private ServerEntity preferredServer;
 
     @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "createdBy")
