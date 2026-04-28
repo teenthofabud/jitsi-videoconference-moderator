@@ -12,13 +12,13 @@ import java.util.UUID;
 @Component
 public class GoogleConferenceFormToGoogleConferenceEntityReducer {
 
-    public GoogleConferenceEntity reduce(GoogleConferenceForm form, UserEntity user, ServerEntity server){
+    public GoogleConferenceEntity reduce(GoogleConferenceForm form, UserEntity user){
         String conferenceId = UUID.randomUUID().toString();
         return GoogleConferenceEntity.builder()
                 .eventId(form.getEventData().getEventId())
                 .status(ConferenceStatus.PENDING)
                 .createdBy(user)
-                .server(server)
+                .server(user.getPreferredServer())
                 .roomId(conferenceId)
                 .build();
     }

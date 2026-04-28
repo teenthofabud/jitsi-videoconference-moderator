@@ -50,8 +50,6 @@ public class GoogleConferenceServiceImpl implements GoogleConferenceService {
     GoogleConferenceEntityToGoogleConferenceDataVoReducer googleConferenceEntityToGoogleConferenceDataVoReducer;
     @Autowired
     UserService userService;
-    @Autowired
-    ServerService serverService;
 
     @Override
     public GoogleConferenceDataVo createNewGoogleConference(GoogleConferenceForm form) throws GoogleConferenceException {
@@ -59,25 +57,20 @@ public class GoogleConferenceServiceImpl implements GoogleConferenceService {
         String eventId = form.getEventData().getEventId();
         GoogleConferenceEntity conferenceEntity = null;
         UserEntity userEntity = null;
-        ServerEntity serverEntity = null;
         try{
             userEntity = userService.getUserByEmail(email);
-            serverEntity = serverService.getServerById(userEntity.getId());
         }
         catch (UserException e) {
             throw new GoogleConferenceException(GoogleConferenceErrorType.TEMPORARY, MDRErrorCode.MDR_ATTRIBUTE_INVALID,new Object[]{email});
         }
-        catch (ServerException e){
-            throw new GoogleConferenceException(GoogleConferenceErrorType.TEMPORARY, MDRErrorCode.MDR_ATTRIBUTE_INVALID,new Object[]{userEntity.getId()});
-        }
         Optional<GoogleConferenceEntity> optionalGoogleConferenceEntity = googleConferenceRepository.findByCreatedByAndEventId(userEntity,eventId);
         if(optionalGoogleConferenceEntity.isEmpty()){
-            conferenceEntity = googleConferenceFormToGoogleConferenceEntityReducer.reduce(form,userEntity,serverEntity);
+            conferenceEntity = googleConferenceFormToGoogleConferenceEntityReducer.reduce(form,userEntity);
             googleConferenceRepository.save(conferenceEntity);
         }
         else
             conferenceEntity = optionalGoogleConferenceEntity.get();
-        GoogleConferenceDataVo googleConferenceDataVo = googleConferenceEntityToGoogleConferenceDataVoReducer.reduce(conferenceEntity,serverEntity.getServerUrl(),email);
+        GoogleConferenceDataVo googleConferenceDataVo = googleConferenceEntityToGoogleConferenceDataVoReducer.reduce(conferenceEntity,userEntity);
         return googleConferenceDataVo;
     }
 

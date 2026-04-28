@@ -22,6 +22,9 @@ public class UserVo {
     @Schema(description = "Name of the user")
     String name;
 
+    @Schema(description = "URL for the preferred server")
+    String preferredServerUrl;
+
     @Schema(description = "User reference type, eg:- GMAIL")
     ReferenceType referenceType;
 
