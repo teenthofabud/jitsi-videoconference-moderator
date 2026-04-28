@@ -40,10 +40,6 @@ public class ServerEntity {
     @ToString.Exclude
     List<GoogleConferenceEntity> conferences = new ArrayList<>();
 
-    @OneToOne(fetch = FetchType.LAZY, optional = true)
-    @JoinColumn(name = "owner_id", nullable = true)
-    UserEntity owner;
-
     public void addConference(GoogleConferenceEntity conference){
         if(conference == null)
             return;

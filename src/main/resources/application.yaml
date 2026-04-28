@@ -14,19 +14,19 @@ spring:
  jpa:
   defer-datasource-initialization: true
   hibernate:
-   ddl-auto: update
+   ddl-auto: none
   show-sql: true
   properties:
    hibernate:
     format_sql: true
-#   jakarta:
-#    persistence:
-#     schema-generation:
-#      create-source: metadata
-#      scripts:
-#       action: drop-and-create
-#       drop-target: src/main/resources/sql/dev-drop.sql
-#       create-target: src/main/resources/sql/dev-ddl.sql
+   jakarta:
+    persistence:
+     schema-generation:
+      create-source: metadata
+      scripts:
+       action: drop-and-create
+       drop-target: src/main/resources/sql/dev-drop.sql
+       create-target: src/main/resources/sql/dev-ddl.sql
 
 logging:
  level:

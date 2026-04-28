@@ -62,28 +62,18 @@ public class UserServiceImpl implements UserService {
         UserEntity user = userRepository.findByEmail(form.getEmail())
                 .orElseThrow(() -> new UserException(MDRErrorCode.MDR_NOT_FOUND,
                         new Object[]{form.getEmail()}));
-        ServerForm serverForm = ServerForm.builder()
-                .serverUrl(form.getPreferredServerUrl())
-                .name(form.getName())
-                .build();
         Optional<ServerEntity> existingServer = serverService.findServerByUrl(form.getPreferredServerUrl());
-        ServerEntity server = existingServer.isPresent() ? existingServer.get() :
-                serverService.createNewCustomServer(serverForm);
-        server.setOwner(user);
-        userRepository.save(user);
-    }
-
-    @Override
-    public void modifyServerPreference(ServerPreferenceForm form) throws UserException, ServerException {
-        UserEntity user = userRepository.findByEmail(form.getEmail())
-                .orElseThrow(() -> new UserException(MDRErrorCode.MDR_NOT_FOUND,
-                        new Object[]{form.getEmail()}));
-        ServerForm serverForm = ServerForm.builder()
-                .serverUrl(form.getPreferredServerUrl())
-                .name(form.getName())
-                .build();
-        ServerEntity server = serverService.createNewCustomServer(serverForm);
-        server.setOwner(user);
+        ServerEntity server = null;
+        if(existingServer.isPresent())
+            server = existingServer.get();
+        else{
+            ServerForm serverForm = ServerForm.builder()
+                    .serverUrl(form.getPreferredServerUrl())
+                    .name(form.getName())
+                    .build();
+            server = serverService.createNewCustomServer(serverForm);
+        }
+        user.setPreferredServer(server);
         userRepository.save(user);
     }
 

@@ -35,7 +35,8 @@ public class UserEntity {
     @Enumerated(EnumType.STRING)
     ReferenceType referenceType;
 
-    @OneToOne(mappedBy = "owner", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "preferred_server_id", nullable = false)
     private ServerEntity preferredServer;
 
     @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "createdBy")

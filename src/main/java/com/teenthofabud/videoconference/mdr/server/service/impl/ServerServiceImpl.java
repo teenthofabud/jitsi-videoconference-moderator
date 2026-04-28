@@ -42,9 +42,7 @@ public class ServerServiceImpl implements ServerService {
             throw new ServerException(MDRErrorCode.MDR_EXISTS,new Object[]{form.getServerUrl()});
         ServerEntity server = serverFormToEntityConverter.convert(form);
         server.setServerType(type);
-//        server.setOwner(userEntity);
-        server = serverRepository.save(server);
-        return server;
+        return serverRepository.save(server);
     }
 
     @Override
