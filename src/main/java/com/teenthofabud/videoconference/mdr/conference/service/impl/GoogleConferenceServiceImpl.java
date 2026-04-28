@@ -63,6 +63,8 @@ public class GoogleConferenceServiceImpl implements GoogleConferenceService {
         catch (UserException e) {
             throw new GoogleConferenceException(GoogleConferenceErrorType.TEMPORARY, MDRErrorCode.MDR_ATTRIBUTE_INVALID,new Object[]{email});
         }
+        if(userEntity.getPreferredServer()==null)
+            throw new GoogleConferenceException(GoogleConferenceErrorType.TEMPORARY, MDRErrorCode.MDR_ATTRIBUTE_MISSING,new Object[]{"Preferred Server",email});
         Optional<GoogleConferenceEntity> optionalGoogleConferenceEntity = googleConferenceRepository.findByCreatedByAndEventId(userEntity,eventId);
         if(optionalGoogleConferenceEntity.isEmpty()){
             conferenceEntity = googleConferenceFormToGoogleConferenceEntityReducer.reduce(form,userEntity);
