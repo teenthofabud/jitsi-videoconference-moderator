@@ -54,6 +54,11 @@ public class ServerServiceImpl implements ServerService {
     }
 
     @Override
+    public Optional<ServerEntity> findServerByUrl(String url) {
+        return serverRepository.findByServerUrl(url);
+    }
+
+    @Override
     public ServerEntity getServerByUrl(String url) throws ServerException {
         return serverRepository.findByServerUrl(url)
                 .orElseThrow(() -> new ServerException(MDRErrorCode.MDR_NOT_FOUND,new Object[]{url}));

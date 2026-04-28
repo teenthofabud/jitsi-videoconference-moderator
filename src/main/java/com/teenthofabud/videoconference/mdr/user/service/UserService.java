@@ -22,6 +22,8 @@ public interface UserService {
 
     void addServerPreference(ServerPreferenceForm preferences) throws UserException, ServerException;
 
+    void modifyServerPreference(ServerPreferenceForm preferences) throws UserException, ServerException;
+
     void patchUser(String userId, JsonPatch patches) throws UserException, JsonPatchException, JsonProcessingException;
 
     void deleteUser(String userId) throws UserException;

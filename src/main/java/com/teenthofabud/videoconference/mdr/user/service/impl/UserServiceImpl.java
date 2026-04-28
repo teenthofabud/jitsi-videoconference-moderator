@@ -37,7 +37,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserEntity createNewUser(UserForm form) throws UserException {
-        Optional<com.teenthofabud.videoconference.mdr.user.entity.UserEntity> existingUser = userRepository.findByEmail(form.getEmail());
+        Optional<UserEntity> existingUser = userRepository.findByEmail(form.getEmail());
         if(existingUser.isPresent())
             throw new UserException(MDRErrorCode.MDR_EXISTS,new Object[]{form.getEmail()});
         com.teenthofabud.videoconference.mdr.user.entity.UserEntity userEntity = userFormToUserEntityConverter.convert(form);
@@ -66,13 +66,29 @@ public class UserServiceImpl implements UserService {
                 .serverUrl(form.getPreferredServerUrl())
                 .name(form.getName())
                 .build();
+        Optional<ServerEntity> existingServer = serverService.findServerByUrl(form.getPreferredServerUrl());
+        ServerEntity server = existingServer.isPresent() ? existingServer.get() :
+                serverService.createNewCustomServer(serverForm);
+        server.setOwner(user);
+        userRepository.save(user);
+    }
+
+    @Override
+    public void modifyServerPreference(ServerPreferenceForm form) throws UserException, ServerException {
+        UserEntity user = userRepository.findByEmail(form.getEmail())
+                .orElseThrow(() -> new UserException(MDRErrorCode.MDR_NOT_FOUND,
+                        new Object[]{form.getEmail()}));
+        ServerForm serverForm = ServerForm.builder()
+                .serverUrl(form.getPreferredServerUrl())
+                .name(form.getName())
+                .build();
         ServerEntity server = serverService.createNewCustomServer(serverForm);
         server.setOwner(user);
         userRepository.save(user);
     }
 
     @Override
-    public void patchUser(String userId, JsonPatch patches) throws UserException, JsonPatchException, JsonProcessingException {
+    public void patchUser(String email, JsonPatch patches) throws UserException, JsonPatchException, JsonProcessingException {
 //        UserEntity userEntity = userRepository.findByUserId(userId).orElseThrow(()-> new UserException(MDRErrorCode.MDR_NOT_FOUND,new Object[]{userId}));
 //        UserDto userDto = null;
 //        JsonNode original = mapper.valueToTree(userDto);
@@ -85,6 +101,4 @@ public class UserServiceImpl implements UserService {
     public void deleteUser(String userId) throws UserException {
         throw new UnsupportedOperationException("not implemented yet");
     }
-
-
 }
