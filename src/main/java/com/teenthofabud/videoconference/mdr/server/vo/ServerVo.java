@@ -19,9 +19,6 @@ public class ServerVo {
     @Schema(description = "Server name")
     String name;
 
-    @Schema(description = "Owner name")
-    String owner;
-
     @Schema(description = "Base Url for the server")
     String serverUrl;
 
