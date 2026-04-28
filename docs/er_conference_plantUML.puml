@@ -5,6 +5,7 @@
       +name
       +email
       +referenceType
+      +preferredServer
     }
 
     class Server {
@@ -12,7 +13,6 @@
       +name
       +serverUrl
       +severType
-      +owner
     }
 
     class Conference {
@@ -48,7 +48,7 @@
     /'//cardinality changes if relationship becomes participates'/
     Conference "N" <..> "1" Server : hosted on
 
-    User "1" <..> "1" Server : brings
+    User "N" <..> "1" Server : brings
 
     Conference --> ConferenceStatus : conference status
 
