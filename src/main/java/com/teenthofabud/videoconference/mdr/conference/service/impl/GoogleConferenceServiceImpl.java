@@ -55,8 +55,7 @@ public class GoogleConferenceServiceImpl implements GoogleConferenceService {
     public GoogleConferenceDataVo createNewGoogleConference(GoogleConferenceForm form) throws GoogleConferenceException {
         String email = form.getEventData().getCalendarId();
         String eventId = form.getEventData().getEventId();
-        GoogleConferenceEntity conferenceEntity = null;
-        UserEntity userEntity = null;
+        UserEntity userEntity;
         try{
             userEntity = userService.getUserByEmail(email);
         }
@@ -66,12 +65,10 @@ public class GoogleConferenceServiceImpl implements GoogleConferenceService {
         if(userEntity.getPreferredServer()==null)
             throw new GoogleConferenceException(GoogleConferenceErrorType.TEMPORARY, MDRErrorCode.MDR_ATTRIBUTE_MISSING,new Object[]{"Preferred Server",email});
         Optional<GoogleConferenceEntity> optionalGoogleConferenceEntity = googleConferenceRepository.findByCreatedByAndEventId(userEntity,eventId);
-        if(optionalGoogleConferenceEntity.isEmpty()){
-            conferenceEntity = googleConferenceFormToGoogleConferenceEntityReducer.reduce(form,userEntity);
-            googleConferenceRepository.save(conferenceEntity);
-        }
-        else
-            conferenceEntity = optionalGoogleConferenceEntity.get();
+        GoogleConferenceEntity conferenceEntity = optionalGoogleConferenceEntity.orElseGet(()->{
+            GoogleConferenceEntity newEntity = googleConferenceFormToGoogleConferenceEntityReducer.reduce(form,userEntity);
+            return googleConferenceRepository.save(newEntity);
+        });
         GoogleConferenceDataVo googleConferenceDataVo = googleConferenceEntityToGoogleConferenceDataVoReducer.reduce(conferenceEntity,userEntity);
         return googleConferenceDataVo;
     }

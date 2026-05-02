@@ -5,7 +5,6 @@
       +name
       +email
       +referenceType
-      +preferredServer
     }
 
     class Server {
@@ -13,6 +12,7 @@
       +name
       +serverUrl
       +severType
+      +ownerEmail
     }
 
     class Conference {
@@ -21,7 +21,6 @@
       +eventId
       +conferenceStatus
       +createdBy
-      +serverId
     }
 
     enum ReferenceType{
@@ -44,11 +43,9 @@
 
     Server --> ServerType : server type
 
-    User "1" <..> "N" Conference : creates
-    /'//cardinality changes if relationship becomes participates'/
-    Conference "N" <..> "1" Server : hosted on
 
-    User "N" <..> "1" Server : brings
+
+    User "1" <..> "1" Server : brings
 
     Conference --> ConferenceStatus : conference status
 
