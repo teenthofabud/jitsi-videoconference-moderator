@@ -2,9 +2,8 @@ package com.teenthofabud.videoconference.mdr.server.service.impl;
 
 import com.teenthofabud.videoconference.mdr.error.core.MDRErrorCode;
 import com.teenthofabud.videoconference.mdr.server.constants.ServerType;
-import com.teenthofabud.videoconference.mdr.server.converter.ServerEntityToVoConverter;
 import com.teenthofabud.videoconference.mdr.server.converter.ServerFormToEntityConverter;
-import com.teenthofabud.videoconference.mdr.server.vo.ServerVo;
+import com.teenthofabud.videoconference.mdr.server.form.ServerPreferenceForm;
 import com.teenthofabud.videoconference.mdr.server.entity.ServerEntity;
 import com.teenthofabud.videoconference.mdr.server.error.ServerException;
 import com.teenthofabud.videoconference.mdr.server.form.ServerForm;
@@ -12,7 +11,8 @@ import com.teenthofabud.videoconference.mdr.server.repository.ServerRepository;
 import com.teenthofabud.videoconference.mdr.server.service.ServerService;
 import com.teenthofabud.videoconference.mdr.user.entity.UserEntity;
 import com.teenthofabud.videoconference.mdr.user.error.UserException;
-import com.teenthofabud.videoconference.mdr.user.service.UserService;
+import com.teenthofabud.videoconference.mdr.user.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,25 +25,9 @@ public class ServerServiceImpl implements ServerService {
     ServerRepository serverRepository;
     @Autowired
     ServerFormToEntityConverter serverFormToEntityConverter;
+    @Autowired
+    UserRepository userRepository;
 
-    @Override
-    public ServerEntity createNewCustomServer(ServerForm form) throws ServerException {
-        return createNewServer(form,ServerType.CUSTOM);
-    }
-
-    @Override
-    public ServerEntity createNewDefaultServer(ServerForm form) throws ServerException {
-        return createNewServer(form,ServerType.DEFAULT);
-    }
-
-    private ServerEntity createNewServer(ServerForm form, ServerType type) throws ServerException {
-        Optional<ServerEntity> existingServer = serverRepository.findByServerUrl(form.getServerUrl());
-        if(existingServer.isPresent())
-            throw new ServerException(MDRErrorCode.MDR_EXISTS,new Object[]{form.getServerUrl()});
-        ServerEntity server = serverFormToEntityConverter.convert(form);
-        server.setServerType(type);
-        return serverRepository.save(server);
-    }
 
     @Override
     public ServerEntity getServerById(Long id) throws ServerException {
@@ -51,15 +35,24 @@ public class ServerServiceImpl implements ServerService {
                 .orElseThrow(() -> new ServerException(MDRErrorCode.MDR_NOT_FOUND,new Object[]{id}));
     }
 
-    @Override
-    public Optional<ServerEntity> findServerByUrl(String url) {
-        return serverRepository.findByServerUrl(url);
-    }
 
     @Override
-    public ServerEntity getServerByUrl(String url) throws ServerException {
-        return serverRepository.findByServerUrl(url)
-                .orElseThrow(() -> new ServerException(MDRErrorCode.MDR_NOT_FOUND,new Object[]{url}));
+    @Transactional
+    public void addServerPreference(ServerPreferenceForm form) throws UserException, ServerException {
+        UserEntity user = userRepository.findByEmail(form.getEmail())
+                .orElseThrow(() -> new UserException(MDRErrorCode.MDR_NOT_FOUND,
+                        new Object[]{form.getEmail()}));
+        Optional<ServerEntity> existingServer = serverRepository.findByServerUrlAndOwner(form.getPreferredServerUrl(),user);
+        if(existingServer.isPresent())
+            throw new ServerException(MDRErrorCode.MDR_EXISTS,new Object[]{form.getPreferredServerUrl(),user.getEmail()});
+        ServerEntity server = ServerEntity.builder()
+                .serverType(ServerType.CUSTOM)
+                .owner(user)
+                .serverUrl(form.getPreferredServerUrl())
+                .name(form.getName())
+                .build();
+        server = serverRepository.save(server);
+        user.setPreferredServer(server);
     }
 
 }

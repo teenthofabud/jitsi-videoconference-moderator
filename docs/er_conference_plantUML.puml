@@ -12,7 +12,7 @@
       +name
       +serverUrl
       +severType
-      +ownerEmail
+      +userId
     }
 
     class Conference {
@@ -46,7 +46,7 @@
 
 
 
-    User "1" <..> "1" Server : brings
+    User "1 " <..> "1 " Server : brings
 
     Conference --> ConferenceStatus : conference status
 

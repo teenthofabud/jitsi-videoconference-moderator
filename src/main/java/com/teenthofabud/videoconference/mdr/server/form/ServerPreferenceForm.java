@@ -1,4 +1,4 @@
-package com.teenthofabud.videoconference.mdr.user.form;
+package com.teenthofabud.videoconference.mdr.server.form;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;

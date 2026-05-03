@@ -3,7 +3,7 @@ package com.teenthofabud.videoconference.mdr.user.resource.impl;
 import com.teenthofabud.videoconference.mdr.server.error.ServerException;
 import com.teenthofabud.videoconference.mdr.user.converter.UserEntityToVoConverter;
 import com.teenthofabud.videoconference.mdr.user.entity.UserEntity;
-import com.teenthofabud.videoconference.mdr.user.form.ServerPreferenceForm;
+import com.teenthofabud.videoconference.mdr.server.form.ServerPreferenceForm;
 import com.teenthofabud.videoconference.mdr.user.vo.UserVo;
 import com.teenthofabud.videoconference.mdr.user.error.UserException;
 import com.teenthofabud.videoconference.mdr.user.form.UserForm;
@@ -49,11 +49,5 @@ public class UserController implements UserAPI {
         return ResponseEntity.ok(userVo);
     }
 
-    @Override
-    @PostMapping("/preferred-server")
-    public ResponseEntity<Void> addServerPreference(@Valid @RequestBody ServerPreferenceForm form) throws UserException, ServerException {
-        userService.addServerPreference(form);
-        return ResponseEntity.ok().build();
-    }
 
 }

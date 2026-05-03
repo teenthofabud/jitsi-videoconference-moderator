@@ -32,25 +32,12 @@ public class ServerEntity {
     @EqualsAndHashCode.Include
     String serverUrl;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "owner_id", nullable = false)
+    private UserEntity owner;
+
     @Column(name = "server_type", nullable = false)
     @Enumerated(EnumType.STRING)
     ServerType serverType;
 
-    @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "server")
-    @ToString.Exclude
-    List<GoogleConferenceEntity> conferences = new ArrayList<>();
-
-    public void addConference(GoogleConferenceEntity conference){
-        if(conference == null)
-            return;
-        conferences.add(conference);
-        conference.setServer(this);
-    }
-
-    public void removeConference(GoogleConferenceEntity conference){
-        if(conference == null)
-            return;
-        conferences.remove(conference);
-        conference.setServer(null);
-    }
 }

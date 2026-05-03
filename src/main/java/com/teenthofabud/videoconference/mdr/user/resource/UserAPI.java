@@ -1,7 +1,7 @@
 package com.teenthofabud.videoconference.mdr.user.resource;
 
 import com.teenthofabud.videoconference.mdr.server.error.ServerException;
-import com.teenthofabud.videoconference.mdr.user.form.ServerPreferenceForm;
+import com.teenthofabud.videoconference.mdr.server.form.ServerPreferenceForm;
 import com.teenthofabud.videoconference.mdr.user.vo.UserVo;
 import com.teenthofabud.videoconference.mdr.user.error.UserException;
 import com.teenthofabud.videoconference.mdr.user.form.UserForm;
@@ -42,15 +42,6 @@ public interface UserAPI {
                     content = @Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorVo.class)))
     })
     ResponseEntity<UserVo> getUserById(Long Id) throws UserException;
-
-    @Operation(method = "POST", summary = "Add new Server preference for the user", description = "addServerPreference")
-    @ApiResponses( value = {
-            @ApiResponse(responseCode = "201",description = "Successfully added server preference"),
-            @ApiResponse(responseCode = "404", description = "User not found",
-            content = @Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorVo.class)))
-
-    })
-    ResponseEntity<Void> addServerPreference(ServerPreferenceForm form) throws UserException, ServerException;
 
 
 }

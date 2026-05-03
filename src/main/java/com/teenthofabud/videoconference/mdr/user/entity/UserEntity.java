@@ -35,26 +35,7 @@ public class UserEntity {
     @Enumerated(EnumType.STRING)
     ReferenceType referenceType;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "preferred_server_id")
+    @OneToOne(mappedBy = "owner",fetch = FetchType.LAZY)
     private ServerEntity preferredServer;
-
-    @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "createdBy")
-    @ToString.Exclude
-    List<GoogleConferenceEntity> conferences = new ArrayList<>();
-
-    public void addConference(GoogleConferenceEntity conference){
-        if(conference == null)
-            return;
-        conferences.add(conference);
-        conference.setCreatedBy(this);
-    }
-
-    public void removeConference(GoogleConferenceEntity conference){
-        if(conference == null)
-            return;
-        conferences.remove(conference);
-        conference.setCreatedBy(null);
-    }
 
 }

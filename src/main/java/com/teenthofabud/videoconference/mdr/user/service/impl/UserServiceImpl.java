@@ -11,7 +11,7 @@ import com.teenthofabud.videoconference.mdr.server.form.ServerForm;
 import com.teenthofabud.videoconference.mdr.server.service.ServerService;
 import com.teenthofabud.videoconference.mdr.user.converter.UserFormToUserEntityConverter;
 import com.teenthofabud.videoconference.mdr.user.entity.UserEntity;
-import com.teenthofabud.videoconference.mdr.user.form.ServerPreferenceForm;
+import com.teenthofabud.videoconference.mdr.server.form.ServerPreferenceForm;
 import com.teenthofabud.videoconference.mdr.user.error.UserException;
 import com.teenthofabud.videoconference.mdr.user.form.UserForm;
 import com.teenthofabud.videoconference.mdr.user.repository.UserRepository;
@@ -55,26 +55,6 @@ public class UserServiceImpl implements UserService {
     public UserEntity getUserByEmail(String email) throws UserException {
         return userRepository.findByEmail(email)
                 .orElseThrow(()->new UserException(MDRErrorCode.MDR_NOT_FOUND,new Object[]{email}));
-    }
-
-    @Override
-    public void addServerPreference(ServerPreferenceForm form) throws UserException, ServerException {
-        UserEntity user = userRepository.findByEmail(form.getEmail())
-                .orElseThrow(() -> new UserException(MDRErrorCode.MDR_NOT_FOUND,
-                        new Object[]{form.getEmail()}));
-        Optional<ServerEntity> existingServer = serverService.findServerByUrl(form.getPreferredServerUrl());
-        ServerEntity server = null;
-        if(existingServer.isPresent())
-            server = existingServer.get();
-        else{
-            ServerForm serverForm = ServerForm.builder()
-                    .serverUrl(form.getPreferredServerUrl())
-                    .name(form.getName())
-                    .build();
-            server = serverService.createNewCustomServer(serverForm);
-        }
-        user.setPreferredServer(server);
-        userRepository.save(user);
     }
 
     @Override

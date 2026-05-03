@@ -25,9 +25,8 @@ public abstract class ConferenceEntity {
     @Column(name = "room_id", nullable = false)
     String roomId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "created_by")
-    UserEntity createdBy;
+    @Column(name = "organizer_email", nullable = false)
+    String organizerEmail;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "server_id")
