@@ -64,7 +64,7 @@ public class GoogleConferenceServiceImpl implements GoogleConferenceService {
         }
         if(userEntity.getPreferredServer()==null)
             throw new GoogleConferenceException(GoogleConferenceErrorType.TEMPORARY, MDRErrorCode.MDR_ATTRIBUTE_MISSING,new Object[]{"Preferred Server",email});
-        Optional<GoogleConferenceEntity> optionalGoogleConferenceEntity = googleConferenceRepository.findByCreatedByAndEventId(userEntity,eventId);
+        Optional<GoogleConferenceEntity> optionalGoogleConferenceEntity = googleConferenceRepository.findByOrganizerEmailAndEventId(userEntity.getEmail(),eventId);
         GoogleConferenceEntity conferenceEntity = optionalGoogleConferenceEntity.orElseGet(()->{
             GoogleConferenceEntity newEntity = googleConferenceFormToGoogleConferenceEntityReducer.reduce(form,userEntity);
             return googleConferenceRepository.save(newEntity);
@@ -77,7 +77,7 @@ public class GoogleConferenceServiceImpl implements GoogleConferenceService {
     public GoogleConferenceVo getGoogleConferenceByUserEmailAndEventId(String email, String eventId) throws GoogleConferenceException, UserException {
         GoogleConferenceVo conferenceVo = null;
         UserEntity userEntity = userService.getUserByEmail(email);
-        Optional<GoogleConferenceEntity> optionalConferenceEntity = googleConferenceRepository.findByCreatedByAndEventId(userEntity,eventId);
+        Optional<GoogleConferenceEntity> optionalConferenceEntity = googleConferenceRepository.findByOrganizerEmailAndEventId(userEntity.getEmail(),eventId);
         if(optionalConferenceEntity.isEmpty())
             throw new GoogleConferenceException(GoogleConferenceErrorType.TEMPORARY,MDRErrorCode.MDR_NOT_FOUND,new Object[]{eventId});
         else{
@@ -89,7 +89,7 @@ public class GoogleConferenceServiceImpl implements GoogleConferenceService {
     @Override
     public List<GoogleConferenceVo> getAllGoogleConferencesByUserEmail(String email) throws GoogleConferenceException, UserException {
         UserEntity userEntity = userService.getUserByEmail(email);
-        List<GoogleConferenceVo> conferenceVoList = googleConferenceRepository.findAllByCreatedBy(userEntity)
+        List<GoogleConferenceVo> conferenceVoList = googleConferenceRepository.findAllByOrganizerEmail(userEntity.getEmail())
                 .stream()
                 .map(e-> googleConferenceEntityToGoogleConferenceVoConverter.convert(e))
                 .collect(Collectors.toList());
@@ -99,7 +99,7 @@ public class GoogleConferenceServiceImpl implements GoogleConferenceService {
     @Override
     public void patchGoogleConferenceByUserEmailAndEventId(String email, String eventId, JsonPatch patches) throws GoogleConferenceException, JsonPatchException, JsonProcessingException, UserException {
         UserEntity userEntity = userService.getUserByEmail(email);
-        Optional<GoogleConferenceEntity> optionalConferenceEntity = googleConferenceRepository.findByCreatedByAndEventId(userEntity,eventId);
+        Optional<GoogleConferenceEntity> optionalConferenceEntity = googleConferenceRepository.findByOrganizerEmailAndEventId(userEntity.getEmail(),eventId);
         if(optionalConferenceEntity.isEmpty())
             throw new GoogleConferenceException(GoogleConferenceErrorType.TEMPORARY,MDRErrorCode.MDR_NOT_FOUND,new Object[]{eventId});
         GoogleConferenceEntity conferenceEntity = optionalConferenceEntity.get();
@@ -114,7 +114,7 @@ public class GoogleConferenceServiceImpl implements GoogleConferenceService {
     @Override
     public void deleteGoogleConferenceByUserEmailAndEventId(String email, String eventId) throws GoogleConferenceException, UserException {
         UserEntity userEntity = userService.getUserByEmail(email);
-        Optional<GoogleConferenceEntity> optionalConferenceEntity = googleConferenceRepository.findByCreatedByAndEventId(userEntity,eventId);
+        Optional<GoogleConferenceEntity> optionalConferenceEntity = googleConferenceRepository.findByOrganizerEmailAndEventId(userEntity.getEmail(),eventId);
         if(optionalConferenceEntity.isEmpty())
             throw new GoogleConferenceException(GoogleConferenceErrorType.TEMPORARY,MDRErrorCode.MDR_NOT_FOUND,new Object[]{email});
         else googleConferenceRepository.deleteById(optionalConferenceEntity.get().getId());

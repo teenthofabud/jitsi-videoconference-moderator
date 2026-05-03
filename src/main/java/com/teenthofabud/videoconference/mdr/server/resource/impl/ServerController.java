@@ -57,5 +57,12 @@ public class ServerController implements ServerAPI {
         return ResponseEntity.ok().build();
     }
 
+    @Override
+    @PutMapping("/preference")
+    public ResponseEntity<Void> updateServerPreference(@Valid @RequestBody ServerPreferenceForm form) throws UserException, ServerException {
+        serverService.updateServerPreference(form);
+        return ResponseEntity.ok().build();
+    }
+
 
 }

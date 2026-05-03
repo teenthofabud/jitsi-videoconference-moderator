@@ -14,5 +14,7 @@ public interface ServerService {
 
     void addServerPreference(ServerPreferenceForm preferences) throws UserException, ServerException;
 
+    void updateServerPreference(ServerPreferenceForm preferences) throws UserException, ServerException;
+
 
 }

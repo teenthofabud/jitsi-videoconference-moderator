@@ -11,5 +11,5 @@ import java.util.Optional;
 @Repository
 public interface ServerRepository extends JpaRepository<ServerEntity,Long>{
 
-    Optional<ServerEntity> findByServerUrlAndOwner(String serverUrl, UserEntity owner);
+    Optional<ServerEntity> findByOwner(UserEntity owner);
 }

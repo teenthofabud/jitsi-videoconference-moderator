@@ -28,10 +28,6 @@ public abstract class ConferenceEntity {
     @Column(name = "organizer_email", nullable = false)
     String organizerEmail;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "server_id")
-    ServerEntity server;
-
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
     ConferenceStatus status;
