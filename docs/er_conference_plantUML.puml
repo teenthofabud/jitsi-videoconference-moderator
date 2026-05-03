@@ -19,8 +19,9 @@
       +id
       +roomId
       +eventId
+      +organizerEmail
       +conferenceStatus
-      +createdBy
+
     }
 
     enum ReferenceType{
