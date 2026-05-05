@@ -5,17 +5,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
 import com.teenthofabud.videoconference.mdr.error.core.MDRErrorCode;
-import com.teenthofabud.videoconference.mdr.server.entity.ServerEntity;
-import com.teenthofabud.videoconference.mdr.server.error.ServerException;
-import com.teenthofabud.videoconference.mdr.server.form.ServerForm;
-import com.teenthofabud.videoconference.mdr.server.service.ServerService;
+import com.teenthofabud.videoconference.mdr.user.converter.UserEntityToVoConverter;
 import com.teenthofabud.videoconference.mdr.user.converter.UserFormToUserEntityConverter;
 import com.teenthofabud.videoconference.mdr.user.entity.UserEntity;
-import com.teenthofabud.videoconference.mdr.server.form.ServerPreferenceForm;
 import com.teenthofabud.videoconference.mdr.user.error.UserException;
 import com.teenthofabud.videoconference.mdr.user.form.UserForm;
 import com.teenthofabud.videoconference.mdr.user.repository.UserRepository;
 import com.teenthofabud.videoconference.mdr.user.service.UserService;
+import com.teenthofabud.videoconference.mdr.user.vo.UserVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,28 +30,44 @@ public class UserServiceImpl implements UserService {
     @Autowired
     ObjectMapper mapper;
     @Autowired
-    ServerService serverService;
+    UserEntityToVoConverter userEntityToVoConverter;
 
     @Override
-    public UserEntity createNewUser(UserForm form) throws UserException {
+    public UserVo createNewUser(UserForm form) throws UserException {
         Optional<UserEntity> existingUser = userRepository.findByEmail(form.getEmail());
-        if(existingUser.isPresent())
+        if(existingUser.isPresent()){
+            log.error("User already exists with email id: {}",form.getEmail());
             throw new UserException(MDRErrorCode.MDR_EXISTS,new Object[]{form.getEmail()});
-        com.teenthofabud.videoconference.mdr.user.entity.UserEntity userEntity = userFormToUserEntityConverter.convert(form);
+        }
+        UserEntity userEntity = userFormToUserEntityConverter.convert(form);
         userRepository.save(userEntity);
-        return userEntity;
+        return userEntityToVoConverter.convert(userEntity);
     }
 
     @Override
-    public UserEntity getUserById(Long id) throws UserException {
+    public UserVo getUserById(Long id) throws UserException {
         return userRepository.findById(id)
-                .orElseThrow(()->new UserException(MDRErrorCode.MDR_NOT_FOUND,new Object[]{id}));
+                .map(userEntityToVoConverter::convert)
+                .orElseThrow(() -> {
+                    log.error("User doesn't exist with id: {}",id);
+                    return new UserException(
+                            MDRErrorCode.MDR_NOT_FOUND,
+                            new Object[]{id}
+                    );
+                });
     }
 
     @Override
-    public UserEntity getUserByEmail(String email) throws UserException {
+    public UserVo getUserByEmail(String email) throws UserException {
         return userRepository.findByEmail(email)
-                .orElseThrow(()->new UserException(MDRErrorCode.MDR_NOT_FOUND,new Object[]{email}));
+                .map(userEntityToVoConverter::convert)
+                .orElseThrow(() -> {
+                    log.error("User doesn't exist with email: {}",email);
+                    return new UserException(
+                            MDRErrorCode.MDR_NOT_FOUND,
+                            new Object[]{email}
+                    );
+                });
     }
 
     @Override

@@ -7,15 +7,16 @@ import com.github.fge.jsonpatch.JsonPatchException;
 import com.teenthofabud.videoconference.mdr.user.entity.UserEntity;
 import com.teenthofabud.videoconference.mdr.user.error.UserException;
 import com.teenthofabud.videoconference.mdr.user.form.UserForm;
+import com.teenthofabud.videoconference.mdr.user.vo.UserVo;
 
 
 public interface UserService {
 
-    UserEntity createNewUser(UserForm form) throws UserException;
+    UserVo createNewUser(UserForm form) throws UserException;
 
-    UserEntity getUserById(Long id) throws UserException;
+    UserVo getUserById(Long id) throws UserException;
 
-    UserEntity getUserByEmail(String email) throws UserException;
+    UserVo getUserByEmail(String email) throws UserException;
 
     void patchUser(String userId, JsonPatch patches) throws UserException, JsonPatchException, JsonProcessingException;
 

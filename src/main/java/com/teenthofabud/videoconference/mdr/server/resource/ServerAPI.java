@@ -46,20 +46,22 @@ public interface ServerAPI {
 
     @Operation(method = "POST", summary = "Add new Server preference for the user", description = "addServerPreference")
     @ApiResponses( value = {
-            @ApiResponse(responseCode = "201",description = "Successfully added server preference"),
+            @ApiResponse(responseCode = "201",description = "Successfully added server preference",
+                    content = @Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = ServerVo.class))),
             @ApiResponse(responseCode = "404", description = "User not found",
                     content = @Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorVo.class)))
 
     })
-    ResponseEntity<Void> addServerPreference(ServerPreferenceForm form) throws UserException, ServerException;
+    ResponseEntity<ServerVo> addServerPreference(ServerPreferenceForm form) throws ServerException;
 
     @Operation(method = "POST", summary = "Update Server preference for the user", description = "updateServerPreference")
     @ApiResponses( value = {
-            @ApiResponse(responseCode = "201",description = "Successfully updated server preference"),
+            @ApiResponse(responseCode = "201",description = "Successfully updated server preference",
+                    content = @Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = ServerVo.class))),
             @ApiResponse(responseCode = "404", description = "User not found",
                     content = @Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorVo.class)))
 
     })
-    ResponseEntity<Void> updateServerPreference(ServerPreferenceForm form) throws UserException, ServerException;
+    ResponseEntity<ServerVo> updateServerPreference(ServerPreferenceForm form) throws ServerException;
 
 }

@@ -1,9 +1,5 @@
 package com.teenthofabud.videoconference.mdr.user.resource.impl;
 
-import com.teenthofabud.videoconference.mdr.server.error.ServerException;
-import com.teenthofabud.videoconference.mdr.user.converter.UserEntityToVoConverter;
-import com.teenthofabud.videoconference.mdr.user.entity.UserEntity;
-import com.teenthofabud.videoconference.mdr.server.form.ServerPreferenceForm;
 import com.teenthofabud.videoconference.mdr.user.vo.UserVo;
 import com.teenthofabud.videoconference.mdr.user.error.UserException;
 import com.teenthofabud.videoconference.mdr.user.form.UserForm;
@@ -25,14 +21,11 @@ public class UserController implements UserAPI {
 
     @Autowired
     UserService userService;
-    @Autowired
-    UserEntityToVoConverter userEntityToVoConverter;
 
     @Override
     @PostMapping
     public ResponseEntity<Void> createNewUser(@Valid @RequestBody UserForm form) throws UserException {
-        UserEntity userEntity = userService.createNewUser(form);
-        UserVo userVo = userEntityToVoConverter.convert(userEntity);
+        UserVo userVo = userService.createNewUser(form);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
@@ -44,10 +37,7 @@ public class UserController implements UserAPI {
     @Override
     @GetMapping("/{id}")
     public ResponseEntity<UserVo> getUserById(@PathVariable Long id) throws UserException {
-        UserEntity userEntity = userService.getUserById(id);
-        UserVo userVo = userEntityToVoConverter.convert(userEntity);
+        UserVo userVo = userService.getUserById(id);
         return ResponseEntity.ok(userVo);
     }
-
-
 }

@@ -25,5 +25,8 @@ public class ServerVo {
     @Schema(description = "Whether the server is default or custom")
     ServerType serverType;
 
+    @Schema(description = "Email of the owner of the server")
+    String ownerEmail;
+
 
 }
