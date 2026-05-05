@@ -56,7 +56,7 @@ public class ServerServiceImpl implements ServerService {
                             new Object[]{form.getEmail()}
                     );
                 });
-        Optional<ServerEntity> existingServer = serverRepository.findByOwner(user);
+        Optional<ServerEntity> existingServer = serverRepository.findByOwnerEmail(user.getEmail());
         if(existingServer.isPresent()){
             log.error("Preferred server for the user({}) already exists with server url : {}",form.getEmail(),form.getPreferredServerUrl());
             throw new ServerException(MDRErrorCode.MDR_EXISTS,new Object[]{form.getPreferredServerUrl(),user.getEmail()});
@@ -83,7 +83,7 @@ public class ServerServiceImpl implements ServerService {
                             new Object[]{form.getEmail()}
                     );
                 });
-        Optional<ServerEntity> optionalServerEntity = serverRepository.findByOwner(user);
+        Optional<ServerEntity> optionalServerEntity = serverRepository.findByOwnerEmail(user.getEmail());
         if(optionalServerEntity.isEmpty()) {
             log.error("User({}) doesn't have a preferred server yet",form.getEmail());
             throw new ServerException(MDRErrorCode.MDR_NOT_FOUND, new Object[]{user.getEmail()});
