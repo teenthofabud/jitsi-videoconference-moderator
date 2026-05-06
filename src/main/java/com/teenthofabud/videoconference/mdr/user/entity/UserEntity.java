@@ -31,9 +31,9 @@ public class UserEntity {
     @Column(name = "name", nullable = false)
     String name;
 
-    @Column(name = "reference_type", nullable = false)
-    @Enumerated(EnumType.STRING)
-    ReferenceType referenceType;
+//    @Column(name = "reference_type", nullable = false)
+//    @Enumerated(EnumType.STRING)
+//    ReferenceType referenceType;
 
     @OneToOne(mappedBy = "owner",fetch = FetchType.LAZY)
     private ServerEntity preferredServer;

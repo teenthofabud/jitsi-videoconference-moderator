@@ -25,7 +25,7 @@ public class UserVo {
     @Schema(description = "URL for the preferred server")
     String preferredServerUrl;
 
-    @Schema(description = "User reference type, eg:- GMAIL")
-    ReferenceType referenceType;
+//    @Schema(description = "User reference type, eg:- GMAIL")
+//    ReferenceType referenceType;
 
 }

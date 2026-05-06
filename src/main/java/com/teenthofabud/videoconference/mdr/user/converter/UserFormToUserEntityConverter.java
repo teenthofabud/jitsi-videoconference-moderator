@@ -14,7 +14,7 @@ public class UserFormToUserEntityConverter implements Converter<UserForm,UserEnt
             return UserEntity.builder()
                     .email(source.getEmail())
                     .name(source.getName())
-                    .referenceType(source.getReferenceType())
+//                    .referenceType(source.getReferenceType())
                     .build();
     }
 }

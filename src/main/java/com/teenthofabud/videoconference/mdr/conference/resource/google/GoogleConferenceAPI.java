@@ -19,6 +19,8 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
@@ -34,7 +36,7 @@ public interface GoogleConferenceAPI {
             ),
     })
     ResponseEntity<GoogleConferenceDataVo> createNewGoogleConference(@RequestBody(description = "Google conference form", required = true,
-            content = @Content(schema = @Schema(implementation = GoogleConferenceForm.class))) GoogleConferenceForm form) throws GoogleConferenceException, ConferenceException;
+            content = @Content(schema = @Schema(implementation = GoogleConferenceForm.class))) @Valid GoogleConferenceForm form) throws GoogleConferenceException, ConferenceException;
 
 
     @Operation(method = "GET", summary = "Get conference by ID", description = "getGoogleConferenceByUserEmailAndEventId")
@@ -43,7 +45,7 @@ public interface GoogleConferenceAPI {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Conference for given id",content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = GoogleConferenceVo.class))),
     })
-    ResponseEntity<GoogleConferenceVo> getGoogleConferenceByUserEmailAndEventId(String eventId, String email) throws ConferenceException, GoogleConferenceException;
+    ResponseEntity<GoogleConferenceVo> getGoogleConferenceByUserEmailAndEventId(String eventId, @Email String email) throws ConferenceException, GoogleConferenceException;
 
 
     @Operation(method = "POST", summary = "Get all conferences", description = "getAllConferencesByUserEmail")
@@ -52,7 +54,7 @@ public interface GoogleConferenceAPI {
             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, array = @ArraySchema(schema = @Schema(implementation = GoogleConferenceVo.class))))
     })
     @Parameter(name = "email",description = "User Email",schema = @Schema(implementation = String.class), in = ParameterIn.QUERY, required = true)
-    ResponseEntity<List<GoogleConferenceVo>> getAllGoogleConferencesByUserEmail(String userId) throws GoogleConferenceException;
+    ResponseEntity<List<GoogleConferenceVo>> getAllGoogleConferencesByUserEmail(@Email String email) throws GoogleConferenceException;
 
 
     @Operation(method = "PATCH", summary = "Update Google conference by ID", description = "patchGoogleConferenceByUserEmailAndEventIdpatchGoogleConferenceByUserEmailAndEventId")
@@ -61,7 +63,7 @@ public interface GoogleConferenceAPI {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Conference edited")
     })
-    ResponseEntity<Void> patchGoogleConferenceByUserEmailAndEventId(String eventId, String userId, @RequestBody(description = "JsonPatch", required = true,
+    ResponseEntity<Void> patchGoogleConferenceByUserEmailAndEventId(String eventId, @Email String email, @RequestBody(description = "JsonPatch", required = true,
             content = @Content(mediaType = HttpMediaType.APPLICATION_JSON_PATCH,schema = @Schema(implementation = JsonPatch.class))) JsonPatch patches) throws GoogleConferenceException, JsonPatchException, JsonProcessingException;
 
     @Operation(method = "DELETE", summary = "Delete Google conference by ID", description = "deleteGoogleConferenceByUserEmailAndEventId")
@@ -70,7 +72,7 @@ public interface GoogleConferenceAPI {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Conference deleted")
     })
-    ResponseEntity<Void> deleteGoogleConferenceByUserEmailAndEventId(String email, String eventId) throws GoogleConferenceException;
+    ResponseEntity<Void> deleteGoogleConferenceByUserEmailAndEventId(@Email String email, String eventId) throws GoogleConferenceException;
 
 
 }
