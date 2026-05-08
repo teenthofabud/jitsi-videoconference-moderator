@@ -3,14 +3,14 @@ package com.teenthofabud.videoconference.mdr.conference.resource.google.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
-import com.teenthofabud.videoconference.mdr.conference.error.ConferenceException;
 import com.teenthofabud.videoconference.mdr.conference.error.google.GoogleConferenceException;
-import com.teenthofabud.videoconference.mdr.conference.vo.google.GoogleConferenceDataVo;
 import com.teenthofabud.videoconference.mdr.conference.form.google.GoogleConferenceForm;
+import com.teenthofabud.videoconference.mdr.conference.vo.google.GoogleConferenceDataVo;
 import com.teenthofabud.videoconference.mdr.conference.resource.google.GoogleConferenceAPI;
 import com.teenthofabud.videoconference.mdr.conference.service.GoogleConferenceService;
 import com.teenthofabud.videoconference.mdr.conference.vo.google.GoogleConferenceVo;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,7 +29,7 @@ public class GoogleGoogleConferenceController implements GoogleConferenceAPI {
 
     @Override
     @PostMapping
-    public ResponseEntity<GoogleConferenceDataVo> createNewGoogleConference(@Valid @RequestBody GoogleConferenceForm form) throws GoogleConferenceException {
+    public ResponseEntity<GoogleConferenceDataVo> createNewGoogleConference(@RequestBody GoogleConferenceForm form) throws GoogleConferenceException {
         log.debug("Received request with body : {}",form);
         GoogleConferenceDataVo googleConferenceDataVo = googleConferenceService.createNewGoogleConference(form);
         return ResponseEntity.status(HttpStatus.CREATED).body(googleConferenceDataVo);
@@ -37,29 +37,29 @@ public class GoogleGoogleConferenceController implements GoogleConferenceAPI {
 
     @Override
     @GetMapping("/event/{eventId}")
-    public ResponseEntity<GoogleConferenceVo> getGoogleConferenceByUserAndEventId(@PathVariable String eventId,@RequestParam String userId) throws ConferenceException, GoogleConferenceException {
-         GoogleConferenceVo conferenceVo = googleConferenceService.getGoogleConferenceByUserAndEventId(eventId,userId);
+    public ResponseEntity<GoogleConferenceVo> getGoogleConferenceByUserEmailAndEventId(@PathVariable String eventId, @RequestParam String email) throws GoogleConferenceException {
+         GoogleConferenceVo conferenceVo = googleConferenceService.getGoogleConferenceByUserEmailAndEventId(email,eventId);
          return ResponseEntity.ok(conferenceVo);
     }
 
     @Override
     @GetMapping
-    public ResponseEntity<List<GoogleConferenceVo>> getAllGoogleConferencesByUser(@RequestParam String userId) throws GoogleConferenceException {
-        List<GoogleConferenceVo> conferenceVoList = googleConferenceService.getAllGoogleConferencesByUserId(userId);
+    public ResponseEntity<List<GoogleConferenceVo>> getAllGoogleConferencesByUserEmail(@RequestParam String email) throws GoogleConferenceException {
+        List<GoogleConferenceVo> conferenceVoList = googleConferenceService.getAllGoogleConferencesByUserEmail(email);
         return ResponseEntity.ok(conferenceVoList);
     }
 
     @Override
     @PatchMapping("/event/{eventId}")
-    public ResponseEntity<Void> patchGoogleConferenceByUserAndEventId(@PathVariable String eventId, @RequestParam String userId, @RequestBody JsonPatch patches) throws GoogleConferenceException, JsonPatchException, JsonProcessingException {
-        googleConferenceService.patchGoogleConferenceByUserAndEventId(eventId,userId,patches);
+    public ResponseEntity<Void> patchGoogleConferenceByUserEmailAndEventId(@PathVariable String eventId, @RequestParam String email, @RequestBody JsonPatch patches) throws GoogleConferenceException, JsonPatchException, JsonProcessingException {
+        googleConferenceService.patchGoogleConferenceByUserEmailAndEventId(email,eventId,patches);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @Override
     @DeleteMapping("/event/{eventId}")
-    public ResponseEntity<Void> deleteGoogleConferenceByUserAndEventId(@PathVariable String eventId,@RequestParam String userId) throws GoogleConferenceException {
-        googleConferenceService.deleteGoogleConferenceByUserAndEventId(eventId,userId);
+    public ResponseEntity<Void> deleteGoogleConferenceByUserEmailAndEventId(@PathVariable String email, @RequestParam String eventId) throws GoogleConferenceException {
+        googleConferenceService.deleteGoogleConferenceByUserEmailAndEventId(email,eventId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

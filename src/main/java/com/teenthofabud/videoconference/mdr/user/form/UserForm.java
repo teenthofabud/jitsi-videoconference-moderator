@@ -5,6 +5,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.util.List;
+
 @EqualsAndHashCode
 @ToString
 @NoArgsConstructor
@@ -13,22 +15,16 @@ import lombok.*;
 @Setter
 public class UserForm {
 
-    @Schema(description = "Identifier for the user",required = true)
-    @NotNull(message = "user id can't be null")
-    String userId;
+    @Schema(description = "Email of the user",required = true)
+    @NotNull(message = "email can't be null")
+    String email;
 
     @Schema(description = "Name of the user",required = true)
     @NotNull(message = "name can't be null")
     String name;
 
-    @Schema(description = "User reference type, eg:- GMAIL",required = true)
-    @NotNull(message = "reference type can't be null")
-    ReferenceType referenceType;
+//    @Schema(description = "User reference type, eg:- GMAIL",required = true)
+//    @NotNull(message = "reference type can't be null")
+//    ReferenceType referenceType;
 
-    @Schema(description = "Server preference type whether DEFAULT or CUSTOM", required = true, allowableValues = {"DEFAULT","CUSTOM"})
-    String serverPreferenceType;
-
-    @Schema(description = "URL of the server which user prefers for conducting the conference ",required = true)
-    @NotNull(message = "preferred server URL can't be null")
-    String preferredServerUrl;
 }

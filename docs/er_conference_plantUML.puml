@@ -1,60 +1,47 @@
-@startuml
+    @startuml
 
-class User {
-  +id
-  +name
-  +userId
-  +userIdHash
-  +referenceType
-}
+    class User {
+      +id
+      +name
+      +email
+    }
 
-class Server {
-  +id
-  +name
-  +serverUrl
-  +serverPreferences
-}
+    class Server {
+      +id
+      +name
+      +serverUrl
+      +severType
+      +userId
+    }
 
-class Meeting {
-  +id
-  +roomId
-  +eventId
-  +status
-  +serverPreferenceId
-}
+    class Conference {
+      +id
+      +roomId
+      +eventId
+      +organizerEmail
+      +conferenceStatus
 
-class ServerPreference {
-  +id
-  +serverUrl
-  +userIdHash
-  +sevrerPreferenceType
-}
+    }
 
-enum ReferenceType{
- +Email
-}
+    enum ServerType{
+     +Custom
+     +Default
+    }
 
-enum ServerPreferenceType{
- +Custom
- +Default
-}
+    enum ConferenceStatus{
+     +Active
+     +Pending
+     +Cancelled
+    }
 
-User --> ReferenceType : reference type
-
-ServerPreference --> ServerPreferenceType : preference type
-
-User "1" <..> "N" Meeting : creates
-/'//cardinality changes if relationship becomes participates'/
-Meeting "N" <..> "1" Server : hosted on
-
-User "1" <..> "1" ServerPreference : has
-ServerPreference "N" <--> "1" Server : requires
-
-@enduml
+    Server --> ServerType : server type
 
 
 
+    User "1 " <..> "1 " Server : brings
 
+    Conference --> ConferenceStatus : conference status
 
+    @enduml
 
 

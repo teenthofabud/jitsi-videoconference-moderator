@@ -1,6 +1,5 @@
 package com.teenthofabud.videoconference.mdr.user.resource.impl;
 
-import com.teenthofabud.videoconference.mdr.serverpreference.error.ServerPreferenceException;
 import com.teenthofabud.videoconference.mdr.user.vo.UserVo;
 import com.teenthofabud.videoconference.mdr.user.error.UserException;
 import com.teenthofabud.videoconference.mdr.user.form.UserForm;
@@ -19,12 +18,13 @@ import java.net.URI;
 @RestController
 @RequestMapping("/user")
 public class UserController implements UserAPI {
+
     @Autowired
     UserService userService;
 
     @Override
     @PostMapping
-    public ResponseEntity<Void> createNewUser(@Valid @RequestBody UserForm form) throws UserException, ServerPreferenceException {
+    public ResponseEntity<Void> createNewUser(@Valid @RequestBody UserForm form) throws UserException {
         UserVo userVo = userService.createNewUser(form);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -37,7 +37,7 @@ public class UserController implements UserAPI {
     @Override
     @GetMapping("/{id}")
     public ResponseEntity<UserVo> getUserById(@PathVariable Long id) throws UserException {
-        UserVo userDto = userService.getUserById(id);
-        return ResponseEntity.ok(userDto);
+        UserVo userVo = userService.getUserById(id);
+        return ResponseEntity.ok(userVo);
     }
 }

@@ -1,8 +1,8 @@
 package com.teenthofabud.videoconference.mdr.server.resource.impl;
 
+import com.teenthofabud.videoconference.mdr.server.form.ServerPreferenceForm;
 import com.teenthofabud.videoconference.mdr.server.vo.ServerVo;
 import com.teenthofabud.videoconference.mdr.server.error.ServerException;
-import com.teenthofabud.videoconference.mdr.server.form.ServerForm;
 import com.teenthofabud.videoconference.mdr.server.resource.ServerAPI;
 import com.teenthofabud.videoconference.mdr.server.service.ServerService;
 import jakarta.validation.Valid;
@@ -23,9 +23,16 @@ public class ServerController implements ServerAPI {
     ServerService serverService;
 
     @Override
+    @GetMapping("/{serverId}")
+    public ResponseEntity<ServerVo> getServerById(@PathVariable Long serverId) throws ServerException {
+        ServerVo serverVo = serverService.getServerById(serverId);
+        return ResponseEntity.ok(serverVo);
+    }
+
+    @Override
     @PostMapping
-    public ResponseEntity<Void> createNewServer(@Valid @RequestBody ServerForm form) throws ServerException {
-        ServerVo serverVo = serverService.createNewServer(form);
+    public ResponseEntity<ServerVo> addServerPreference(@Valid @RequestBody ServerPreferenceForm form) throws ServerException {
+        ServerVo serverVo = serverService.addServerPreference(form);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
@@ -35,11 +42,14 @@ public class ServerController implements ServerAPI {
     }
 
     @Override
-    @GetMapping("/{serverID}")
-    public ResponseEntity<ServerVo> getServerByID(@PathVariable Long serverID) throws ServerException {
-        ServerVo serverVo = serverService.getServerByID(serverID);
-        return ResponseEntity.ok(serverVo);
+    @PutMapping
+    public ResponseEntity<ServerVo> updateServerPreference(@Valid @RequestBody ServerPreferenceForm form) throws ServerException {
+        ServerVo serverVo = serverService.updateServerPreference(form);
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(serverVo.getId())
+                .toUri();
+        return ResponseEntity.created(location).build();
     }
-
-
 }

@@ -14,5 +14,6 @@ public class ServerFormToEntityConverter implements Converter<ServerForm, Server
                 .name(source.getName())
                 .serverUrl(source.getServerUrl())
                 .build();
+
     }
 }
