@@ -6,7 +6,3 @@ spring:
   driverClassName: ${JITSI_DB_DRIVER_CLASS}
  jpa:
   database-platform: ${JITSI_DB_DIALECT}
-
-auth0:
- domain: ${AUTH0_DOMAIN}
- audience: ${AUTH0_API_IDENTIFIER}
