@@ -3,7 +3,7 @@ server:
 
 auth0:
  domain: ${AUTH0_DOMAIN}
- audience: toab-jitsi
+ audience: ${AUTH0_API_IDENTIFIER}
  dpop-mode: DISABLED
 
 spring:
