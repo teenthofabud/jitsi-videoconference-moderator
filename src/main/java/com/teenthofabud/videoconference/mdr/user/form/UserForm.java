@@ -23,8 +23,4 @@ public class UserForm {
     @NotNull(message = "name can't be null")
     String name;
 
-//    @Schema(description = "User reference type, eg:- GMAIL",required = true)
-//    @NotNull(message = "reference type can't be null")
-//    ReferenceType referenceType;
-
 }

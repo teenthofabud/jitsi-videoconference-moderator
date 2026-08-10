@@ -1,4 +1,4 @@
-name: Java CI Test with Maven
+name: Deploy moderator service to AWS Lambda
 
 on:
   push:

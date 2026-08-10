@@ -3,7 +3,8 @@ server:
 
 auth0:
  domain: ${AUTH0_DOMAIN}
- audience: ${AUTH0_API_IDENTIFIER}
+ audience: toab-jitsi
+ dpop-mode: DISABLED
 
 spring:
  application:
@@ -15,6 +16,7 @@ spring:
   username: ${JITSI_DB_USERNAME}
   password: ${JITSI_DB_PASSWORD}
   driverClassName: ${JITSI_DB_DRIVER_CLASS}
+
  sql:
   init:
    mode: never
@@ -22,7 +24,7 @@ spring:
   database-platform: ${JITSI_DB_DIALECT}
   defer-datasource-initialization: true
   hibernate:
-   ddl-auto: validate
+   ddl-auto: create
   show-sql: true
   properties:
    hibernate:
@@ -40,4 +42,10 @@ logging:
  level:
   org.hibernate.orm.jdbc.bind: trace
   org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+  com.auth0: TRACE
+  com.auth0.spring: TRACE
+  com.auth0.spring.security: TRACE
+  org.springframework.security: TRACE
+
+
 

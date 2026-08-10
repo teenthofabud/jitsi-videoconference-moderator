@@ -15,7 +15,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 
 @RestController
-@RequestMapping("/server")
+@RequestMapping("/api/server")
 @Slf4j
 public class ServerController implements ServerAPI {
 

@@ -1,7 +1,5 @@
 package com.teenthofabud.videoconference.mdr.user.resource;
 
-import com.teenthofabud.videoconference.mdr.server.error.ServerException;
-import com.teenthofabud.videoconference.mdr.server.form.ServerPreferenceForm;
 import com.teenthofabud.videoconference.mdr.user.vo.UserVo;
 import com.teenthofabud.videoconference.mdr.user.error.UserException;
 import com.teenthofabud.videoconference.mdr.user.form.UserForm;
@@ -15,7 +13,9 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -31,6 +31,15 @@ public interface UserAPI {
     })
     ResponseEntity<Void> createNewUser(@RequestBody(description = "User form", required = true,
             content = @Content(schema = @Schema(implementation = UserForm.class))) UserForm form) throws UserException;
+
+    @Operation(method = "POST", summary = "Guest user creation", description = "createNewGuestUser")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "User created"),
+            @ApiResponse(
+                    responseCode = "409", description = "User already created",
+                    content = @Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorVo.class)))
+    })
+    ResponseEntity<UserVo> createNewGuestUser (@Valid @org.springframework.web.bind.annotation.RequestBody UserForm form) throws UserException;
 
     @Operation(method = "GET", summary = "Get User By Id", description = "getUserById")
     @Parameter(description = "User ID (PK)",name = "userID",required = true,in = ParameterIn.PATH, schema = @Schema(implementation = Long.class))

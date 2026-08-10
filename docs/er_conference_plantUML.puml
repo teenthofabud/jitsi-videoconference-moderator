@@ -4,6 +4,7 @@
       +id
       +name
       +email
+      +managed
     }
 
     class Server {

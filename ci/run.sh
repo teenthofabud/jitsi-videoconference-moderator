@@ -75,7 +75,9 @@ if [ "$USE_SAM" = "true" ]; then
     "JITSI_DB_USERNAME": "$JITSI_DB_USERNAME",
     "JITSI_DB_PASSWORD": "$JITSI_DB_PASSWORD",
     "JITSI_DB_DRIVER_CLASS": "$JITSI_DB_DRIVER_CLASS",
-    "JITSI_DB_DIALECT": "$JITSI_DB_DIALECT"
+    "JITSI_DB_DIALECT": "$JITSI_DB_DIALECT",
+    "AUTH0_DOMAIN":"$AUTH0_DOMAIN",
+    "AUTH0_API_IDENTIFIER":"$AUTH0_API_IDENTIFIER"
   }
 }
 EOF
@@ -109,4 +111,4 @@ while IFS= read -r line; do
 done < "$ENV_FILE"
 
 echo "Running Spring Boot (env=$ENV)"
-exec mvn spring-boot:run
+exec mvn spring-boot:run -Dspring-boot.run.jvmArguments="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"

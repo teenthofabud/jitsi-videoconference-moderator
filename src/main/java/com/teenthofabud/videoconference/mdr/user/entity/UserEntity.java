@@ -28,12 +28,11 @@ public class UserEntity {
     @Column(name = "email", nullable = false, unique = true)
     String email;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = true)
     String name;
 
-//    @Column(name = "reference_type", nullable = false)
-//    @Enumerated(EnumType.STRING)
-//    ReferenceType referenceType;
+    @Column(name = "is_managed", nullable = false)
+    Boolean managed;
 
     @OneToOne(mappedBy = "owner",fetch = FetchType.LAZY)
     private ServerEntity preferredServer;
