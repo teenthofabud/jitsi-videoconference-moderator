@@ -33,13 +33,14 @@ public class UserServiceImpl implements UserService {
     UserEntityToVoConverter userEntityToVoConverter;
 
     @Override
-    public UserVo createNewUser(UserForm form) throws UserException {
+    public UserVo createNewUser(UserForm form, Boolean isManaged) throws UserException {
         Optional<UserEntity> existingUser = userRepository.findByEmail(form.getEmail());
         if(existingUser.isPresent()){
             log.error("User already exists with email id: {}",form.getEmail());
             throw new UserException(MDRErrorCode.MDR_EXISTS,new Object[]{form.getEmail()});
         }
         UserEntity userEntity = userFormToUserEntityConverter.convert(form);
+        userEntity.setManaged(isManaged);
         userRepository.save(userEntity);
         return userEntityToVoConverter.convert(userEntity);
     }

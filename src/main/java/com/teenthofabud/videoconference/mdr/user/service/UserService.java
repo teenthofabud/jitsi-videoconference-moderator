@@ -12,7 +12,7 @@ import com.teenthofabud.videoconference.mdr.user.vo.UserVo;
 
 public interface UserService {
 
-    UserVo createNewUser(UserForm form) throws UserException;
+    UserVo createNewUser(UserForm form, Boolean isManaged) throws UserException;
 
     UserVo getUserById(Long id) throws UserException;
 
