@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.4.5</version>
+		<version>4.0.0</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.teenthofabud</groupId>
@@ -71,6 +71,11 @@
 			<artifactId>aws-serverless-java-container-springboot3</artifactId>
 			<version>2.0.1</version>
 		</dependency>
+		<!-- Spring cloud function initializes the custom runtime context and keeps the event loop running-->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-function-adapter-aws</artifactId>
+		</dependency>
 		<!-- open api -->
 		<dependency>
 			<groupId>org.springdoc</groupId>
@@ -97,6 +102,17 @@
 			<version>${jsonpatch.version}</version>
 		</dependency>
 	</dependencies>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>2025.0.0</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 	<profiles>
 		<profile>
 			<id>standard</id>
