@@ -14,6 +14,7 @@ import java.io.OutputStream;
 import java.io.InputStream;
 
 @Slf4j
+@Deprecated //This is useful only when using an AWS managed runtime for Java and not custom runtimes like linux with GraalVM binary
 public class LambdaContainerHandler implements RequestStreamHandler {
     private static SpringBootLambdaContainerHandler<AwsProxyRequest, AwsProxyResponse> handler;
     static {
