@@ -69,7 +69,7 @@
 		<dependency>
 			<groupId>com.amazonaws.serverless</groupId>
 			<artifactId>aws-serverless-java-container-springboot3</artifactId>
-			<version>2.0.1</version>
+			<version>3.0.0</version>
 		</dependency>
 		<!-- Spring cloud function initializes the custom runtime context and keeps the event loop running-->
 		<dependency>
