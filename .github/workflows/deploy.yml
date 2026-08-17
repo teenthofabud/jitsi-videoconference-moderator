@@ -15,7 +15,7 @@ on:
         default: dev
 
 jobs:
-  deploy-aiven-db-ping-service-lambda:
+  deploy-jitsi-moderator-service-lambda:
     runs-on: ubuntu-latest
 
     permissions:
