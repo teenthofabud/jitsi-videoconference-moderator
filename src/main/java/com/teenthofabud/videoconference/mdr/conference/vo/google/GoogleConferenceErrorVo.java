@@ -1,20 +1,28 @@
 package com.teenthofabud.videoconference.mdr.conference.vo.google;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import com.teenthofabud.videoconference.mdr.vo.ErrorVo;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
-@NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@AllArgsConstructor
-@Builder
-public class GoogleConferenceErrorVo {
+@SuperBuilder
+public class GoogleConferenceErrorVo extends ErrorVo {
 
     String authenticationUrl;
     String error;
-    String message;
+
+    public GoogleConferenceErrorVo(String authenticationUrl, String error, String message) {
+        super(message,error);
+        this.authenticationUrl = authenticationUrl;
+        this.error = error;
+    }
+
+    public GoogleConferenceErrorVo(String error, String message) {
+        super(message,error);
+        this.error = error;
+    }
+
 
 }

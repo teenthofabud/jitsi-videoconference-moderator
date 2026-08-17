@@ -1,1 +1,0 @@
-insert into conference_entity (status,room_id,server_url,user_id) values(0,'QuiteALotOfSugar','https://meet.jit.si','shahadneeliyatt786@gmail.com');

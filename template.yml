@@ -1,0 +1,52 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Jitsi Video Conference Moderator
+
+Globals:
+  Api:
+    # API Gateway regional endpoints
+    EndpointConfiguration: REGIONAL
+
+Parameters:
+  JITSI_DB_URL:
+    Type : String
+  JITSI_DB_USERNAME:
+    Type: String
+  JITSI_DB_DRIVER_CLASS:
+    Type: String
+  JITSI_DB_PASSWORD:
+    Type: String
+  JITSI_DB_DIALECT:
+    Type: String
+
+Resources:
+  MainFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: com.teenthofabud.videoconference.mdr.configuration.LambdaContainerHandler::handleRequest
+      Runtime: java21
+      CodeUri: .
+      MemorySize: 1512
+      Policies: AWSLambdaBasicExecutionRole
+      Timeout: 60
+      Events:
+        HttpApiEvent:
+          Type: HttpApi
+          Properties:
+            TimeoutInMillis: 20000
+            PayloadFormatVersion: '1.0'
+      Environment:
+        Variables:
+          JITSI_DB_URL : !Ref JITSI_DB_URL
+          JITSI_DB_USERNAME : !Ref JITSI_DB_USERNAME
+          JITSI_DB_DRIVER_CLASS : !Ref JITSI_DB_DRIVER_CLASS
+          JITSI_DB_PASSWORD : !Ref JITSI_DB_PASSWORD
+          JITSI_DB_DIALECT: !Ref JITSI_DB_DIALECT
+
+
+Outputs:
+  VideoConferenceModeratorApi:
+    Description: URL for application
+    Value: !Sub 'https://${ServerlessHttpApi}.execute-api.${AWS::Region}.amazonaws.com/'
+    Export:
+      Name: VideoConferenceModeratorApi

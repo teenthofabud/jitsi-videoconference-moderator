@@ -1,0 +1,5 @@
+#!/bin/sh
+
+cd ${LAMBDA_TASK_ROOT:-.}
+
+./jitsi-videoconference-moderator -Dlogging.level.org.springframework=INFO -Dlogging.level.com.amazonaws.serverless.proxy.spring=INFO

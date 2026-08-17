@@ -1,0 +1,37 @@
+package com.teenthofabud.videoconference.mdr.configuration;
+
+import com.amazonaws.serverless.exceptions.ContainerInitializationException;
+import com.amazonaws.serverless.proxy.model.AwsProxyRequest;
+import com.amazonaws.serverless.proxy.model.AwsProxyResponse;
+import com.amazonaws.serverless.proxy.spring.SpringBootLambdaContainerHandler;
+import com.amazonaws.services.lambda.runtime.Context;
+import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
+import com.teenthofabud.videoconference.mdr.JitsiConferenceModeratorApplication;
+import lombok.extern.slf4j.Slf4j;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.InputStream;
+
+@Slf4j
+@Deprecated //This is useful only when using an AWS managed runtime for Java and not custom runtimes like linux with GraalVM binary
+public class LambdaContainerHandler implements RequestStreamHandler {
+    private static SpringBootLambdaContainerHandler<AwsProxyRequest, AwsProxyResponse> handler;
+    static {
+        try {
+            handler = SpringBootLambdaContainerHandler.getAwsProxyHandler(JitsiConferenceModeratorApplication.class);
+            // If you are using HTTP APIs with the version 2.0 of the proxy model, use the getHttpApiV2ProxyHandler
+            // method: handler = SpringBootLambdaContainerHandler.getHttpApiV2ProxyHandler(Application.class);
+        } catch (ContainerInitializationException e) {
+            // if we fail here. We re-throw the exception to force another cold start
+            log.error("Failed to initialize Lambda container : ",e);
+            throw new RuntimeException("Could not initialize Spring Boot application", e);
+        }
+    }
+
+    @Override
+    public void handleRequest(InputStream inputStream, OutputStream outputStream, Context context)
+            throws IOException {
+        handler.proxyStream(inputStream, outputStream, context);
+    }
+}

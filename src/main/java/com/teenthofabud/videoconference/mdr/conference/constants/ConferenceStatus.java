@@ -3,39 +3,25 @@ package com.teenthofabud.videoconference.mdr.conference.constants;
 import lombok.Getter;
 import lombok.experimental.FieldNameConstants;
 
+import java.util.Arrays;
 import java.util.NoSuchElementException;
 
 @Getter
 @FieldNameConstants(onlyExplicitlyIncluded = true)
 public enum ConferenceStatus {
 
-    ACTIVE(0),
-    INACTIVE(1);
+    ACTIVE,
+    PENDING,
+    CANCELLED;
 
     @Override
     public String toString() {
         return name();
     }
 
-    private Integer ordinal;
+    public static ConferenceStatus getByName(String name) throws NoSuchElementException {
 
-    ConferenceStatus(Integer ordinal) {
-        this.ordinal = ordinal;
-    }
-
-    public static ConferenceStatus getByOrdinal(Integer ordinal) throws NoSuchElementException {
-        ConferenceStatus x = null;
-        for(ConferenceStatus t : ConferenceStatus.values()) {
-            if(t.getOrdinal().compareTo(ordinal) == 0) {
-                x = t;
-                break;
-            }
-        }
-        if(x != null) {
-            return x;
-        } else {
-            throw new NoSuchElementException("No Conference Status available by ordinal: " + ordinal);
-        }
+        return Arrays.stream(ConferenceStatus.values()).filter(e->e.name().equals(name)).findFirst().orElseThrow(()-> new NoSuchElementException("No Conference status available by name : "+name));
     }
 
 }

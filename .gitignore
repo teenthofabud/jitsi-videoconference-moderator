@@ -6,3 +6,6 @@ target/
 .mvn/
 mvnw.cmd
 mvnw
+.aws-sam/
+.env*
+!.env.template
