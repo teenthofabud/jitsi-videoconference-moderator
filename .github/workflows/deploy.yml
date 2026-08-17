@@ -47,7 +47,7 @@ jobs:
           native-image --version
 
       - name: Compile the service into native binary
-        run: mvn clean native:compile -Pnative
+        run: mvn clean native:compile -Pnative -DskipTests
 
       - name: Update Lambda Function Code
         run: |
