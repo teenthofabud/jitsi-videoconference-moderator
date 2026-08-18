@@ -176,9 +176,7 @@
 								<buildArg>--enable-url-protocols=http</buildArg>
 								<buildArg>-march=compatibility</buildArg>
 								<buildArg>-J-Xmx6g</buildArg>
-								<!-- Strips debug symbols and local variable table info -->
-								<buildArg>-H:-IncludeLocals</buildArg>
-								<buildArg>-H:±RemoveSaturatedTypeFlows</buildArg>
+								<buildArg>-H:GenerateDebugInfo=0</buildArg>
 							</buildArgs>
 						</configuration>
 						<executions>
