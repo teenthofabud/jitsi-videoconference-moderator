@@ -17,7 +17,6 @@
 		<java.version>21</java.version>
 		<googleapi.version>v3-rev20220715-2.0.0</googleapi.version>
 		<openapi.version>3.0.0</openapi.version> <!-- FIXED: Upgraded to 3.0.0 for Spring Boot 4 compatibility -->
-		<gson.version>2.9.1</gson.version>
 		<jsonpatch.version>1.13</jsonpatch.version>
 		<hibernate.validator.version>8.0.1.Final</hibernate.validator.version>
 	</properties>
@@ -29,12 +28,6 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-devtools</artifactId>
-			<scope>runtime</scope>
-			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>com.auth0</groupId>
@@ -51,11 +44,6 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>org.hibernate.validator</groupId>
 			<artifactId>hibernate-validator</artifactId>
 			<version>${hibernate.validator.version}</version>
@@ -65,11 +53,6 @@
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 			<version>42.7.7</version>
-		</dependency>
-		<dependency>
-			<groupId>com.amazonaws.serverless</groupId>
-			<artifactId>aws-serverless-java-container-springboot4</artifactId>
-			<version>3.0.0</version>
 		</dependency>
 		<!-- Spring cloud function initializes the custom runtime context and keeps the event loop running-->
 		<dependency>
@@ -81,19 +64,6 @@
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
 			<version>${openapi.version}</version>
-		</dependency>
-		<!-- gson for JSON conversions -->
-		<dependency>
-			<groupId>com.google.code.gson</groupId>
-			<artifactId>gson</artifactId>
-			<version>${gson.version}</version>
-		</dependency>
-		<!-- calendar API -->
-		<!-- https://mvnrepository.com/artifact/com.google.apis/google-api-services-calendar -->
-		<dependency>
-			<groupId>com.google.apis</groupId>
-			<artifactId>google-api-services-calendar</artifactId>
-			<version>${googleapi.version}</version>
 		</dependency>
 		<!-- json patch -->
 		<dependency>
