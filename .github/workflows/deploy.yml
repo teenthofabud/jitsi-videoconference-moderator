@@ -52,7 +52,7 @@ jobs:
 
       - name: Update Lambda Function Code via S3
         run: |
-          ZIP_FILE=$(find target -maxdepth 1 -name "function.zip" | head -n 1)
+          ZIP_FILE=$(find target -maxdepth 1 -name "*-native-zip.zip" | head -n 1)
           echo "Found deployment package: $ZIP_FILE"
 
           S3_BUCKET="${{ vars.S3_MODERATOR_DEPLOYMENT_BUCKET }}-${{ inputs.environment }}-${{ secrets.AWS_ACCOUNT_ID }}-${{ vars.AWS_REGION }}-an"
