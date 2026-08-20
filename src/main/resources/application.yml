@@ -24,7 +24,7 @@ spring:
   database-platform: ${JITSI_DB_DIALECT}
   defer-datasource-initialization: true
   hibernate:
-   ddl-auto: create
+   ddl-auto: none
   show-sql: true
   properties:
    hibernate:
