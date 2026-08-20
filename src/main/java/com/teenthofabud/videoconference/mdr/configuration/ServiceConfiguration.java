@@ -34,5 +34,10 @@ public class ServiceConfiguration {
         return messageSource;
     }
 
+    @Bean
+    public ObjectMapper objectMapper() {
+        return new ObjectMapper();
+    }
+
 
 }
