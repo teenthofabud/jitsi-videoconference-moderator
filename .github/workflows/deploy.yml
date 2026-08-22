@@ -92,16 +92,23 @@ jobs:
           java -agentlib:native-image-agent=config-output-dir="$CONFIG_DIR" -jar "$JAR_PATH" &
           APP_PID=$!
           # Wait a few seconds for Spring Boot to fully start up
-          sleep 15
+          sleep 20
           # Gracefully stop the application to flush the JSON files out
           kill -SIGTERM $APP_PID
           wait $APP_PID || true
 
       - name: Verify Tracing Output
         run: find src/main/resources/META-INF/native-image -type f
+        
+      - name: Archive GraalVM Tracing JSONs
+        uses: actions/upload-artifact@v4
+        with:
+          name: graalvm-tracing-jsons
+          path: |
+            src/main/resources/META-INF/native-image/**/*.json
 
       - name: Compile the service into native binary
-        run: mvn clean native:compile -Pnative -DskipTests
+        run: mvn native:compile -Pnative -DskipTests
 
       - name: Update Lambda Function Code via S3
         run: |
@@ -117,5 +124,5 @@ jobs:
           aws lambda update-function-code \
             --function-name ${{ vars.LAMBDA_FUNCTION_NAME }}-${{ inputs.environment }} \
             --s3-bucket "$S3_BUCKET" \
-            --s3-key "$S3_KEY"
+            --s3-key "$S3_KEY" --output none
 
