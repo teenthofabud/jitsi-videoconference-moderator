@@ -98,7 +98,7 @@ jobs:
           wait $APP_PID || true
 
       - name: Verify Tracing Output
-        run: ls -la src/main/resources/META-INF/native-image/**/
+        run: find src/main/resources/META-INF/native-image -type f
 
       - name: Compile the service into native binary
         run: mvn clean native:compile -Pnative -DskipTests
