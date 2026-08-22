@@ -99,7 +99,7 @@ jobs:
 
       - name: Verify Tracing Output
         run: find src/main/resources/META-INF/native-image -type f
-        
+
       - name: Archive GraalVM Tracing JSONs
         uses: actions/upload-artifact@v4
         with:
@@ -124,5 +124,6 @@ jobs:
           aws lambda update-function-code \
             --function-name ${{ vars.LAMBDA_FUNCTION_NAME }}-${{ inputs.environment }} \
             --s3-bucket "$S3_BUCKET" \
-            --s3-key "$S3_KEY" --output none
+            --s3-key "$S3_KEY" \
+            --query "{Name: FunctionName, Runtime: Runtime, Memory: MemorySize, CodeSize: CodeSize, LastModified: LastModified, RevisionId: RevisionId}"
 
