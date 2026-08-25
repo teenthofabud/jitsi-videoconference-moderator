@@ -62,53 +62,8 @@ jobs:
           java --version
           native-image --version
 
-      # build normal jar for running the tracing agent to generate reachability-metadata
-      - name: Build JAR Package
-        run: mvn clean package -DskipTests
-
-      # run the jar with the tracing Agent against the local container database
-      - name: Run GraalVM Tracing Agent
-        env:
-          JITSI_DB_URL: jdbc:postgresql://localhost:5432/testdb
-          JITSI_DB_USERNAME: testuser
-          JITSI_DB_PASSWORD: testpassword
-          JITSI_DB_DIALECT: org.hibernate.dialect.PostgreSQLDialect
-          JITSI_DB_DRIVER_CLASS: org.postgresql.Driver
-          AUTH0_API_IDENTIFIER: test
-          AUTH0_DOMAIN: test.com
-        run: |
-          # Start the app with the tracing agent in the background
-          ARTIFACT_ID=$(mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout)
-          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
-          GROUP_ID=$(mvn help:evaluate -Dexpression=project.groupId -q -DforceStdout)
-          
-          JAR_PATH="target/${ARTIFACT_ID}-${VERSION}.jar"
-          CONFIG_DIR="src/main/resources/META-INF/native-image/${GROUP_ID}/${ARTIFACT_ID}"
-  
-          echo "Running agent for: $JAR_PATH"
-          echo "Output config dir: $CONFIG_DIR"
-  
-          # Run the app with the tracing agent in the background
-          java -agentlib:native-image-agent=config-output-dir="$CONFIG_DIR" -jar "$JAR_PATH" &
-          APP_PID=$!
-          # Wait a few seconds for Spring Boot to fully start up
-          sleep 20
-          # Gracefully stop the application to flush the JSON files out
-          kill -SIGTERM $APP_PID
-          wait $APP_PID || true
-
-      - name: Verify Tracing Output
-        run: find src/main/resources/META-INF/native-image -type f
-
-      - name: Archive GraalVM Tracing JSONs
-        uses: actions/upload-artifact@v4
-        with:
-          name: graalvm-tracing-jsons
-          path: |
-            src/main/resources/META-INF/native-image/**/*.json
-
       - name: Compile the service into native binary
-        run: mvn native:compile -Pnative -Dnative.max.memory=-J-Xmx10g -DskipTests
+        run: mvn clean native:compile -Pnative -DskipTests
 
       - name: Update Lambda Function Code via S3
         run: |
