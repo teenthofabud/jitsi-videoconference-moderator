@@ -18,14 +18,26 @@ Parameters:
     Type: String
   JITSI_DB_DIALECT:
     Type: String
+  AUTH0_API_IDENTIFIER:
+    Type: String
+  AUTH0_DOMAIN:
+    Type: String
+  AWS_REGION:
+    Type: String
 
 Resources:
   MainFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: com.teenthofabud.videoconference.mdr.configuration.LambdaContainerHandler::handleRequest
-      Runtime: java21
-      CodeUri: .
+      Handler: bootstrap
+      Runtime: provided.al2023
+      RuntimeManagementConfig:
+        UpdateRuntimeOn: Auto
+        SnapStart:
+          ApplyOn: None
+      FunctionUrlConfig:
+        AuthType: NONE
+      CodeUri: ./target/jitsi-videoconference-moderator-0.1.0-SNAPSHOT-native-zip.zip
       MemorySize: 1512
       Policies: AWSLambdaBasicExecutionRole
       Timeout: 60
@@ -35,6 +47,9 @@ Resources:
           Properties:
             TimeoutInMillis: 20000
             PayloadFormatVersion: '1.0'
+      Layers:
+        # AWS Lambda Web Adaptor Layer
+        - !Sub arn:aws:lambda:${AWS::Region}:753240598075:layer:LambdaAdapterLayerX86:23
       Environment:
         Variables:
           JITSI_DB_URL : !Ref JITSI_DB_URL
@@ -42,6 +57,9 @@ Resources:
           JITSI_DB_DRIVER_CLASS : !Ref JITSI_DB_DRIVER_CLASS
           JITSI_DB_PASSWORD : !Ref JITSI_DB_PASSWORD
           JITSI_DB_DIALECT: !Ref JITSI_DB_DIALECT
+          AUTH0_API_IDENTIFIER: !Ref AUTH0_API_IDENTIFIER
+          AUTH0_DOMAIN: !AUTH0_DOMAIN
+          AWS_REGION: !AWS_REGION
 
 
 Outputs:

@@ -9,14 +9,13 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.teenthofabud</groupId>
-	<artifactId>jitsi-conference-moderator</artifactId>
+	<artifactId>jitsi-videoconference-moderator</artifactId>
 	<version>0.1.0-SNAPSHOT</version>
 	<name>jitsi-videoconference-moderator</name>
 	<description>Jitsi Conference Moderator</description>
 	<properties>
 		<java.version>21</java.version>
-		<googleapi.version>v3-rev20220715-2.0.0</googleapi.version>
-		<openapi.version>3.0.0</openapi.version> <!-- FIXED: Upgraded to 3.0.0 for Spring Boot 4 compatibility -->
+		<openapi.version>3.0.3</openapi.version> <!-- FIXED: Upgraded to 3.0.0 for Spring Boot 4 compatibility -->
 		<jsonpatch.version>1.13</jsonpatch.version>
 		<hibernate.validator.version>8.0.1.Final</hibernate.validator.version>
 	</properties>
@@ -54,11 +53,6 @@
 			<artifactId>postgresql</artifactId>
 			<version>42.7.7</version>
 		</dependency>
-		<!-- Spring cloud function initializes the custom runtime context and keeps the event loop running-->
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-function-adapter-aws</artifactId>
-		</dependency>
 		<!-- open api -->
 		<dependency>
 			<groupId>org.springdoc</groupId>
@@ -72,17 +66,6 @@
 			<version>${jsonpatch.version}</version>
 		</dependency>
 	</dependencies>
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-dependencies</artifactId>
-				<version>2025.1.0</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
 	<build>
 		<plugins>
 			<plugin>
@@ -100,24 +83,6 @@
 						</path>
 					</annotationProcessorPaths>
 				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.hibernate.orm.tooling</groupId>
-				<artifactId>hibernate-enhance-maven-plugin</artifactId>
-				<version>6.6.54.Final</version>
-				<executions>
-					<execution>
-						<configuration>
-							<enableLazyInitialization>true</enableLazyInitialization>
-							<enableDirtyTracking>true</enableDirtyTracking>
-							<enableAssociationManagement>true</enableAssociationManagement>
-							<enableExtendedEnhancement>false</enableExtendedEnhancement>
-						</configuration>
-						<goals>
-							<goal>enhance</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
 		</plugins>
 	</build>
@@ -149,23 +114,71 @@
 			<build>
 				<plugins>
 					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-shade-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>build-native-uber-jar</id>
+								<phase>package</phase>
+								<goals>
+									<goal>shade</goal>
+								</goals>
+								<configuration>
+									<!-- Give the jar a unique name so it doesn't break standard Spring Boot -->
+									<shadedArtifactAttached>true</shadedArtifactAttached>
+									<shadedClassifierName>native-cleansed</shadedClassifierName>
+									<filters>
+										<!-- Target the specific Hibernate jar and rip out the ServiceLoader -->
+										<filter>
+											<artifact>org.hibernate.orm:hibernate-core</artifact>
+											<excludes>
+												<exclude>META-INF/services/org.hibernate.bytecode.spi.BytecodeProvider</exclude>
+											</excludes>
+										</filter>
+										<filter>
+											<artifact>*:*</artifact>
+											<excludes>
+												<exclude>META-INF/*.SF</exclude>
+												<exclude>META-INF/*.DSA</exclude>
+												<exclude>META-INF/*.RSA</exclude>
+											</excludes>
+										</filter>
+									</filters>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
 						<groupId>org.springframework.boot</groupId>
 						<artifactId>spring-boot-maven-plugin</artifactId>
 						<configuration>
 							<jvmArguments>--enable-preview</jvmArguments>
 						</configuration>
+						<executions>
+							<execution>
+								<id>process-aot</id>
+								<goals>
+									<goal>process-aot</goal>
+								</goals>
+							</execution>
+						</executions>
 					</plugin>
 					<plugin>
 						<groupId>org.graalvm.buildtools</groupId>
 						<artifactId>native-maven-plugin</artifactId>
 						<configuration>
 							<imageName>jitsi-videoconference-moderator</imageName>
+							<classpath>
+								<param>${project.build.directory}/${project.build.finalName}-native-cleansed.jar</param>
+							</classpath>
 							<buildArgs>
 								<buildArg>-Os</buildArg>
 								<buildArg>--enable-url-protocols=http</buildArg>
 								<buildArg>-march=compatibility</buildArg>
 								<buildArg>-J-Xmx6g</buildArg>
 								<buildArg>-H:GenerateDebugInfo=0</buildArg>
+								<buildArg>--initialize-at-run-time=io.netty</buildArg>
+								<buildArg>-H:IncludeResources=org/joda/time/tz/data/.*</buildArg>
 							</buildArgs>
 						</configuration>
 						<executions>
