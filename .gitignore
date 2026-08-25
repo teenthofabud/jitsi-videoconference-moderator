@@ -3,6 +3,7 @@
 /workspace.xml
 .idea/
 target/
+dependency-reduced-pom.xml
 .mvn/
 mvnw.cmd
 mvnw

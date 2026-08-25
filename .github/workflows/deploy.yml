@@ -108,7 +108,7 @@ jobs:
             src/main/resources/META-INF/native-image/**/*.json
 
       - name: Compile the service into native binary
-        run: mvn native:compile -Pnative -DskipTests
+        run: mvn native:compile -Pnative -Dnative.max.memory=-J-Xmx10g -DskipTests
 
       - name: Update Lambda Function Code via S3
         run: |
