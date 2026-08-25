@@ -292,61 +292,7 @@
       ]
     },
     {
-      "type": "com.sun.crypto.provider.HmacCore$HmacSHA256",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
       "type": "com.sun.crypto.provider.HmacCore$HmacSHA384",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "com.sun.crypto.provider.PBKDF2Core$HmacSHA1",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "com.sun.crypto.provider.PBKDF2Core$HmacSHA224",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "com.sun.crypto.provider.PBKDF2Core$HmacSHA256",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "com.sun.crypto.provider.PBKDF2Core$HmacSHA384",
-      "methods": [
-        {
-          "name": "<init>",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
-      "type": "com.sun.crypto.provider.PBKDF2Core$HmacSHA512",
       "methods": [
         {
           "name": "<init>",
@@ -1036,10 +982,16 @@
       ]
     },
     {
+      "type": "com.zaxxer.hikari.pool.HikariPool"
+    },
+    {
       "type": "com.zaxxer.hikari.pool.PoolBase"
     },
     {
       "type": "com.zaxxer.hikari.pool.PoolEntry"
+    },
+    {
+      "type": "com.zaxxer.hikari.util.DriverDataSource"
     },
     {
       "type": "groovy.lang.MetaClass"
@@ -1721,15 +1673,6 @@
       "type": "java.io.Closeable"
     },
     {
-      "type": "java.io.Console",
-      "methods": [
-        {
-          "name": "isTerminal",
-          "parameterTypes": []
-        }
-      ]
-    },
-    {
       "type": "java.io.Externalizable"
     },
     {
@@ -1854,6 +1797,10 @@
       "methods": [
         {
           "name": "<init>",
+          "parameterTypes": []
+        },
+        {
+          "name": "toString",
           "parameterTypes": []
         }
       ]
@@ -2150,7 +2097,7 @@
       "type": "java.sql.NClob"
     },
     {
-      "type": "java.sql.Statement[]"
+      "type": "java.sql.SQLException"
     },
     {
       "type": "java.sql.Time"
@@ -2374,6 +2321,9 @@
       "type": "java.util.UUID"
     },
     {
+      "type": "java.util.concurrent.Callable"
+    },
+    {
       "type": "java.util.concurrent.Executor"
     },
     {
@@ -2450,6 +2400,9 @@
     },
     {
       "type": "jdk.internal.misc.Unsafe"
+    },
+    {
+      "type": "jdk.internal.reflect.DirectMethodHandleAccessor"
     },
     {
       "type": "kotlin.Metadata"
@@ -2776,7 +2729,22 @@
       "type": "org.aopalliance.intercept.MethodInterceptor"
     },
     {
+      "type": "org.apache.catalina.connector.CoyoteAdapter"
+    },
+    {
       "type": "org.apache.catalina.core.ApplicationContextFacade"
+    },
+    {
+      "type": "org.apache.catalina.core.ApplicationDispatcher"
+    },
+    {
+      "type": "org.apache.catalina.core.ApplicationFilterChain"
+    },
+    {
+      "type": "org.apache.catalina.core.StandardEngineValve"
+    },
+    {
+      "type": "org.apache.catalina.core.StandardHostValve"
     },
     {
       "type": "org.apache.catalina.loader.JdbcLeakPrevention",
@@ -2804,6 +2772,9 @@
       ]
     },
     {
+      "type": "org.apache.catalina.valves.ErrorReportValve"
+    },
+    {
       "type": "org.apache.commons.dbcp2.BasicDataSource"
     },
     {
@@ -2826,6 +2797,9 @@
           "parameterTypes": []
         }
       ]
+    },
+    {
+      "type": "org.apache.coyote.AbstractProcessorLight"
     },
     {
       "type": "org.apache.coyote.AbstractProtocol",
@@ -2860,6 +2834,9 @@
       ]
     },
     {
+      "type": "org.apache.coyote.AbstractProtocol$ConnectionHandler"
+    },
+    {
       "type": "org.apache.coyote.UpgradeProtocol"
     },
     {
@@ -2873,6 +2850,9 @@
     },
     {
       "type": "org.apache.coyote.http11.Http11NioProtocol"
+    },
+    {
+      "type": "org.apache.coyote.http11.Http11Processor"
     },
     {
       "type": "org.apache.derby.jdbc.EmbeddedDriver"
@@ -2923,6 +2903,21 @@
     },
     {
       "type": "org.apache.tomcat.util.net.NioEndpoint"
+    },
+    {
+      "type": "org.apache.tomcat.util.net.NioEndpoint$SocketProcessor"
+    },
+    {
+      "type": "org.apache.tomcat.util.net.SocketProcessorBase"
+    },
+    {
+      "type": "org.apache.tomcat.util.threads.TaskThread$WrappingRunnable"
+    },
+    {
+      "type": "org.apache.tomcat.util.threads.ThreadPoolExecutor"
+    },
+    {
+      "type": "org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker"
     },
     {
       "type": "org.apache.tomcat.websocket.server.WsFilter"
@@ -3004,6 +2999,10 @@
       "methods": [
         {
           "name": "close",
+          "parameterTypes": []
+        },
+        {
+          "name": "isOpen",
           "parameterTypes": []
         }
       ]
@@ -3728,6 +3727,9 @@
       "type": "org.hibernate.boot.internal.Extends"
     },
     {
+      "type": "org.hibernate.boot.internal.InFlightMetadataCollectorImpl"
+    },
+    {
       "type": "org.hibernate.boot.internal.Target"
     },
     {
@@ -3740,6 +3742,9 @@
       ]
     },
     {
+      "type": "org.hibernate.boot.model.process.spi.MetadataBuildingProcess"
+    },
+    {
       "type": "org.hibernate.boot.model.relational.ColumnOrderingStrategyStandard",
       "methods": [
         {
@@ -3747,6 +3752,9 @@
           "parameterTypes": []
         }
       ]
+    },
+    {
+      "type": "org.hibernate.boot.model.relational.Database"
     },
     {
       "type": "org.hibernate.boot.models.DialectOverrideAnnotations",
@@ -4740,6 +4748,9 @@
       ]
     },
     {
+      "type": "org.hibernate.boot.registry.internal.StandardServiceRegistryImpl"
+    },
+    {
       "type": "org.hibernate.bytecode.enhance.internal.bytebuddy.CodeTemplates$AreFieldsDirty"
     },
     {
@@ -4824,9 +4835,7 @@
       "methods": [
         {
           "name": "<init>",
-          "parameterTypes": [
-            "org.hibernate.engine.jdbc.dialect.spi.DialectResolutionInfo"
-          ]
+          "parameterTypes": []
         }
       ]
     },
@@ -4939,6 +4948,12 @@
       "type": "org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentImpl"
     },
     {
+      "type": "org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator"
+    },
+    {
+      "type": "org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess"
+    },
+    {
       "type": "org.hibernate.engine.jdbc.env.internal.LobCreationLogging_$logger",
       "methods": [
         {
@@ -4960,6 +4975,26 @@
     },
     {
       "type": "org.hibernate.engine.jdbc.mutation.internal.StandardMutationExecutorService"
+    },
+    {
+      "type": "org.hibernate.engine.jdbc.spi.SQLExceptionLogging_$logger",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.jboss.logging.Logger"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "org.hibernate.engine.jdbc.spi.SQLExceptionLogging_$logger_en"
+    },
+    {
+      "type": "org.hibernate.engine.jdbc.spi.SQLExceptionLogging_$logger_en_IN"
+    },
+    {
+      "type": "org.hibernate.engine.jdbc.spi.SqlExceptionHelper"
     },
     {
       "type": "org.hibernate.engine.jdbc.spi.SqlStatementLogger"
@@ -5189,6 +5224,12 @@
       "type": "org.hibernate.event.spi.ReplicateEventListener[]"
     },
     {
+      "type": "org.hibernate.exception.internal.SQLStateConversionDelegate"
+    },
+    {
+      "type": "org.hibernate.exception.internal.StandardSQLExceptionConverter"
+    },
+    {
       "type": "org.hibernate.generator.EventType[]"
     },
     {
@@ -5261,6 +5302,9 @@
     },
     {
       "type": "org.hibernate.internal.util.cache.InternalCacheFactoryImpl"
+    },
+    {
+      "type": "org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl"
     },
     {
       "type": "org.hibernate.metamodel.model.domain.JpaMetamodel"
@@ -5341,6 +5385,9 @@
       "type": "org.hibernate.resource.jdbc.internal.ResourceRegistryLogger_$logger_en_IN"
     },
     {
+      "type": "org.hibernate.resource.transaction.backend.jdbc.internal.JdbcIsolationDelegate"
+    },
+    {
       "type": "org.hibernate.resource.transaction.backend.jdbc.internal.JdbcResourceLocalTransactionCoordinatorBuilderImpl",
       "methods": [
         {
@@ -5351,6 +5398,9 @@
     },
     {
       "type": "org.hibernate.service.Service"
+    },
+    {
+      "type": "org.hibernate.service.internal.AbstractServiceRegistryImpl"
     },
     {
       "type": "org.hibernate.service.internal.SessionFactoryServiceRegistryFactoryImpl"
@@ -5700,10 +5750,13 @@
       ]
     },
     {
-      "type": "org.postgresql.core.QueryExecutorCloseAction"
+      "type": "org.postgresql.core.ConnectionFactory"
     },
     {
-      "type": "org.postgresql.jdbc.PgStatement"
+      "type": "org.postgresql.core.v3.ConnectionFactoryImpl"
+    },
+    {
+      "type": "org.postgresql.jdbc.PgConnection"
     },
     {
       "type": "org.postgresql.util.PGobject"
@@ -6642,7 +6695,16 @@
       "type": "org.springframework.beans.factory.config.SmartInstantiationAwareBeanPostProcessor"
     },
     {
+      "type": "org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory"
+    },
+    {
+      "type": "org.springframework.beans.factory.support.AbstractBeanFactory"
+    },
+    {
       "type": "org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor"
+    },
+    {
+      "type": "org.springframework.beans.factory.support.DefaultSingletonBeanRegistry"
     },
     {
       "type": "org.springframework.beans.factory.support.NullBean"
@@ -6661,6 +6723,9 @@
     },
     {
       "type": "org.springframework.boot.LazyInitializationExcludeFilter"
+    },
+    {
+      "type": "org.springframework.boot.SpringApplication"
     },
     {
       "type": "org.springframework.boot.SpringBootConfiguration"
@@ -8586,7 +8651,13 @@
       ]
     },
     {
+      "type": "org.springframework.boot.loader.launch.JarLauncher"
+    },
+    {
       "type": "org.springframework.boot.loader.launch.LaunchedClassLoader"
+    },
+    {
+      "type": "org.springframework.boot.loader.launch.Launcher"
     },
     {
       "type": "org.springframework.boot.loader.net.protocol.jar.JarUrlClassLoader"
@@ -9585,6 +9656,9 @@
       "type": "org.springframework.boot.web.server.servlet.WebListenerRegistry"
     },
     {
+      "type": "org.springframework.boot.web.server.servlet.context.ServletWebServerApplicationContext"
+    },
+    {
       "type": "org.springframework.boot.web.server.servlet.context.ServletWebServerApplicationContextFactory",
       "methods": [
         {
@@ -10295,6 +10369,9 @@
           "parameterTypes": []
         }
       ]
+    },
+    {
+      "type": "org.springframework.context.support.AbstractApplicationContext"
     },
     {
       "type": "org.springframework.context.support.AbstractMessageSource"
@@ -11227,6 +11304,9 @@
       "type": "org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"
     },
     {
+      "type": "org.springframework.orm.jpa.vendor.SpringHibernateJpaPersistenceProvider"
+    },
+    {
       "type": "org.springframework.scheduling.SchedulingTaskExecutor"
     },
     {
@@ -11664,6 +11744,9 @@
       "type": "org.springframework.security.web.FilterChainProxy"
     },
     {
+      "type": "org.springframework.security.web.FilterChainProxy$VirtualFilterChain"
+    },
+    {
       "type": "org.springframework.security.web.SecurityFilterChain"
     },
     {
@@ -11680,6 +11763,9 @@
     },
     {
       "type": "org.springframework.security.web.access.intercept.RequestMatcherDelegatingAuthorizationManager"
+    },
+    {
+      "type": "org.springframework.security.web.authentication.AnonymousAuthenticationFilter"
     },
     {
       "type": "org.springframework.security.web.authentication.logout.LogoutFilter"
@@ -11988,6 +12074,12 @@
     },
     {
       "type": "org.springframework.web.filter.CharacterEncodingFilter"
+    },
+    {
+      "type": "org.springframework.web.filter.CompositeFilter"
+    },
+    {
+      "type": "org.springframework.web.filter.CompositeFilter$VirtualFilterChain"
     },
     {
       "type": "org.springframework.web.filter.DelegatingFilterProxy"
@@ -12734,13 +12826,6 @@
     {
       "type": {
         "proxy": [
-          "java.sql.Connection"
-        ]
-      }
-    },
-    {
-      "type": {
-        "proxy": [
           "net.bytebuddy.description.method.MethodDescription$InDefinedShape$AbstractBase$Executable"
         ]
       }
@@ -13044,9 +13129,6 @@
     },
     {
       "glob": "META-INF/services/jakarta.validation.valueextraction.ValueExtractor"
-    },
-    {
-      "glob": "META-INF/services/java.net.spi.InetAddressResolverProvider"
     },
     {
       "glob": "META-INF/services/java.net.spi.URLStreamHandlerProvider"
@@ -13388,6 +13470,15 @@
       "glob": "io/swagger/v3/oas/annotations/tags/Tag.class"
     },
     {
+      "glob": "jakarta/servlet/LocalStrings.properties"
+    },
+    {
+      "glob": "jakarta/servlet/LocalStrings_en.properties"
+    },
+    {
+      "glob": "jakarta/servlet/LocalStrings_en_IN.properties"
+    },
+    {
       "glob": "jakarta/servlet/http/LocalStrings.properties"
     },
     {
@@ -13436,7 +13527,16 @@
       "glob": "messages.properties"
     },
     {
+      "glob": "messages_en.properties"
+    },
+    {
+      "glob": "messages_en_IN.properties"
+    },
+    {
       "glob": "org/apache/catalina/authenticator/LocalStrings.properties"
+    },
+    {
+      "glob": "org/apache/catalina/authenticator/jaspic/LocalStrings.properties"
     },
     {
       "glob": "org/apache/catalina/connector/LocalStrings.properties"
@@ -13497,6 +13597,9 @@
     },
     {
       "glob": "org/apache/coyote/http11/LocalStrings.properties"
+    },
+    {
+      "glob": "org/apache/coyote/http11/filters/LocalStrings.properties"
     },
     {
       "glob": "org/apache/naming/LocalStrings.properties"
@@ -14783,14 +14886,19 @@
       "glob": "static/index.html"
     },
     {
-      "module": "java.base",
-      "glob": "jdk/internal/icu/impl/data/icudt76b/nfkc.nrm"
+      "bundle": "jakarta.servlet.LocalStrings"
     },
     {
       "bundle": "jakarta.servlet.http.LocalStrings"
     },
     {
+      "bundle": "messages"
+    },
+    {
       "bundle": "org.apache.catalina.authenticator.LocalStrings"
+    },
+    {
+      "bundle": "org.apache.catalina.authenticator.jaspic.LocalStrings"
     },
     {
       "bundle": "org.apache.catalina.connector.LocalStrings"
@@ -14833,6 +14941,9 @@
     },
     {
       "bundle": "org.apache.coyote.http11.LocalStrings"
+    },
+    {
+      "bundle": "org.apache.coyote.http11.filters.LocalStrings"
     },
     {
       "bundle": "org.apache.naming.LocalStrings"

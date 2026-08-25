@@ -56,16 +56,9 @@ if [ "$USE_SAM" = "true" ]; then
     fi
 
     echo "Loading env from $ENV_FILE"
-    while IFS= read -r line; do
-        case "$line" in
-            ''|\#*) continue;;
-            *)
-                varname=$(echo "$line" | cut -d '=' -f 1)
-                varvalue=$(echo "$line" | cut -d '=' -f 2-)
-                export "$varname=$varvalue"
-                ;;
-        esac
-    done < "$ENV_FILE"
+    set -a;
+    source "$ENV_FILE"
+    set +a;
 
     echo "Creating sam-env.json"
     cat > sam-env.json <<EOF
@@ -77,11 +70,13 @@ if [ "$USE_SAM" = "true" ]; then
     "JITSI_DB_DRIVER_CLASS": "$JITSI_DB_DRIVER_CLASS",
     "JITSI_DB_DIALECT": "$JITSI_DB_DIALECT",
     "AUTH0_DOMAIN":"$AUTH0_DOMAIN",
-    "AUTH0_API_IDENTIFIER":"$AUTH0_API_IDENTIFIER"
+    "AUTH0_API_IDENTIFIER":"$AUTH0_API_IDENTIFIER",
+    "AWS_REGION":"$AWS_REGION"
   }
 }
 EOF
 
+    mvn clean native:compile -Pnative -DskipTests
     sam build
     sam local start-api --debug --warm-containers EAGER --env-vars sam-env.json
     exit 0

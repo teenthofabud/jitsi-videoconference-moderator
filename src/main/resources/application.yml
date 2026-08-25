@@ -1,5 +1,5 @@
 server:
- port: 8091
+ port: 8080
 
 auth0:
  domain: ${AUTH0_DOMAIN}
@@ -29,6 +29,8 @@ spring:
   properties:
    hibernate:
     format_sql: true
+    bytecode:
+     provider: none
 #   jakarta:
 #    persistence:
 #     schema-generation:
