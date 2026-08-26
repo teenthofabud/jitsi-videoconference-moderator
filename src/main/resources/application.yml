@@ -43,11 +43,6 @@ spring:
 logging:
  level:
   org.hibernate.orm.jdbc.bind: trace
-  org.hibernate.type.descriptor.sql.BasicBinder: TRACE
-  com.auth0: TRACE
-  com.auth0.spring: TRACE
-  com.auth0.spring.security: TRACE
-  org.springframework.security: TRACE
 
 
 
