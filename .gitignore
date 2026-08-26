@@ -10,3 +10,4 @@ mvnw
 .aws-sam/
 .env*
 !.env.template
+sam-env.json
