@@ -38,7 +38,7 @@ spring:
 #      scripts:
 #       action: drop-and-create
 #       drop-target: src/main/resources/sql/dev-drop.sql
-#       create-target: src/main/resources/sql/dev-ddl.sql
+#       create-target: src/main/resources/sql/dev-V1__main.sql
 
 logging:
  level:

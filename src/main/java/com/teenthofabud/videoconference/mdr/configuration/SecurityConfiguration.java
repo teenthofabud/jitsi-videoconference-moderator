@@ -20,8 +20,12 @@ public class SecurityConfiguration {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers(
+                                "/swagger-ui.html",
+                                "/swagger-ui/**",
+                                "/v3/api-docs*/**"
+                        ).permitAll()
                         .requestMatchers("/actuator/health").permitAll()
-                        .requestMatchers("/google/conference/**").permitAll()
                         .requestMatchers(HttpMethod.POST,"/api/user/preview").permitAll()
                         .anyRequest().authenticated()
                 )
