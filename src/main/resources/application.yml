@@ -17,6 +17,7 @@ spring:
   password: ${JITSI_DB_PASSWORD}
   driverClassName: ${JITSI_DB_DRIVER_CLASS}
 
+
  sql:
   init:
    mode: never
