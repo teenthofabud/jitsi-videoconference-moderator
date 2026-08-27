@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -39,6 +40,7 @@ public interface UserAPI {
                     responseCode = "409", description = "User already created",
                     content = @Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorVo.class)))
     })
+    @SecurityRequirements()
     ResponseEntity<UserVo> createNewGuestUser (@Valid @org.springframework.web.bind.annotation.RequestBody UserForm form) throws UserException;
 
     @Operation(method = "GET", summary = "Get User By Id", description = "getUserById")
