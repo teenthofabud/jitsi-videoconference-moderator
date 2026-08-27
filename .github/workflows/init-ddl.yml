@@ -39,16 +39,15 @@ jobs:
           psql "${{ steps.secrets.outputs.AIVEN_DB_URL }}" \
                -f ./sql/init-db.sql
 
-      # Setup the official Flyway CLI
-      - name: Setup Flyway
-        uses: red-gate/flyway-actions/setup-flyway@v2
-
       # Run Flyway as the restricted app_flyway user
       - name: Run Flyway Migrate
         run: |
-          flyway migrate \
+          docker run --rm \
+            -v ${{ github.workspace }}/sql/ddl:/flyway/sql \
+            flyway/flyway:13.3-alpine \
             -url="${{ steps.secrets.outputs.AIVEN_DB_JDBC_URL }}" \
             -user="app_moderator_flyway" \
             -password="H3daMqf8wwrN" \
             -schemas="jitsi_moderator" \
-            -locations="filesystem:./sql/ddl"
+            -locations="filesystem:/flyway/sql" \
+            migrate
