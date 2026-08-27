@@ -1,0 +1,54 @@
+name: Deploy database migrations
+description: Deploy Database Migrations to Aiven DB using flyway (Moderator)
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Environment to deploy the application to"
+        required: true
+        type: choice
+        options:
+          - dev
+          - qa
+          - prod
+        default: dev
+
+jobs:
+  deploy-migrations:
+    environment: ${{ inputs.environment }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Get Secrets
+        id: secrets
+        uses: bitwarden/sm-action@v3.0.0
+        with:
+          cloud_region: ${{ vars.BITWARDEN_CLOUD_REGION }}
+          access_token: ${{ secrets.BITWARDEN_MACHINE_ACCOUNT_TOAB_JITSI_INFRASTRUCTURE_ACCESS_TOKEN_GITHUB_ACTIONS }}
+          secrets: |
+            ${{ vars.BITWARDEN_UUID_AIVEN_DB_URL }} > AIVEN_DB_URL
+            ${{ vars.BITWARDEN_UUID_AIVEN_DB_JDBC_URL }} > AIVEN_DB_JDBC_URL
+
+      - name: Setup PostgreSQL Client
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+
+      - name: Initialize Database Roles and Schema
+        run: |
+          psql "${{ steps.secrets.outputs.AIVEN_DB_URL }}" \
+               -f ./sql/init-db.sql
+
+      # Run Flyway as the restricted app_flyway user
+      - name: Run Flyway Migrate
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}/sql/ddl:/flyway/sql \
+            flyway/flyway:13.3-alpine \
+            -url="${{ steps.secrets.outputs.AIVEN_DB_JDBC_URL }}" \
+            -user="app_moderator_flyway" \
+            -password="H3daMqf8wwrN" \
+            -schemas="jitsi_moderator" \
+            -locations="filesystem:/flyway/sql" \
+            migrate
