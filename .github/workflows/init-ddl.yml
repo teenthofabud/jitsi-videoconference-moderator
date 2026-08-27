@@ -16,6 +16,7 @@ on:
 
 jobs:
   deploy-migrations:
+    environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
