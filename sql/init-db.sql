@@ -45,10 +45,10 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA jitsi_moderator TO 
 GRANT USAGE, SELECT, UPDATE ON ALL SEQUENCES IN SCHEMA jitsi_moderator TO moderator_server_manager;
 
 -- Grant DML (Read/Write) privileges on FUTURE objects created by Flyway
-ALTER DEFAULT PRIVILEGES FOR ROLE moderator_schema_migrator IN SCHEMA jitsi_moderator
+ALTER DEFAULT PRIVILEGES FOR ROLE app_moderator_flyway IN SCHEMA jitsi_moderator
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO moderator_server_manager;
 
-ALTER DEFAULT PRIVILEGES FOR ROLE moderator_schema_migrator IN SCHEMA jitsi_moderator
+ALTER DEFAULT PRIVILEGES FOR ROLE app_moderator_flyway IN SCHEMA jitsi_moderator
 GRANT USAGE, SELECT, UPDATE ON SEQUENCES TO moderator_server_manager;
 
 -- Create the application user
