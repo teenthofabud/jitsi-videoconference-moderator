@@ -18,9 +18,6 @@ public class OpenAPIConfiguration {
     @Value("${spring.application.version}")
     private String version;
 
-    @Value("${spring.application.name}")
-    private String name;
-
     @Value("${spring.application.description}")
     private String description;
 
@@ -32,7 +29,7 @@ public class OpenAPIConfiguration {
         return new OpenAPI()
                 .info(
                     new Info()
-                        .title(name)
+                        .title("jitsi-videoconference-moderator-service")
                         .contact(contactBuilder())
                         .description(description)
                         .version(version)
