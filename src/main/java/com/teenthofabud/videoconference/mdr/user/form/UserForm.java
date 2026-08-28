@@ -19,8 +19,7 @@ public class UserForm {
     @NotNull(message = "email can't be null")
     String email;
 
-    @Schema(description = "Name of the user",required = true)
-    @NotNull(message = "name can't be null")
+    @Schema(description = "Name of the user")
     String name;
 
 }
