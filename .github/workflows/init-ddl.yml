@@ -62,8 +62,8 @@ jobs:
             -v ${{ github.workspace }}/sql/ddl:/flyway/sql \
             flyway/flyway:13.3-alpine \
             -url="${{ steps.secrets.outputs.AIVEN_DB_JDBC_URL }}" \
-            -user="app_moderator_flyway" \
-            -password="H3daMqf8wwrN" \
+            -user="${{ steps.secrets.outputs.FLYWAY_USERNAME }}" \
+            -password="${{ steps.secrets.outputs.FLYWAY_PASSWORD }}" \
             -schemas="jitsi_moderator" \
             -locations="filesystem:/flyway/sql" \
             migrate
