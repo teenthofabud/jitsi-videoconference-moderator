@@ -1,10 +1,15 @@
 server:
  port: 8080
+ forward-headers-strategy: framework
 
 auth0:
  domain: ${AUTH0_DOMAIN}
  audience: ${AUTH0_API_IDENTIFIER}
  dpop-mode: DISABLED
+
+springdoc:
+ swagger-ui:
+  validator-url: none
 
 spring:
  application:
