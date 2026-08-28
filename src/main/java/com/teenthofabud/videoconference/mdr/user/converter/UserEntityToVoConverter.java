@@ -21,6 +21,7 @@ public class UserEntityToVoConverter implements Converter<com.teenthofabud.video
                 .preferredServerUrl(Optional.ofNullable(source.getPreferredServer())
                         .map(ServerEntity::getServerUrl)
                         .orElse(null))
+                .isManaged(source.getManaged())
                 .build();
     }
 }

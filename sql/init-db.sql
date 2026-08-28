@@ -19,13 +19,13 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA jitsi_moderator GRANT ALL PRIVILEGES ON SEQUE
 -- Create Flyway migration user
 DO $$ 
 BEGIN
-  CREATE USER app_moderator_flyway LOGIN PASSWORD 'H3daMqf8wwrN';
+  CREATE USER ${FLYWAY_USER} LOGIN PASSWORD '${FLYWAY_PASSWORD}';
 EXCEPTION WHEN duplicate_object THEN
-  RAISE NOTICE 'User app_moderator_flyway already exists, skipping...';
+  RAISE NOTICE 'User ${FLYWAY_USER} already exists, skipping...';
 END $$;
 
 -- Assign role
-GRANT moderator_schema_migrator TO app_moderator_flyway;
+GRANT moderator_schema_migrator TO ${FLYWAY_USER};
 
 -- Flyway end --
 
@@ -45,21 +45,21 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA jitsi_moderator TO 
 GRANT USAGE, SELECT, UPDATE ON ALL SEQUENCES IN SCHEMA jitsi_moderator TO moderator_server_manager;
 
 -- Grant DML (Read/Write) privileges on FUTURE objects created by Flyway
-ALTER DEFAULT PRIVILEGES FOR ROLE app_moderator_flyway IN SCHEMA jitsi_moderator
+ALTER DEFAULT PRIVILEGES FOR ROLE ${FLYWAY_USER} IN SCHEMA jitsi_moderator
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO moderator_server_manager;
 
-ALTER DEFAULT PRIVILEGES FOR ROLE app_moderator_flyway IN SCHEMA jitsi_moderator
+ALTER DEFAULT PRIVILEGES FOR ROLE ${FLYWAY_USER} IN SCHEMA jitsi_moderator
 GRANT USAGE, SELECT, UPDATE ON SEQUENCES TO moderator_server_manager;
 
 -- Create the application user
 DO $$
 BEGIN
-  CREATE USER app_jitsi_moderator_service_user LOGIN PASSWORD 'RJHGHR4efjhhrj7defhe';
+  CREATE USER ${APP_USER} LOGIN PASSWORD '${APP_PASSWORD}';
 EXCEPTION WHEN duplicate_object THEN
-  RAISE NOTICE 'User app_jitsi_moderator_service_user already exists, skipping...';
+  RAISE NOTICE 'User ${APP_USER} already exists, skipping...';
 END $$;
 
 -- Assign the DML role to the application user
-GRANT moderator_server_manager TO app_jitsi_moderator_service_user;
+GRANT moderator_server_manager TO ${APP_USER};
 
 -- Server end --
