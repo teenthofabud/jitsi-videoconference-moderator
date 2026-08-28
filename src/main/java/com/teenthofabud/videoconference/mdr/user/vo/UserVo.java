@@ -25,6 +25,9 @@ public class UserVo {
     @Schema(description = "URL for the preferred server")
     String preferredServerUrl;
 
+    @Schema(description = "Whether the user is a guest (isManaged = false) or signed up user")
+    Boolean isManaged;
+
 //    @Schema(description = "User reference type, eg:- GMAIL")
 //    ReferenceType referenceType;
 

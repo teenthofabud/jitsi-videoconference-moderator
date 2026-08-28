@@ -31,14 +31,29 @@ jobs:
           secrets: |
             ${{ vars.BITWARDEN_UUID_AIVEN_DB_URL }} > AIVEN_DB_URL
             ${{ vars.BITWARDEN_UUID_AIVEN_DB_JDBC_URL }} > AIVEN_DB_JDBC_URL
+            ${{ vars.BITWARDEN_UUID_FLYWAY_MODERATOR_USERNAME }} > FLYWAY_USERNAME
+            ${{ vars.BITWARDEN_UUID_FLYWAY_MODERATOR_PASSWORD }} > FLYWAY_PASSWORD
+            ${{ vars.BITWARDEN_UUID_DB_MODERATOR_USERNAME }} > MODERATOR_SERVICE_DB_USERNAME
+            ${{ vars.BITWARDEN_UUID_DB_MODERATOR_PASSWORD }} > MODERATOR_SERVICE_DB_PASSWORD
 
       - name: Setup PostgreSQL Client
         run: sudo apt-get update && sudo apt-get install -y postgresql-client
 
       - name: Initialize Database Roles and Schema
+        env:
+          FLYWAY_USER: ${{ steps.secrets.outputs.FLYWAY_USERNAME }}
+          FLYWAY_PASSWORD: ${{ steps.secrets.outputs.FLYWAY_PASSWORD }}
+          APP_USER: ${{ steps.secrets.outputs.MODERATOR_SERVICE_DB_USERNAME }}
+          APP_PASSWORD: ${{ steps.secrets.outputs.MODERATOR_SERVICE_DB_PASSWORD }}
         run: |
-          psql "${{ steps.secrets.outputs.AIVEN_DB_URL }}" \
-               -f ./sql/init-db.sql
+          # Replace placeholders and create a temporary hydrated SQL file
+          envsubst '${FLYWAY_USER} ${FLYWAY_PASSWORD} ${APP_USER} ${APP_PASSWORD}' < ./sql/init-db.sql > ./sql/init-db-hydrated.sql
+          
+          # Execute the hydrated file
+          psql "${{ steps.secrets.outputs.AIVEN_DB_URL }}" -f ./sql/init-db-hydrated.sql
+          
+          # Delete the file so plain-text passwords do not linger on the runner
+          rm ./sql/init-db-hydrated.sql
 
       # Run Flyway as the restricted app_flyway user
       - name: Run Flyway Migrate
