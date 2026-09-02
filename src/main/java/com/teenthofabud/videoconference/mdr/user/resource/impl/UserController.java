@@ -24,21 +24,26 @@ public class UserController implements UserAPI {
 
     @Override
     @PostMapping
-    public ResponseEntity<Void> createNewUser(@Valid @RequestBody UserForm form) throws UserException {
+    public ResponseEntity<UserVo> createNewUser(@Valid @RequestBody UserForm form) throws UserException {
         UserVo userVo = userService.createNewUser(form,true);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(userVo.getId())
                 .toUri();
-        return ResponseEntity.created(location).build();
+        return ResponseEntity.created(location).body(userVo);
     }
 
     @Override
     @PostMapping("/preview")
     public ResponseEntity<UserVo> createNewGuestUser(@Valid @RequestBody UserForm form) throws UserException {
         UserVo userVo = userService.createNewUser(form, false);
-        return ResponseEntity.ok(userVo);
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(userVo.getId())
+                .toUri();
+        return ResponseEntity.created(location).body(userVo);
     }
 
     @Override

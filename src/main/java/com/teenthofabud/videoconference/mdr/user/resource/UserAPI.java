@@ -30,7 +30,7 @@ public interface UserAPI {
                     responseCode = "409", description = "User already created",
                     content = @Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorVo.class)))
     })
-    ResponseEntity<Void> createNewUser(@RequestBody(description = "User form", required = true,
+    ResponseEntity<UserVo> createNewUser(@RequestBody(description = "User form", required = true,
             content = @Content(schema = @Schema(implementation = UserForm.class))) UserForm form) throws UserException;
 
     @Operation(method = "POST", summary = "Guest user creation", description = "createNewGuestUser")

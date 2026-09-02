@@ -1,8 +1,11 @@
 package com.teenthofabud.videoconference.mdr.server.service.impl;
 
 import com.teenthofabud.videoconference.mdr.error.core.MDRErrorCode;
+import com.teenthofabud.videoconference.mdr.server.constants.ServerType;
 import com.teenthofabud.videoconference.mdr.server.converter.ServerEntityToVoConverter;
 import com.teenthofabud.videoconference.mdr.server.converter.ServerPreferenceFormToEntityConverter;
+import com.teenthofabud.videoconference.mdr.server.form.DefaultServerForm;
+import com.teenthofabud.videoconference.mdr.server.form.DefaultServerUpdateForm;
 import com.teenthofabud.videoconference.mdr.server.form.ServerPreferenceForm;
 import com.teenthofabud.videoconference.mdr.server.entity.ServerEntity;
 import com.teenthofabud.videoconference.mdr.server.error.ServerException;
@@ -14,7 +17,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 
 @Service
 @Slf4j
@@ -46,6 +48,7 @@ public class ServerServiceImpl implements ServerService {
             throw new ServerException(MDRErrorCode.MDR_EXISTS,new Object[]{String.format("%s:%s",form.getUserId(),form.getServerUrl())});
         }
         ServerEntity server = serverPreferenceFormToEntityConverter.convert(form);
+        server.setServerType(ServerType.CUSTOM);
         server = serverRepository.save(server);
         return serverEntityToVoConverter.convert(server);
     }
@@ -53,10 +56,10 @@ public class ServerServiceImpl implements ServerService {
     @Override
     public ServerVo updateServerPreference(ServerPreferenceUpdateForm form) throws ServerException {
         form.setServerUrl(sanitizeUrl(form.getServerUrl()));
-        ServerEntity existingServer = serverRepository.findByIdAndUserId(form.getServerId(),form.getUserId())
+        ServerEntity existingServer = serverRepository.findById(form.getServerId())
                 .orElseThrow(() -> {
-                    log.error("Server preference not found for userId: {} and serverId: {}", form.getUserId(), form.getServerId());
-                    return new ServerException(MDRErrorCode.MDR_NOT_FOUND, new Object[]{String.format("%s:%s",form.getUserId(),form.getServerId())});
+                    log.error("Server preference not found with serverId: {}", form.getUserId(), form.getServerId());
+                    return new ServerException(MDRErrorCode.MDR_NOT_FOUND, new Object[]{form.getServerId()});
                 });
         // ensure the update won't result in unique constraint violation
         // since server URLs are unique per user
@@ -68,6 +71,46 @@ public class ServerServiceImpl implements ServerService {
         }
         existingServer.setName(form.getName());
         existingServer.setServerUrl(form.getServerUrl());
+        existingServer = serverRepository.save(existingServer);
+        return serverEntityToVoConverter.convert(existingServer);
+    }
+
+    @Override
+    public ServerVo createDefaultServer(DefaultServerForm form) throws ServerException {
+        String cleanUrl = sanitizeUrl(form.getServerUrl());
+        if (serverRepository.existsByServerUrlAndServerType(cleanUrl, ServerType.DEFAULT)) {
+            log.error("A DEFAULT server already exists with the url : {}", cleanUrl);
+            throw new ServerException(MDRErrorCode.MDR_EXISTS, new Object[]{cleanUrl});
+        }
+        ServerEntity server = ServerEntity.builder()
+                .name(form.getName())
+                .serverUrl(cleanUrl)
+                .serverType(ServerType.DEFAULT)
+                .build();
+        server = serverRepository.save(server);
+        return serverEntityToVoConverter.convert(server);
+    }
+
+    @Override
+    public ServerVo updateDefaultServer(DefaultServerUpdateForm form) throws ServerException {
+        String cleanUrl = sanitizeUrl(form.getServerUrl());
+        ServerEntity existingServer = serverRepository.findById(form.getServerId())
+                .orElseThrow(() -> {
+                    log.error("A DEFAULT server doesn't exist with the id : {}", form.getServerId());
+                    return new ServerException(MDRErrorCode.MDR_NOT_FOUND, new Object[]{form.getServerId()});
+                });
+        if (existingServer.getServerType() != ServerType.DEFAULT) {
+            log.error("Server with id : {} is not a DEFAULT server", form.getServerId());
+        }
+        // Ensure the update won't result in a unique constraint violation
+        if (!existingServer.getServerUrl().equals(cleanUrl)) {
+            if (serverRepository.existsByServerUrlAndServerType(cleanUrl, ServerType.DEFAULT)) {
+                log.error("A DEFAULT server already exists with the url : {}", cleanUrl);
+                throw new ServerException(MDRErrorCode.MDR_EXISTS, new Object[]{cleanUrl, "DEFAULT"});
+            }
+        }
+        existingServer.setName(form.getName());
+        existingServer.setServerUrl(cleanUrl);
         existingServer = serverRepository.save(existingServer);
         return serverEntityToVoConverter.convert(existingServer);
     }

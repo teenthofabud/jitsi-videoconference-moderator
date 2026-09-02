@@ -71,7 +71,7 @@ public class GoogleConferenceServiceImpl implements GoogleConferenceService {
             GoogleConferenceEntity newEntity = googleConferenceFormToGoogleConferenceEntityReducer.reduce(form,userVo);
             return googleConferenceRepository.save(newEntity);
         });
-        GoogleConferenceDataVo googleConferenceDataVo = googleConferenceEntityToGoogleConferenceDataVoReducer.reduce(conferenceEntity,userVo);
+        GoogleConferenceDataVo googleConferenceDataVo = googleConferenceEntityToGoogleConferenceDataVoReducer.reduce(conferenceEntity,email, serverVo.getServerUrl());
         return googleConferenceDataVo;
     }
 

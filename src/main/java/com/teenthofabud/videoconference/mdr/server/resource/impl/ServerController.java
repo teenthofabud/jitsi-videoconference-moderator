@@ -1,5 +1,7 @@
 package com.teenthofabud.videoconference.mdr.server.resource.impl;
 
+import com.teenthofabud.videoconference.mdr.server.form.DefaultServerForm;
+import com.teenthofabud.videoconference.mdr.server.form.DefaultServerUpdateForm;
 import com.teenthofabud.videoconference.mdr.server.form.ServerPreferenceForm;
 import com.teenthofabud.videoconference.mdr.server.form.ServerPreferenceUpdateForm;
 import com.teenthofabud.videoconference.mdr.server.vo.ServerVo;
@@ -43,14 +45,27 @@ public class ServerController implements ServerAPI {
     }
 
     @Override
-    @PutMapping
-    public ResponseEntity<ServerVo> updateServerPreference(@Valid @RequestBody ServerPreferenceUpdateForm form) throws ServerException {
-        ServerVo serverVo = serverService.updateServerPreference(form);
+    @PostMapping("/default")
+    public ResponseEntity<ServerVo> createDefaultServer(@Valid @RequestBody DefaultServerForm form) throws ServerException {
+        ServerVo serverVo = serverService.createDefaultServer(form);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(serverVo.getId())
                 .toUri();
         return ResponseEntity.created(location).build();
+    }
+
+    @Override
+    public ResponseEntity<ServerVo> updateDefaultServer(DefaultServerUpdateForm form) throws ServerException {
+        ServerVo serverVo = serverService.updateDefaultServer(form);
+        return ResponseEntity.ok(serverVo);
+    }
+
+    @Override
+    @PutMapping
+    public ResponseEntity<ServerVo> updateServerPreference(@Valid @RequestBody ServerPreferenceUpdateForm form) throws ServerException {
+        ServerVo serverVo = serverService.updateServerPreference(form);
+        return ResponseEntity.ok(serverVo);
     }
 }

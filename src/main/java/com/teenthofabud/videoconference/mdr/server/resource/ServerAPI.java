@@ -1,5 +1,7 @@
 package com.teenthofabud.videoconference.mdr.server.resource;
 
+import com.teenthofabud.videoconference.mdr.server.form.DefaultServerForm;
+import com.teenthofabud.videoconference.mdr.server.form.DefaultServerUpdateForm;
 import com.teenthofabud.videoconference.mdr.server.form.ServerPreferenceForm;
 import com.teenthofabud.videoconference.mdr.server.form.ServerPreferenceUpdateForm;
 import com.teenthofabud.videoconference.mdr.server.vo.ServerVo;
@@ -20,17 +22,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @Tag(name = "ServerAPI", description = "Server Management")
 public interface ServerAPI {
 
-//    @Hidden
-//    @Operation(method = "POST", summary = "Default Server creation", description = "createNewDefaultServer")
-//    @ApiResponses(value = {
-//            @ApiResponse(responseCode = "201", description = "Server created"),
-//            @ApiResponse(
-//                    responseCode = "409", description = "Server already created",
-//                    content = @Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorVo.class)))
-//    })
-//    ResponseEntity<Void> createNewDefaultServer(@RequestBody(description = "Server form", required = true,
-//            content = @Content(schema = @Schema(implementation = ServerForm.class))) ServerForm form) throws ServerException;
-
     @Operation(method = "GET", summary = "Get Server By ID", description = "getServerById")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Server retrieved",content = @Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = ServerVo.class))),
@@ -50,6 +41,26 @@ public interface ServerAPI {
 
     })
     ResponseEntity<ServerVo> addServerPreference(ServerPreferenceForm form) throws ServerException;
+
+    @Operation(method = "POST", summary = "Create a default server", description = "createDefaultServer")
+    @ApiResponses( value = {
+            @ApiResponse(responseCode = "201",description = "Successfully added server preference",
+                    content = @Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = ServerVo.class))),
+            @ApiResponse(responseCode = "404", description = "User not found",
+                    content = @Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorVo.class)))
+
+    })
+    ResponseEntity<ServerVo> createDefaultServer(DefaultServerForm form) throws ServerException;
+
+    @Operation(method = "POST", summary = "Create a default server", description = "updateDefaultServer")
+    @ApiResponses( value = {
+            @ApiResponse(responseCode = "201",description = "Successfully added server preference",
+                    content = @Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = ServerVo.class))),
+            @ApiResponse(responseCode = "404", description = "User not found",
+                    content = @Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorVo.class)))
+
+    })
+    ResponseEntity<ServerVo> updateDefaultServer(DefaultServerUpdateForm form) throws ServerException;
 
     @Operation(method = "POST", summary = "Update Server preference for the user", description = "updateServerPreference")
     @ApiResponses( value = {
