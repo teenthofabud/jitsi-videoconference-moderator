@@ -17,7 +17,12 @@ import java.util.List;
 @Builder
 @Getter
 @Setter
-@Table(name = "server")
+@Table(name = "server", uniqueConstraints = {
+    @UniqueConstraint(
+        name = "uk_user_server",
+        columnNames = {"user_id", "server_url"}
+    )
+})
 public class ServerEntity {
 
     @Id
@@ -32,9 +37,9 @@ public class ServerEntity {
     @EqualsAndHashCode.Include
     String serverUrl;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "owner_id", nullable = false)
-    private UserEntity owner;
+    @Column(name = "user_id", nullable = true)
+    @EqualsAndHashCode.Include
+    Long userId;
 
     @Column(name = "server_type", nullable = false)
     @Enumerated(EnumType.STRING)

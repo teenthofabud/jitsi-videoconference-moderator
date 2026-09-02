@@ -18,11 +18,14 @@ import com.teenthofabud.videoconference.mdr.conference.vo.google.GoogleConferenc
 import com.teenthofabud.videoconference.mdr.conference.service.GoogleConferenceService;
 import com.teenthofabud.videoconference.mdr.conference.vo.google.GoogleConferenceVo;
 import com.teenthofabud.videoconference.mdr.error.core.MDRErrorCode;
+import com.teenthofabud.videoconference.mdr.server.error.ServerException;
+import com.teenthofabud.videoconference.mdr.server.service.ServerService;
+import com.teenthofabud.videoconference.mdr.server.vo.ServerVo;
 import com.teenthofabud.videoconference.mdr.user.error.UserException;
 import com.teenthofabud.videoconference.mdr.user.service.UserService;
 import com.teenthofabud.videoconference.mdr.user.vo.UserVo;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,38 +34,37 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class GoogleConferenceServiceImpl implements GoogleConferenceService {
 
-    @Autowired
-    GoogleConferenceRepository googleConferenceRepository;
-    @Autowired
-    ConferenceEntityToConferenceVoConverter conferenceEntityToConferenceVoConverter;
-    @Autowired
-    GoogleConferenceEntityToGoogleConferenceVoConverter googleConferenceEntityToGoogleConferenceVoConverter;
-    @Autowired
-    ObjectMapper objectMapper;
-    @Autowired
-    GoogleConferenceFormToGoogleConferenceEntityReducer googleConferenceFormToGoogleConferenceEntityReducer;
-    @Autowired
-    GoogleConferenceEntityToGoogleConferenceDataVoReducer googleConferenceEntityToGoogleConferenceDataVoReducer;
-    @Autowired
-    UserService userService;
+    private final GoogleConferenceRepository googleConferenceRepository;
+    private final ConferenceEntityToConferenceVoConverter conferenceEntityToConferenceVoConverter;
+    private final GoogleConferenceEntityToGoogleConferenceVoConverter googleConferenceEntityToGoogleConferenceVoConverter;
+    private final ObjectMapper objectMapper;
+    private final GoogleConferenceFormToGoogleConferenceEntityReducer googleConferenceFormToGoogleConferenceEntityReducer;
+    private final GoogleConferenceEntityToGoogleConferenceDataVoReducer googleConferenceEntityToGoogleConferenceDataVoReducer;
+    private final UserService userService;
+    private final ServerService serverService;
 
     @Override
     public GoogleConferenceDataVo createNewGoogleConference(GoogleConferenceForm form) throws GoogleConferenceException {
         String email = form.getEventData().getCalendarId();
         String eventId = form.getEventData().getEventId();
         UserVo userVo;
+        ServerVo serverVo;
         try{
             userVo = userService.getUserByEmail(email);
         }
         catch (UserException e) {
-            log.error("User with calendarId/email {} not found",email);
+            log.error("User with calendarID/email {} not found",email);
             throw new GoogleConferenceException(GoogleConferenceErrorType.TEMPORARY, MDRErrorCode.MDR_ATTRIBUTE_INVALID,new Object[]{email});
         }
-        if(userVo.getPreferredServerUrl()==null){
-            log.error("User{} doesn't have a preferred server yet",email);
-            throw new GoogleConferenceException(GoogleConferenceErrorType.TEMPORARY, MDRErrorCode.MDR_ATTRIBUTE_MISSING,new Object[]{"Preferred Server",email});
+        try{
+            serverVo = serverService.getServerById(form.getServerId());
+        }
+        catch (ServerException e){
+            log.error("Server with serverID {} not found",form.getServerId());
+            throw new GoogleConferenceException(GoogleConferenceErrorType.TEMPORARY, MDRErrorCode.MDR_ATTRIBUTE_INVALID,new Object[]{form.getServerId()});
         }
         Optional<GoogleConferenceEntity> optionalGoogleConferenceEntity = googleConferenceRepository.findByOrganizerEmailAndEventId(email,eventId);
         GoogleConferenceEntity conferenceEntity = optionalGoogleConferenceEntity.orElseGet(()->{

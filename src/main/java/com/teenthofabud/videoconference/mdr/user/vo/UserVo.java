@@ -1,6 +1,5 @@
 package com.teenthofabud.videoconference.mdr.user.vo;
 
-import com.teenthofabud.videoconference.mdr.user.constants.ReferenceType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
@@ -22,13 +21,7 @@ public class UserVo {
     @Schema(description = "Name of the user")
     String name;
 
-    @Schema(description = "URL for the preferred server")
-    String preferredServerUrl;
-
     @Schema(description = "Whether the user is a guest (isManaged = false) or signed up user")
     Boolean isManaged;
-
-//    @Schema(description = "User reference type, eg:- GMAIL")
-//    ReferenceType referenceType;
 
 }

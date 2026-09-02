@@ -1,18 +1,15 @@
 package com.teenthofabud.videoconference.mdr.server.resource;
 
 import com.teenthofabud.videoconference.mdr.server.form.ServerPreferenceForm;
+import com.teenthofabud.videoconference.mdr.server.form.ServerPreferenceUpdateForm;
 import com.teenthofabud.videoconference.mdr.server.vo.ServerVo;
 import com.teenthofabud.videoconference.mdr.server.error.ServerException;
-import com.teenthofabud.videoconference.mdr.server.form.ServerForm;
-import com.teenthofabud.videoconference.mdr.user.error.UserException;
 import com.teenthofabud.videoconference.mdr.vo.ErrorVo;
-import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -62,6 +59,6 @@ public interface ServerAPI {
                     content = @Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorVo.class)))
 
     })
-    ResponseEntity<ServerVo> updateServerPreference(ServerPreferenceForm form) throws ServerException;
+    ResponseEntity<ServerVo> updateServerPreference(ServerPreferenceUpdateForm form) throws ServerException;
 
 }

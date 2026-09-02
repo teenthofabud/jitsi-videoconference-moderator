@@ -39,7 +39,7 @@
 
 
 
-    User "1 " <..> "1 " Server : brings
+    User "1 " <..> "M" Server : prefers
 
     Conference --> ConferenceStatus : conference status
 

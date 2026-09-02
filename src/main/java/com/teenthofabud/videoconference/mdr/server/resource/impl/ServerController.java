@@ -1,6 +1,7 @@
 package com.teenthofabud.videoconference.mdr.server.resource.impl;
 
 import com.teenthofabud.videoconference.mdr.server.form.ServerPreferenceForm;
+import com.teenthofabud.videoconference.mdr.server.form.ServerPreferenceUpdateForm;
 import com.teenthofabud.videoconference.mdr.server.vo.ServerVo;
 import com.teenthofabud.videoconference.mdr.server.error.ServerException;
 import com.teenthofabud.videoconference.mdr.server.resource.ServerAPI;
@@ -43,7 +44,7 @@ public class ServerController implements ServerAPI {
 
     @Override
     @PutMapping
-    public ResponseEntity<ServerVo> updateServerPreference(@Valid @RequestBody ServerPreferenceForm form) throws ServerException {
+    public ResponseEntity<ServerVo> updateServerPreference(@Valid @RequestBody ServerPreferenceUpdateForm form) throws ServerException {
         ServerVo serverVo = serverService.updateServerPreference(form);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
