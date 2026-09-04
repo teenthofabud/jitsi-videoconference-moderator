@@ -13,6 +13,8 @@ import com.teenthofabud.videoconference.mdr.server.form.ServerPreferenceUpdateFo
 import com.teenthofabud.videoconference.mdr.server.repository.ServerRepository;
 import com.teenthofabud.videoconference.mdr.server.service.ServerService;
 import com.teenthofabud.videoconference.mdr.server.vo.ServerVo;
+import com.teenthofabud.videoconference.mdr.user.error.UserException;
+import com.teenthofabud.videoconference.mdr.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -26,6 +28,7 @@ public class ServerServiceImpl implements ServerService {
     private final ServerRepository serverRepository;
     private final ServerPreferenceFormToEntityConverter serverPreferenceFormToEntityConverter;
     private final ServerEntityToVoConverter serverEntityToVoConverter;
+    private final UserService userService;
 
     @Override
     public ServerVo getServerById(Long id) throws ServerException {
@@ -35,7 +38,7 @@ public class ServerServiceImpl implements ServerService {
                     log.error("Server not found with id: {}", id);
                     return new ServerException(
                             MDRErrorCode.MDR_NOT_FOUND,
-                            new Object[]{id}
+                           String.format("Server not found with id: %s", id)
                     );
                 });
     }
@@ -44,8 +47,15 @@ public class ServerServiceImpl implements ServerService {
     public ServerVo addServerPreference(ServerPreferenceForm form) throws ServerException {
         form.setServerUrl(sanitizeUrl(form.getServerUrl()));
         if(serverRepository.existsByUserIdAndServerUrl(form.getUserId(), form.getServerUrl())){
-            log.error("Preferred server for the user({}) already exists with server url : {}",form.getUserId(),form.getServerUrl());
-            throw new ServerException(MDRErrorCode.MDR_EXISTS,new Object[]{String.format("%s:%s",form.getUserId(),form.getServerUrl())});
+            log.error("A server already exists with url {} for the user with id {}",form.getUserId(),form.getServerUrl());
+            throw new ServerException(MDRErrorCode.MDR_EXISTS,String.format("A server already exists with url %s for the user with id %s",form.getUserId(),form.getServerUrl()));
+        }
+        // temporary check which has to be removed once proper End user OAuth is setup
+        try{
+            userService.getUserById(form.getUserId());
+        } catch (UserException e) {
+            log.error("User doesn't exist with ID : {}", form.getUserId());
+            throw new ServerException(MDRErrorCode.MDR_ATTRIBUTE_INVALID,String.format("User doesn't exist with id %s",form.getUserId()));
         }
         ServerEntity server = serverPreferenceFormToEntityConverter.convert(form);
         server.setServerType(ServerType.CUSTOM);
@@ -59,14 +69,21 @@ public class ServerServiceImpl implements ServerService {
         ServerEntity existingServer = serverRepository.findById(form.getServerId())
                 .orElseThrow(() -> {
                     log.error("Server preference not found with serverId: {}", form.getUserId(), form.getServerId());
-                    return new ServerException(MDRErrorCode.MDR_NOT_FOUND, new Object[]{form.getServerId()});
+                    return new ServerException(MDRErrorCode.MDR_NOT_FOUND, String.format("Server not found with id %s",form.getServerId()));
                 });
+        // temporary check which has to be removed once proper End user OAuth is setup
+        try{
+            userService.getUserById(form.getUserId());
+        } catch (UserException e) {
+            log.error("User doesn't exist with ID : {}", form.getUserId());
+            throw new ServerException(MDRErrorCode.MDR_ATTRIBUTE_INVALID,String.format("User doesn't exist with id %s",form.getUserId()));
+        }
         // ensure the update won't result in unique constraint violation
         // since server URLs are unique per user
         if (!existingServer.getServerUrl().equals(form.getServerUrl())) {
             if (serverRepository.existsByUserIdAndServerUrl(form.getUserId(), form.getServerUrl())) {
-                log.error("User({}) already has a preferred server with the url : {}", form.getUserId(), form.getServerUrl());
-                throw new ServerException(MDRErrorCode.MDR_EXISTS, new Object[]{String.format("%s:%s",form.getUserId(),form.getServerUrl())});
+                log.error("User with id {} already has a preferred server with the url {}", form.getUserId(), form.getServerUrl());
+                throw new ServerException(MDRErrorCode.MDR_EXISTS, String.format("User with id %s already has a preferred server with the url %s",form.getUserId(),form.getServerUrl()));
             }
         }
         existingServer.setName(form.getName());
@@ -79,8 +96,8 @@ public class ServerServiceImpl implements ServerService {
     public ServerVo createDefaultServer(DefaultServerForm form) throws ServerException {
         String cleanUrl = sanitizeUrl(form.getServerUrl());
         if (serverRepository.existsByServerUrlAndServerType(cleanUrl, ServerType.DEFAULT)) {
-            log.error("A DEFAULT server already exists with the url : {}", cleanUrl);
-            throw new ServerException(MDRErrorCode.MDR_EXISTS, new Object[]{cleanUrl});
+            log.error("Default server already exists with the url {}", cleanUrl);
+            throw new ServerException(MDRErrorCode.MDR_EXISTS, String.format("Default server already exists with the url %s",form.getServerUrl()));
         }
         ServerEntity server = ServerEntity.builder()
                 .name(form.getName())
@@ -96,8 +113,8 @@ public class ServerServiceImpl implements ServerService {
         String cleanUrl = sanitizeUrl(form.getServerUrl());
         ServerEntity existingServer = serverRepository.findById(form.getServerId())
                 .orElseThrow(() -> {
-                    log.error("A DEFAULT server doesn't exist with the id : {}", form.getServerId());
-                    return new ServerException(MDRErrorCode.MDR_NOT_FOUND, new Object[]{form.getServerId()});
+                    log.error("Default server doesn't exist with the id {}", form.getServerId());
+                    return new ServerException(MDRErrorCode.MDR_NOT_FOUND, String.format("Default server doesn't exist with the id  %s",form.getServerId()));
                 });
         if (existingServer.getServerType() != ServerType.DEFAULT) {
             log.error("Server with id : {} is not a DEFAULT server", form.getServerId());
@@ -105,8 +122,8 @@ public class ServerServiceImpl implements ServerService {
         // Ensure the update won't result in a unique constraint violation
         if (!existingServer.getServerUrl().equals(cleanUrl)) {
             if (serverRepository.existsByServerUrlAndServerType(cleanUrl, ServerType.DEFAULT)) {
-                log.error("A DEFAULT server already exists with the url : {}", cleanUrl);
-                throw new ServerException(MDRErrorCode.MDR_EXISTS, new Object[]{cleanUrl, "DEFAULT"});
+                log.error("Default server already exists with the url {}", cleanUrl);
+                throw new ServerException(MDRErrorCode.MDR_EXISTS, String.format("Default server already exists with the url %s",existingServer.getServerUrl()));
             }
         }
         existingServer.setName(form.getName());

@@ -36,8 +36,8 @@ public class UserServiceImpl implements UserService {
     public UserVo createNewUser(UserForm form, Boolean isManaged) throws UserException {
         Optional<UserEntity> existingUser = userRepository.findByEmail(form.getEmail());
         if(existingUser.isPresent()){
-            log.error("User already exists with email id: {}",form.getEmail());
-            throw new UserException(MDRErrorCode.MDR_EXISTS,new Object[]{form.getEmail()});
+            log.error("User already exists with email id {}",form.getEmail());
+            throw new UserException(MDRErrorCode.MDR_EXISTS,String.format("User already exists with email %s",form.getEmail()));
         }
         UserEntity userEntity = userFormToUserEntityConverter.convert(form);
         userEntity.setManaged(isManaged);
@@ -50,10 +50,10 @@ public class UserServiceImpl implements UserService {
         return userRepository.findById(id)
                 .map(userEntityToVoConverter::convert)
                 .orElseThrow(() -> {
-                    log.error("User doesn't exist with id: {}",id);
+                    log.error("User doesn't exist with id {}",id);
                     return new UserException(
                             MDRErrorCode.MDR_NOT_FOUND,
-                            new Object[]{id}
+                            String.format("User doesn't exist with id %s",id)
                     );
                 });
     }
@@ -63,10 +63,10 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByEmail(email)
                 .map(userEntityToVoConverter::convert)
                 .orElseThrow(() -> {
-                    log.error("User doesn't exist with email: {}",email);
+                    log.error("User doesn't exist with email {}",email);
                     return new UserException(
                             MDRErrorCode.MDR_NOT_FOUND,
-                            new Object[]{email}
+                            String.format("User doesn't exist with email %s",email)
                     );
                 });
     }

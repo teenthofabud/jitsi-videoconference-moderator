@@ -41,7 +41,7 @@ public class ServerController implements ServerAPI {
                 .path("/{id}")
                 .buildAndExpand(serverVo.getId())
                 .toUri();
-        return ResponseEntity.created(location).build();
+        return ResponseEntity.created(location).body(serverVo);
     }
 
     @Override
@@ -53,7 +53,7 @@ public class ServerController implements ServerAPI {
                 .path("/{id}")
                 .buildAndExpand(serverVo.getId())
                 .toUri();
-        return ResponseEntity.created(location).build();
+        return ResponseEntity.created(location).body(serverVo);
     }
 
     @Override

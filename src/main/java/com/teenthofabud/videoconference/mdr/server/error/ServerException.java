@@ -4,7 +4,7 @@ import com.teenthofabud.videoconference.mdr.error.core.MDRBaseException;
 import com.teenthofabud.videoconference.mdr.error.core.MDRError;
 
 public class ServerException extends MDRBaseException {
-    public ServerException(MDRError error, Object[] parameters) {
-        super(error, parameters);
+    public ServerException(MDRError error, String message) {
+        super(error, message);
     }
 }

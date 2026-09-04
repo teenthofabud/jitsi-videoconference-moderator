@@ -29,11 +29,11 @@ public class ServerEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @Column(name = "name", nullable = false, unique = true)
+    @Column(name = "name", nullable = false, unique = false)
     @EqualsAndHashCode.Include
     String name;
 
-    @Column(name = "server_url", nullable = false, unique = true)
+    @Column(name = "server_url", nullable = false, unique = false)
     @EqualsAndHashCode.Include
     String serverUrl;
 

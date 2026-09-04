@@ -8,13 +8,10 @@ import lombok.Setter;
 public abstract class MDRBaseException extends Exception {
 
     private transient MDRError error;
-    private transient Object[] parameters;
 
-    protected MDRBaseException(MDRError error, Object[] parameters) {
-        super(error.getErrorCode());
+    protected MDRBaseException(MDRError error, String message) {
+        super(message);
         this.error = error;
-        this.parameters = parameters;
     }
-
 
 }
