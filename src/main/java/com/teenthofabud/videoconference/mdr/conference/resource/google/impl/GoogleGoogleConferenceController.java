@@ -21,7 +21,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/google/conference")
+@RequestMapping("api/google/conferences")
 public class GoogleGoogleConferenceController implements GoogleConferenceAPI {
 
     @Autowired

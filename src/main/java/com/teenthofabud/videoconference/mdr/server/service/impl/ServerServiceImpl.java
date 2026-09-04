@@ -19,6 +19,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 
 @Service
 @Slf4j
@@ -130,6 +134,18 @@ public class ServerServiceImpl implements ServerService {
         existingServer.setServerUrl(cleanUrl);
         existingServer = serverRepository.save(existingServer);
         return serverEntityToVoConverter.convert(existingServer);
+    }
+
+    @Override
+    // temporarily returns default servers merged to user's preferred servers;
+    // change later if required
+    // if plugin dropdown lists by name, guard against a common naming convention upon server creation
+    public List<ServerVo> getServersByUserId(Long userId) {
+        List<ServerEntity> userServers = serverRepository.findAllByUserId(userId);
+        List<ServerEntity> defaultServers = serverRepository.findAllByServerType(ServerType.DEFAULT);
+        return Stream.concat(userServers.stream(), defaultServers.stream())
+                .map(serverEntityToVoConverter::convert)
+                .toList();
     }
 
     private String sanitizeUrl(String rawUrl) {

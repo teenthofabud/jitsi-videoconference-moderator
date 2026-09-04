@@ -16,9 +16,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
-@RequestMapping("/api/server")
+@RequestMapping("/api/servers")
 @Slf4j
 public class ServerController implements ServerAPI {
 
@@ -67,5 +68,12 @@ public class ServerController implements ServerAPI {
     public ResponseEntity<ServerVo> updateServerPreference(@Valid @RequestBody ServerPreferenceUpdateForm form) throws ServerException {
         ServerVo serverVo = serverService.updateServerPreference(form);
         return ResponseEntity.ok(serverVo);
+    }
+
+    @Override
+    @GetMapping
+    // guard against IDOR by changing PK to UUIDv7 or alternatives or strong OAuth security later
+    public ResponseEntity<List<ServerVo>> getServersByUserID(@RequestParam Long userId) throws ServerException {
+        return ResponseEntity.ok(serverService.getServersByUserId(userId));
     }
 }

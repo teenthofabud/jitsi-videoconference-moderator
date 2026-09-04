@@ -10,12 +10,15 @@ import com.teenthofabud.videoconference.mdr.vo.ErrorVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
+
+import java.util.List;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -71,5 +74,16 @@ public interface ServerAPI {
 
     })
     ResponseEntity<ServerVo> updateServerPreference(ServerPreferenceUpdateForm form) throws ServerException;
+
+    @Operation(method = "GET", summary = "Get All servers for a user", description = "getServerByUserID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Servers retrieved",content = @Content(mediaType = APPLICATION_JSON_VALUE, array = @ArraySchema(schema = @Schema(implementation = ServerVo.class)))),
+            @ApiResponse(
+                    responseCode = "404", description = "No servers found",
+                    content = @Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorVo.class)))
+    })
+    @Parameter(description = "User ID (PK)",name = "userId",required = true,in = ParameterIn.QUERY, schema = @Schema(implementation = Long.class))
+    ResponseEntity<List<ServerVo>> getServersByUserID(Long userId) throws ServerException;
+
 
 }
