@@ -18,7 +18,7 @@ public class ServerEntityToVoConverter implements Converter<ServerEntity, Server
                 .id(source.getId())
                 .serverUrl(source.getServerUrl())
                 .serverType(source.getServerType())
-                .ownerEmail(source.getOwner().getEmail())
+                .userId(source.getUserId())
                 .build();
     }
 }

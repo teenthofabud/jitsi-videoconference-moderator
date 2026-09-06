@@ -1,6 +1,9 @@
 package com.teenthofabud.videoconference.mdr.server.resource.impl;
 
+import com.teenthofabud.videoconference.mdr.server.form.DefaultServerForm;
+import com.teenthofabud.videoconference.mdr.server.form.DefaultServerUpdateForm;
 import com.teenthofabud.videoconference.mdr.server.form.ServerPreferenceForm;
+import com.teenthofabud.videoconference.mdr.server.form.ServerPreferenceUpdateForm;
 import com.teenthofabud.videoconference.mdr.server.vo.ServerVo;
 import com.teenthofabud.videoconference.mdr.server.error.ServerException;
 import com.teenthofabud.videoconference.mdr.server.resource.ServerAPI;
@@ -13,9 +16,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
-@RequestMapping("/api/server")
+@RequestMapping("/api/servers")
 @Slf4j
 public class ServerController implements ServerAPI {
 
@@ -38,18 +42,38 @@ public class ServerController implements ServerAPI {
                 .path("/{id}")
                 .buildAndExpand(serverVo.getId())
                 .toUri();
-        return ResponseEntity.created(location).build();
+        return ResponseEntity.created(location).body(serverVo);
     }
 
     @Override
-    @PutMapping
-    public ResponseEntity<ServerVo> updateServerPreference(@Valid @RequestBody ServerPreferenceForm form) throws ServerException {
-        ServerVo serverVo = serverService.updateServerPreference(form);
+    @PostMapping("/default")
+    public ResponseEntity<ServerVo> createDefaultServer(@Valid @RequestBody DefaultServerForm form) throws ServerException {
+        ServerVo serverVo = serverService.createDefaultServer(form);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(serverVo.getId())
                 .toUri();
-        return ResponseEntity.created(location).build();
+        return ResponseEntity.created(location).body(serverVo);
+    }
+
+    @Override
+    public ResponseEntity<ServerVo> updateDefaultServer(DefaultServerUpdateForm form) throws ServerException {
+        ServerVo serverVo = serverService.updateDefaultServer(form);
+        return ResponseEntity.ok(serverVo);
+    }
+
+    @Override
+    @PutMapping
+    public ResponseEntity<ServerVo> updateServerPreference(@Valid @RequestBody ServerPreferenceUpdateForm form) throws ServerException {
+        ServerVo serverVo = serverService.updateServerPreference(form);
+        return ResponseEntity.ok(serverVo);
+    }
+
+    @Override
+    @GetMapping
+    // guard against IDOR by changing PK to UUIDv7 or alternatives or strong OAuth security later
+    public ResponseEntity<List<ServerVo>> getServersByUserID(@RequestParam Long userId) throws ServerException {
+        return ResponseEntity.ok(serverService.getServersByUserId(userId));
     }
 }

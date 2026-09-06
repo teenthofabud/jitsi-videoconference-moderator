@@ -1,20 +1,20 @@
-CREATE SCHEMA IF NOT EXISTS jitsi_moderator;
+CREATE SCHEMA IF NOT EXISTS ${SCHEMA_NAME};
 
 -- Flyway start --
 
 -- Create Migrator Role
 DO $$ 
 BEGIN
-  CREATE ROLE moderator_schema_migrator;
+  CREATE ROLE ${MIGRATOR_ROLE_NAME};
 EXCEPTION WHEN duplicate_object THEN
-  RAISE NOTICE 'Role moderator_schema_migrator already exists, skipping...';
+  RAISE NOTICE 'Role ${MIGRATOR_ROLE_NAME} already exists, skipping...';
 END $$;
 
-GRANT ALL PRIVILEGES ON SCHEMA jitsi_moderator TO moderator_schema_migrator;
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA jitsi_moderator TO moderator_schema_migrator;
-ALTER DEFAULT PRIVILEGES IN SCHEMA jitsi_moderator GRANT ALL PRIVILEGES ON TABLES TO moderator_schema_migrator;
-GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA jitsi_moderator TO moderator_schema_migrator;
-ALTER DEFAULT PRIVILEGES IN SCHEMA jitsi_moderator GRANT ALL PRIVILEGES ON SEQUENCES TO moderator_schema_migrator;
+GRANT ALL PRIVILEGES ON SCHEMA ${SCHEMA_NAME} TO ${MIGRATOR_ROLE_NAME};
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA ${SCHEMA_NAME} TO ${MIGRATOR_ROLE_NAME};
+ALTER DEFAULT PRIVILEGES IN SCHEMA ${SCHEMA_NAME} GRANT ALL PRIVILEGES ON TABLES TO ${MIGRATOR_ROLE_NAME};
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA ${SCHEMA_NAME} TO ${MIGRATOR_ROLE_NAME};
+ALTER DEFAULT PRIVILEGES IN SCHEMA ${SCHEMA_NAME} GRANT ALL PRIVILEGES ON SEQUENCES TO ${MIGRATOR_ROLE_NAME};
 
 -- Create Flyway migration user
 DO $$ 
@@ -25,7 +25,7 @@ EXCEPTION WHEN duplicate_object THEN
 END $$;
 
 -- Assign role
-GRANT moderator_schema_migrator TO ${FLYWAY_USER};
+GRANT ${MIGRATOR_ROLE_NAME} TO ${FLYWAY_USER};
 
 -- Flyway end --
 
@@ -34,22 +34,22 @@ GRANT moderator_schema_migrator TO ${FLYWAY_USER};
 -- Create Server Manager Role
 DO $$
 BEGIN
-  CREATE ROLE moderator_server_manager;
+  CREATE ROLE ${SERVER_MANAGER_ROLE_NAME};
 EXCEPTION WHEN duplicate_object THEN
-  RAISE NOTICE 'Role moderator_server_manager already exists, skipping...';
+  RAISE NOTICE 'Role ${SERVER_MANAGER_ROLE_NAME already exists, skipping...';
 END $$;
 
 -- Grant DML (Read/Write) privileges on CURRENT objects
-GRANT USAGE ON SCHEMA jitsi_moderator TO moderator_server_manager;
-GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA jitsi_moderator TO moderator_server_manager;
-GRANT USAGE, SELECT, UPDATE ON ALL SEQUENCES IN SCHEMA jitsi_moderator TO moderator_server_manager;
+GRANT USAGE ON SCHEMA ${SCHEMA_NAME} TO ${SERVER_MANAGER_ROLE_NAME};
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA ${SCHEMA_NAME} TO ${SERVER_MANAGER_ROLE_NAME};
+GRANT USAGE, SELECT, UPDATE ON ALL SEQUENCES IN SCHEMA ${SCHEMA_NAME} TO ${SERVER_MANAGER_ROLE_NAME};
 
 -- Grant DML (Read/Write) privileges on FUTURE objects created by Flyway
-ALTER DEFAULT PRIVILEGES FOR ROLE ${FLYWAY_USER} IN SCHEMA jitsi_moderator
-GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO moderator_server_manager;
+ALTER DEFAULT PRIVILEGES FOR ROLE ${FLYWAY_USER} IN SCHEMA ${SCHEMA_NAME}
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO ${SERVER_MANAGER_ROLE_NAME};
 
-ALTER DEFAULT PRIVILEGES FOR ROLE ${FLYWAY_USER} IN SCHEMA jitsi_moderator
-GRANT USAGE, SELECT, UPDATE ON SEQUENCES TO moderator_server_manager;
+ALTER DEFAULT PRIVILEGES FOR ROLE ${FLYWAY_USER} IN SCHEMA ${SCHEMA_NAME}
+GRANT USAGE, SELECT, UPDATE ON SEQUENCES TO ${SERVER_MANAGER_ROLE_NAME};
 
 -- Create the application user
 DO $$
@@ -60,6 +60,6 @@ EXCEPTION WHEN duplicate_object THEN
 END $$;
 
 -- Assign the DML role to the application user
-GRANT moderator_server_manager TO ${APP_USER};
+GRANT ${SERVER_MANAGER_ROLE_NAME} TO ${APP_USER};
 
 -- Server end --

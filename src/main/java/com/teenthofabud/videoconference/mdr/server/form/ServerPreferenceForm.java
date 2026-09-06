@@ -13,16 +13,16 @@ import lombok.*;
 @Setter
 public class ServerPreferenceForm {
 
-    @Schema(description = "Email of the user",required = true)
-    @NotNull(message = "email can't be null")
-    String email;
+    @Schema(description = "ID of the user (PK)",required = true)
+    @NotNull(message = "user ID can't be null")
+    Long userId;
 
     @Schema(description = "Name of the server",required = true)
     @NotNull(message = "server name can't be null")
     String name;
 
     @Schema(description = "URL of the server which user prefers for conducting conferences",required = true)
-    @NotNull(message = "preferred server URL can't be null")
-    String preferredServerUrl;
+    @NotNull(message = "server URL can't be null")
+    String serverUrl;
 
 }

@@ -34,7 +34,4 @@ public class UserEntity {
     @Column(name = "is_managed", nullable = false)
     Boolean managed;
 
-    @OneToOne(mappedBy = "owner",fetch = FetchType.LAZY)
-    private ServerEntity preferredServer;
-
 }
