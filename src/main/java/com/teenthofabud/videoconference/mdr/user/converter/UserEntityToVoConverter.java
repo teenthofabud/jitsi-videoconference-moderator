@@ -17,10 +17,6 @@ public class UserEntityToVoConverter implements Converter<com.teenthofabud.video
                 .email(source.getEmail())
                 .id(source.getId())
                 .name(source.getName())
-//                .referenceType(source.getReferenceType())
-                .preferredServerUrl(Optional.ofNullable(source.getPreferredServer())
-                        .map(ServerEntity::getServerUrl)
-                        .orElse(null))
                 .isManaged(source.getManaged())
                 .build();
     }

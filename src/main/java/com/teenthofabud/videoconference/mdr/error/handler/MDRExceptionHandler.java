@@ -1,8 +1,6 @@
 package com.teenthofabud.videoconference.mdr.error.handler;
 
-import com.teenthofabud.videoconference.mdr.conference.constants.google.GoogleConferenceErrorType;
 import com.teenthofabud.videoconference.mdr.conference.error.google.GoogleConferenceException;
-import com.teenthofabud.videoconference.mdr.conference.form.google.GoogleConferenceForm;
 import com.teenthofabud.videoconference.mdr.conference.vo.google.GoogleConferenceErrorVo;
 import com.teenthofabud.videoconference.mdr.error.converter.MDRExceptionToErrorVoConverter;
 import com.teenthofabud.videoconference.mdr.error.converter.MethodArgNotValidExceptionToErrorVoConverter;
@@ -42,18 +40,19 @@ public class MDRExceptionHandler {
         return response;
     }
 
-    @ExceptionHandler(value = { MDRBaseException.class })
-    public ResponseEntity<ErrorVo> fallback(MDRBaseException e){
-        ResponseEntity<ErrorVo>  response = parseExceptionToResponse(e);
+    @ExceptionHandler(value = { Exception.class })
+    public ResponseEntity<ErrorVo> fallback(Exception e){
+        ResponseEntity<ErrorVo> response = parseExceptionToResponse(e);
         log.debug(response.getBody().getMessage(),e);
         return response;
     }
 
-
-    public ResponseEntity<ErrorVo> parseExceptionToResponse(MDRBaseException e) {
-        ErrorVo vo = mdrExceptionToErrorVoConverter.convert(e);
+    public ResponseEntity<ErrorVo> parseExceptionToResponse(Exception e) {
+        ErrorVo vo = ErrorVo.builder()
+                        .message(String.format("Something unexpected happened : %s",e.getMessage()))
+                                .errorCode(MDRErrorCode.MDR_ACTION_FAILURE.getErrorCode()).build();
         log.debug("{}",vo);
-        return ResponseEntity.status(e.getError().getHttpStatusCode()).body(vo);
+        return ResponseEntity.status(500).body(vo);
     }
 
     public ResponseEntity<GoogleConferenceErrorVo> parseExceptionToResponse(GoogleConferenceException e) {

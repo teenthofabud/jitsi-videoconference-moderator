@@ -1,7 +1,6 @@
 package com.teenthofabud.videoconference.mdr.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.teenthofabud.videoconference.mdr.error.core.MDRMessageSource;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
@@ -24,14 +23,6 @@ public class ServiceConfiguration {
                 .buildValidatorFactory();
         Validator validator = validatorFactory.getValidator();
         return validator;
-    }
-
-    @Bean
-    public MDRMessageSource wmsMessageSource() throws IOException {
-        MDRMessageSource messageSource = new MDRMessageSource();
-        messageSource.setDefaultEncoding("UTF-8");
-        messageSource.setBasenames("messages");
-        return messageSource;
     }
 
     @Bean

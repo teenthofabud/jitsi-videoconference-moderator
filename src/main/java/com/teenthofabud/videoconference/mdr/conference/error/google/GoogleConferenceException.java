@@ -14,8 +14,8 @@ public class GoogleConferenceException extends MDRBaseException {
 
     GoogleConferenceErrorType errorType;
 
-    public GoogleConferenceException(GoogleConferenceErrorType errorType,MDRError error, Object[] parameters){
-        super(error,parameters);
+    public GoogleConferenceException(GoogleConferenceErrorType errorType,String message){
+        super(errorType,message);
         this.errorType = errorType;
     }
 

@@ -10,8 +10,7 @@ on:
         type: choice
         options:
           - dev
-          - qa
-          - prod
+          - live
         default: dev
 
 jobs:
@@ -45,9 +44,14 @@ jobs:
           FLYWAY_PASSWORD: ${{ steps.secrets.outputs.FLYWAY_PASSWORD }}
           APP_USER: ${{ steps.secrets.outputs.MODERATOR_SERVICE_DB_USERNAME }}
           APP_PASSWORD: ${{ steps.secrets.outputs.MODERATOR_SERVICE_DB_PASSWORD }}
+          SCHEMA_NAME: jitsi_moderator_${{ inputs.environment }}
+          MIGRATOR_ROLE_NAME: moderator_schema_migrator_${{ inputs.environment }}
+          SERVER_MANAGER_ROLE_NAME: moderator_server_manager_${{ inputs.environment }}
         run: |
           # Replace placeholders and create a temporary hydrated SQL file
-          envsubst '${FLYWAY_USER} ${FLYWAY_PASSWORD} ${APP_USER} ${APP_PASSWORD}' < ./sql/init-db.sql > ./sql/init-db-hydrated.sql
+          envsubst '${FLYWAY_USER} ${SERVER_MANAGER_ROLE_NAME} \
+          ${FLYWAY_PASSWORD} ${SCHEMA_NAME} ${MIGRATOR_ROLE_NAME} \
+          ${APP_USER} ${APP_PASSWORD}' < ./sql/init-db.sql > ./sql/init-db-hydrated.sql
           
           # Execute the hydrated file
           psql "${{ steps.secrets.outputs.AIVEN_DB_URL }}" -f ./sql/init-db-hydrated.sql
@@ -64,6 +68,6 @@ jobs:
             -url="${{ steps.secrets.outputs.AIVEN_DB_JDBC_URL }}" \
             -user="${{ steps.secrets.outputs.FLYWAY_USERNAME }}" \
             -password="${{ steps.secrets.outputs.FLYWAY_PASSWORD }}" \
-            -schemas="jitsi_moderator" \
+            -schemas="jitsi_moderator_${{ inputs.environment }}" \
             -locations="filesystem:/flyway/sql" \
             migrate
