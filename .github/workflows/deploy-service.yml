@@ -10,8 +10,7 @@ on:
         type: choice
         options:
           - dev
-          - qa
-          - prod
+          - live
         default: dev
 
 jobs:
