@@ -28,46 +28,49 @@ jobs:
           cloud_region: ${{ vars.BITWARDEN_CLOUD_REGION }}
           access_token: ${{ secrets.BITWARDEN_MACHINE_ACCOUNT_TOAB_JITSI_INFRASTRUCTURE_ACCESS_TOKEN_GITHUB_ACTIONS }}
           secrets: |
-            ${{ vars.BITWARDEN_UUID_AIVEN_DB_URL }} > AIVEN_DB_URL
-            ${{ vars.BITWARDEN_UUID_AIVEN_DB_JDBC_URL }} > AIVEN_DB_JDBC_URL
+            ${{ vars.BITWARDEN_UUID_AIVEN_DB_HOST }} > AIVEN_DB_HOST        
+            ${{ vars.BITWARDEN_UUID_AIVEN_DB_ADMIN_CREDENTIALS }} > AIVEN_DB_ADMIN_CREDENTIALS
             ${{ vars.BITWARDEN_UUID_FLYWAY_MODERATOR_USERNAME }} > FLYWAY_USERNAME
             ${{ vars.BITWARDEN_UUID_FLYWAY_MODERATOR_PASSWORD }} > FLYWAY_PASSWORD
             ${{ vars.BITWARDEN_UUID_DB_MODERATOR_USERNAME }} > MODERATOR_SERVICE_DB_USERNAME
             ${{ vars.BITWARDEN_UUID_DB_MODERATOR_PASSWORD }} > MODERATOR_SERVICE_DB_PASSWORD
+          set_env: true
 
       - name: Setup PostgreSQL Client
         run: sudo apt-get update && sudo apt-get install -y postgresql-client
 
       - name: Initialize Database Roles and Schema
         env:
-          FLYWAY_USER: ${{ steps.secrets.outputs.FLYWAY_USERNAME }}
-          FLYWAY_PASSWORD: ${{ steps.secrets.outputs.FLYWAY_PASSWORD }}
-          APP_USER: ${{ steps.secrets.outputs.MODERATOR_SERVICE_DB_USERNAME }}
-          APP_PASSWORD: ${{ steps.secrets.outputs.MODERATOR_SERVICE_DB_PASSWORD }}
+          FLYWAY_USER: ${{ env.FLYWAY_USERNAME }}
+          FLYWAY_PASSWORD: ${{ env.FLYWAY_PASSWORD }}
+          APP_USER: ${{ env.MODERATOR_SERVICE_DB_USERNAME }}
+          APP_PASSWORD: ${{ env.MODERATOR_SERVICE_DB_PASSWORD }}
           SCHEMA_NAME: jitsi_moderator_${{ inputs.environment }}
           MIGRATOR_ROLE_NAME: moderator_schema_migrator_${{ inputs.environment }}
           SERVER_MANAGER_ROLE_NAME: moderator_server_manager_${{ inputs.environment }}
+          DB_URL: postgres://${{ env.AIVEN_DB_ADMIN_CREDENTIALS }}@${{ env.AIVEN_DB_HOST }}/toab-jitsi-${{ inputs.environment }}?sslmode=require
         run: |
           # Replace placeholders and create a temporary hydrated SQL file
-          envsubst '${FLYWAY_USER} ${SERVER_MANAGER_ROLE_NAME} \
-          ${FLYWAY_PASSWORD} ${SCHEMA_NAME} ${MIGRATOR_ROLE_NAME} \
-          ${APP_USER} ${APP_PASSWORD}' < ./sql/init-db.sql > ./sql/init-db-hydrated.sql
+          envsubst '${FLYWAY_USER} ${SERVER_MANAGER_ROLE_NAME} ${FLYWAY_PASSWORD} ${SCHEMA_NAME} ${MIGRATOR_ROLE_NAME} ${APP_USER} ${APP_PASSWORD}' \
+          < ./sql/init-db.sql > ./sql/init-db-hydrated.sql
           
           # Execute the hydrated file
-          psql "${{ steps.secrets.outputs.AIVEN_DB_URL }}" -f ./sql/init-db-hydrated.sql
+          psql "${DB_URL}" -f ./sql/init-db-hydrated.sql
           
           # Delete the file so plain-text passwords do not linger on the runner
           rm ./sql/init-db-hydrated.sql
 
       # Run Flyway as the restricted app_flyway user
       - name: Run Flyway Migrate
+        env:
+          AIVEN_JDBC_URL: jdbc:postgresql://${{ env.AIVEN_DB_HOST }}/toab-jitsi-${{ inputs.environment }}?sslmode=require
         run: |
           docker run --rm \
             -v ${{ github.workspace }}/sql/ddl:/flyway/sql \
             flyway/flyway:13.3-alpine \
-            -url="${{ steps.secrets.outputs.AIVEN_DB_JDBC_URL }}" \
-            -user="${{ steps.secrets.outputs.FLYWAY_USERNAME }}" \
-            -password="${{ steps.secrets.outputs.FLYWAY_PASSWORD }}" \
+            -url="${AIVEN_JDBC_URL}" \
+            -user="${{ env.FLYWAY_USERNAME }}" \
+            -password="${{ env.FLYWAY_PASSWORD }}" \
             -schemas="jitsi_moderator_${{ inputs.environment }}" \
             -locations="filesystem:/flyway/sql" \
             migrate
