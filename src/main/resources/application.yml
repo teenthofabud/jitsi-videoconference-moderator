@@ -40,14 +40,14 @@ spring:
     format_sql: true
     bytecode:
      provider: none
-   jakarta:
-    persistence:
-     schema-generation:
-      create-source: metadata
-      scripts:
-       action: drop-and-create
-       drop-target: src/main/resources/sql/dev-drop.sql
-       create-target: src/main/resources/sql/V2__main.sql
+#   jakarta:
+#    persistence:
+#     schema-generation:
+#      create-source: metadata
+#      scripts:
+#       action: drop-and-create
+#       drop-target: src/main/resources/sql/dev-drop.sql
+#       create-target: src/main/resources/sql/V2__main.sql
 
 logging:
  level:
