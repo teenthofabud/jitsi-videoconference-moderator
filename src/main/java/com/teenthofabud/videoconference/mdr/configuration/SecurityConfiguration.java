@@ -26,7 +26,7 @@ public class SecurityConfiguration {
                                 "/v3/api-docs*/**"
                         ).permitAll()
                         .requestMatchers("/actuator/health").permitAll()
-                        .requestMatchers(HttpMethod.POST,"/api/user/preview").permitAll()
+                        .requestMatchers(HttpMethod.POST,"/api/users/preview").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class)
