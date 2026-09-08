@@ -40,6 +40,13 @@ public class MDRExceptionHandler {
         return response;
     }
 
+    @ExceptionHandler(value = { MDRBaseException.class })
+    public ResponseEntity<ErrorVo> handleMdrExceptions(MDRBaseException e){
+        ResponseEntity<ErrorVo> response = parseExceptionToResponse(e);
+        log.debug(response.getBody().getMessage(),e);
+        return response;
+    }
+
     @ExceptionHandler(value = { Exception.class })
     public ResponseEntity<ErrorVo> fallback(Exception e){
         ResponseEntity<ErrorVo> response = parseExceptionToResponse(e);
@@ -53,6 +60,12 @@ public class MDRExceptionHandler {
                                 .errorCode(MDRErrorCode.MDR_ACTION_FAILURE.getErrorCode()).build();
         log.debug("{}",vo);
         return ResponseEntity.status(500).body(vo);
+    }
+
+    public ResponseEntity<ErrorVo> parseExceptionToResponse(MDRBaseException e){
+        ErrorVo vo = mdrExceptionToErrorVoConverter.convert(e);
+        log.debug("{}",vo);
+        return ResponseEntity.status(e.getError().getHttpStatusCode()).body(vo);
     }
 
     public ResponseEntity<GoogleConferenceErrorVo> parseExceptionToResponse(GoogleConferenceException e) {
