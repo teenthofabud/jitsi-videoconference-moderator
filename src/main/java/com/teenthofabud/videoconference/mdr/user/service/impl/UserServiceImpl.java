@@ -37,7 +37,7 @@ public class UserServiceImpl implements UserService {
         Optional<UserEntity> existingUser = userRepository.findByEmail(form.getEmail());
         if(existingUser.isPresent()){
             log.error("User already exists with email id {}",form.getEmail());
-            throw new UserException(MDRErrorCode.MDR_EXISTS,"You are already there!");
+            throw new UserException(MDRErrorCode.MDR_EXISTS,"You are already on the waitlist!");
         }
         UserEntity userEntity = userFormToUserEntityConverter.convert(form);
         userEntity.setManaged(isManaged);

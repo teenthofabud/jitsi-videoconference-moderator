@@ -16,6 +16,8 @@ public class SecurityConfiguration {
     SecurityFilterChain apiSecurity(HttpSecurity http, Auth0AuthenticationFilter authFilter) throws Exception {
         return http
                 .csrf(csrf -> csrf.disable())
+                // aws lambda handles cors
+                .cors(cors -> cors.disable())
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
@@ -28,6 +30,7 @@ public class SecurityConfiguration {
                         .requestMatchers("/actuator/health").permitAll()
                         .requestMatchers(HttpMethod.POST,"/api/users/preview").permitAll()
                         .anyRequest().authenticated()
+
                 )
                 .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
