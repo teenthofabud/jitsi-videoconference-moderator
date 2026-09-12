@@ -154,7 +154,8 @@ public class MDRExceptionHandler {
     public ResponseEntity<GoogleConferenceErrorVo> parseExceptionToResponse(GoogleConferenceException e) {
         GoogleConferenceErrorVo vo = googleExceptionToConferenceErrorVoConverter.convert(e);
         log.debug("{}",vo);
-        return ResponseEntity.status(e.getError().getHttpStatusCode()).body(vo);
+        // google app script will throw and fail on any other http status than 200
+        return ResponseEntity.status(200).body(vo);
     }
 
     public ResponseEntity<ErrorVo> parseExceptionToResponse(MethodArgumentNotValidException e) {

@@ -16,7 +16,7 @@ public interface UserService {
 
     UserVo getUserByEmail(String email) throws UserException;
 
-    void patchUser(String userId, JsonPatch patches) throws UserException;
+    void patchUser(Long userId, JsonPatch patches) throws UserException, JsonProcessingException;
 
     void deleteUser(String userId) throws UserException;
 }
