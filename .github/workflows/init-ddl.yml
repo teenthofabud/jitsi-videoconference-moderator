@@ -45,7 +45,7 @@ jobs:
           FLYWAY_PASSWORD: ${{ env.FLYWAY_PASSWORD }}
           APP_USER: ${{ env.MODERATOR_SERVICE_DB_USERNAME }}
           APP_PASSWORD: ${{ env.MODERATOR_SERVICE_DB_PASSWORD }}
-          SCHEMA_NAME: jitsi_moderator_${{ inputs.environment }}
+          SCHEMA_NAME: jitsi_moderator
           MIGRATOR_ROLE_NAME: moderator_schema_migrator_${{ inputs.environment }}
           SERVER_MANAGER_ROLE_NAME: moderator_server_manager_${{ inputs.environment }}
           DB_URL: postgres://${{ env.AIVEN_DB_ADMIN_CREDENTIALS }}@${{ env.AIVEN_DB_HOST }}/toab-jitsi-${{ inputs.environment }}?sslmode=require
@@ -71,6 +71,6 @@ jobs:
             -url="${AIVEN_JDBC_URL}" \
             -user="${{ env.FLYWAY_USERNAME }}" \
             -password="${{ env.FLYWAY_PASSWORD }}" \
-            -schemas="jitsi_moderator_${{ inputs.environment }}" \
+            -schemas="jitsi_moderator" \
             -locations="filesystem:/flyway/sql" \
             migrate
