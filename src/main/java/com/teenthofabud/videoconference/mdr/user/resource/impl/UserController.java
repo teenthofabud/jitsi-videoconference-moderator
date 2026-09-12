@@ -52,4 +52,11 @@ public class UserController implements UserAPI {
         UserVo userVo = userService.getUserById(id);
         return ResponseEntity.ok(userVo);
     }
+
+    @Override
+    @GetMapping("/lookup")
+    public ResponseEntity<UserVo> getUserByEmail(@RequestParam String email) throws UserException {
+        UserVo userVo = userService.getUserByEmail(email);
+        return ResponseEntity.ok(userVo);
+    }
 }
