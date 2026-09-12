@@ -58,6 +58,7 @@ public class ServerController implements ServerAPI {
     }
 
     @Override
+    @PutMapping("/default")
     public ResponseEntity<ServerVo> updateDefaultServer(DefaultServerUpdateForm form) throws ServerException {
         ServerVo serverVo = serverService.updateDefaultServer(form);
         return ResponseEntity.ok(serverVo);
