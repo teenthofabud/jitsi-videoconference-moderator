@@ -7,19 +7,19 @@ import lombok.Getter;
 public enum GoogleConferenceErrorType implements MDRError {
 
 
-    AUTHENTICATION("Authentication error occurred during conference data generation"),
+    AUTHENTICATION,
     //The user is not allowed to use the selected conference solution
     // (but might be allowed to use other solutions offered by the add-on).
-    CONFERENCE_SOLUTION_FORBIDDEN("User %s is not allowed to use the selected conference solution"),
-    PERMANENT("Permanent error occurred during conference data generation"),
-    PERMISSION_DENIED("User %s isn't allowed to perform an action in the third-party conferencing system"),
-    TEMPORARY("Temporary error occurred during conference data generation"),
-    UNKNOWN("Unknown error during conference data generation");
+    CONFERENCE_SOLUTION_FORBIDDEN,
+    PERMANENT,
+    PERMISSION_DENIED,
+    TEMPORARY,
+    UNKNOWN;
 
     String message;
 
 
-    GoogleConferenceErrorType(String message){
+    GoogleConferenceErrorType(){
         this.message = message;
     }
 
