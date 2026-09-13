@@ -20,6 +20,7 @@
       +roomId
       +eventId
       +userId
+      +serverId
       +conferenceStatus
 
     }

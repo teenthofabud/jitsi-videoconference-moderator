@@ -16,4 +16,8 @@ public class GoogleConferenceVo extends ConferenceVo {
 
     @Schema(description = "Google Calendar Event ID")
     String eventId;
+
+    @Schema(description = "Identifier for the server where conference will be held")
+    Long serverId;
+
 }
