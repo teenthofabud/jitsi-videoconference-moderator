@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.teenthofabud</groupId>
 	<artifactId>jitsi-videoconference-moderator</artifactId>
-	<version>0.1.0</version>
+	<version>0.1.1</version>
 	<name>jitsi-videoconference-moderator</name>
 	<description>Jitsi Conference Moderator</description>
 	<properties>
