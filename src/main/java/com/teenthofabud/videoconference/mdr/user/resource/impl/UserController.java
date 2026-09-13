@@ -54,7 +54,7 @@ public class UserController implements UserAPI {
     }
 
     @Override
-    @GetMapping("/lookup")
+    @GetMapping("/search")
     public ResponseEntity<UserVo> getUserByEmail(@RequestParam String email) throws UserException {
         UserVo userVo = userService.getUserByEmail(email);
         return ResponseEntity.ok(userVo);
