@@ -21,6 +21,9 @@ public class GoogleConferenceDataVo {
     @Schema(description = "Identifier for the user who created the conference")
     Long userId;
 
+    @Schema(description = "Identifier for the server where conference will be held")
+    Long serverId;
+
     @Schema(description = "Video Entry Point")
     String videoUri;
 

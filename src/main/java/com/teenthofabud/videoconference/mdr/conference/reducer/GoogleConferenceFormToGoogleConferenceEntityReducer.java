@@ -16,6 +16,7 @@ public class GoogleConferenceFormToGoogleConferenceEntityReducer {
         return GoogleConferenceEntity.builder()
                 .eventId(form.getEventData().getEventId())
                 .status(ConferenceStatus.PENDING)
+                .serverId(form.getServerId())
                 .userId(user.getId())
                 .roomId(conferenceId)
                 .build();
