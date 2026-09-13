@@ -2,8 +2,6 @@ package com.teenthofabud.videoconference.mdr.user.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.fge.jsonpatch.JsonPatch;
-import com.github.fge.jsonpatch.JsonPatchException;
 import com.teenthofabud.videoconference.mdr.error.core.MDRErrorCode;
 import com.teenthofabud.videoconference.mdr.user.converter.UserEntityToVoConverter;
 import com.teenthofabud.videoconference.mdr.user.converter.UserFormToUserEntityConverter;
@@ -13,6 +11,10 @@ import com.teenthofabud.videoconference.mdr.user.form.UserForm;
 import com.teenthofabud.videoconference.mdr.user.repository.UserRepository;
 import com.teenthofabud.videoconference.mdr.user.service.UserService;
 import com.teenthofabud.videoconference.mdr.user.vo.UserVo;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonPatch;
+import jakarta.json.JsonValue;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,16 +23,13 @@ import java.util.Optional;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    @Autowired
-    UserRepository userRepository;
-    @Autowired
-    UserFormToUserEntityConverter userFormToUserEntityConverter;
-    @Autowired
-    ObjectMapper mapper;
-    @Autowired
-    UserEntityToVoConverter userEntityToVoConverter;
+    private final UserRepository userRepository;
+    private final UserFormToUserEntityConverter userFormToUserEntityConverter;
+    private final ObjectMapper mapper;
+    private final UserEntityToVoConverter userEntityToVoConverter;
 
     @Override
     public UserVo createNewUser(UserForm form, Boolean isManaged) throws UserException {
@@ -72,13 +71,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void patchUser(String email, JsonPatch patches) throws UserException, JsonPatchException, JsonProcessingException {
-//        UserEntity userEntity = userRepository.findByUserId(userId).orElseThrow(()-> new UserException(MDRErrorCode.MDR_NOT_FOUND,new Object[]{userId}));
-//        UserDto userDto = null;
-//        JsonNode original = mapper.valueToTree(userDto);
-//        JsonNode patched = patches.apply(original);
-//        UserDto patchedUserDto = mapper.treeToValue(patched,UserDto.class);
-        throw new UnsupportedOperationException("not implemented yet");
+    public void patchUser(Long userId, JsonPatch patches) throws UserException, JsonProcessingException {
+//        UserEntity userEntity = userRepository.findById(userId).orElseThrow(()-> new UserException(MDRErrorCode.MDR_NOT_FOUND,String.format("User with ID %s not found",userId));
+//        // Convert the Spring entity into a Jakarta JsonValue using Jackson 3
+//        JsonValue source = mapper.convertValue(userEntity, JsonValue.class);
+//        // Apply the JSON-P patch to the JsonObject
+//        JsonObject patched = patches.apply(source.asJsonObject());
+//        // Convert the patched JsonObject back into the Spring entity
+//        userEntity = mapper.convertValue(patched, UserEntity.class);
+//        throw new UnsupportedOperationException("not implemented yet");
     }
 
     @Override

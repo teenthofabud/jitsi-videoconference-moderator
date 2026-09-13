@@ -47,7 +47,7 @@ public interface ServerAPI {
 
     @Operation(method = "POST", summary = "Create a default server", description = "createDefaultServer")
     @ApiResponses( value = {
-            @ApiResponse(responseCode = "201",description = "Successfully added server preference",
+            @ApiResponse(responseCode = "201",description = "Successfully created default server",
                     content = @Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = ServerVo.class))),
             @ApiResponse(responseCode = "404", description = "User not found",
                     content = @Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorVo.class)))
@@ -55,9 +55,9 @@ public interface ServerAPI {
     })
     ResponseEntity<ServerVo> createDefaultServer(DefaultServerForm form) throws ServerException;
 
-    @Operation(method = "POST", summary = "Create a default server", description = "updateDefaultServer")
+    @Operation(method = "PUT", summary = "Create a default server", description = "updateDefaultServer")
     @ApiResponses( value = {
-            @ApiResponse(responseCode = "201",description = "Successfully added server preference",
+            @ApiResponse(responseCode = "201",description = "Successfully updated default server",
                     content = @Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = ServerVo.class))),
             @ApiResponse(responseCode = "404", description = "User not found",
                     content = @Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorVo.class)))
@@ -65,7 +65,7 @@ public interface ServerAPI {
     })
     ResponseEntity<ServerVo> updateDefaultServer(DefaultServerUpdateForm form) throws ServerException;
 
-    @Operation(method = "POST", summary = "Update Server preference for the user", description = "updateServerPreference")
+    @Operation(method = "PUT", summary = "Update Server preference for the user", description = "updateServerPreference")
     @ApiResponses( value = {
             @ApiResponse(responseCode = "201",description = "Successfully updated server preference",
                     content = @Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = ServerVo.class))),

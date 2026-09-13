@@ -25,8 +25,9 @@ public abstract class ConferenceEntity {
     @Column(name = "room_id", nullable = false)
     String roomId;
 
-    @Column(name = "organizer_email", nullable = false)
-    String organizerEmail;
+    // Organizer's userId
+    @Column(name = "user_id", nullable = false)
+    Long userId;
 
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)

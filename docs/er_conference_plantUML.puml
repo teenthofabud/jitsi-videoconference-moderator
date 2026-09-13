@@ -19,7 +19,7 @@
       +id
       +roomId
       +eventId
-      +organizerEmail
+      +userId
       +conferenceStatus
 
     }
