@@ -9,12 +9,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class GoogleConferenceEntityToGoogleConferenceDataVoReducer {
 
-    public GoogleConferenceDataVo reduce(GoogleConferenceEntity conferenceEntity,String email,String serverUrl){
+    public GoogleConferenceDataVo reduce(GoogleConferenceEntity conferenceEntity,Long userId,String serverUrl){
 
             return GoogleConferenceDataVo.builder()
-                    .adminEmail(email)
+                    .userId(userId)
                     .eventId(conferenceEntity.getEventId())
-                    .videoUri(String.format("https://%s/%s",serverUrl, conferenceEntity.getRoomId()))
+                    .videoUri(String.format("%s/%s",serverUrl, conferenceEntity.getRoomId()))
                     .id(conferenceEntity.getRoomId())
                     .build();
     }

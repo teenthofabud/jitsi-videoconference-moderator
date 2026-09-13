@@ -60,10 +60,17 @@
 			<version>${openapi.version}</version>
 		</dependency>
 		<!-- json patch -->
+		<!-- Jackson 3 module for Jakarta JSON Processing API -->
 		<dependency>
-			<groupId>com.github.java-json-tools</groupId>
-			<artifactId>json-patch</artifactId>
-			<version>${jsonpatch.version}</version>
+			<groupId>tools.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-jakarta-jsonp</artifactId>
+		</dependency>
+		<!-- Jakarta JSON Processing (JSON-P) Implementation -->
+		<dependency>
+			<groupId>org.leadpony.joy</groupId>
+			<artifactId>joy-classic</artifactId>
+			<version>2.1.0</version>
+			<scope>runtime</scope>
 		</dependency>
 	</dependencies>
 	<build>

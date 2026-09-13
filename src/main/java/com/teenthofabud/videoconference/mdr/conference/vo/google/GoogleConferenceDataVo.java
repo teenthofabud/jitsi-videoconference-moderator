@@ -19,7 +19,7 @@ public class GoogleConferenceDataVo {
     String eventId;
 
     @Schema(description = "Identifier for the user who created the conference")
-    String adminEmail;
+    Long userId;
 
     @Schema(description = "Video Entry Point")
     String videoUri;
