@@ -148,6 +148,14 @@ public class ServerServiceImpl implements ServerService {
                 .toList();
     }
 
+    @Override
+    public List<ServerVo> getAllDefaultServers() {
+        return serverRepository.findAllByServerType(ServerType.DEFAULT)
+                .stream()
+                .map(serverEntityToVoConverter::convert)
+                .toList();
+    }
+
     private String sanitizeUrl(String rawUrl) {
         if (rawUrl == null || rawUrl.isBlank()) {
             return rawUrl;

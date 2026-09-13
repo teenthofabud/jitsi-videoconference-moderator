@@ -85,5 +85,11 @@ public interface ServerAPI {
     @Parameter(description = "User ID (PK)",name = "userId",required = true,in = ParameterIn.QUERY, schema = @Schema(implementation = Long.class))
     ResponseEntity<List<ServerVo>> getServersByUserID(Long userId) throws ServerException;
 
+    @Operation(method = "GET", summary = "Get all default servers", description = "getAllDefaultServers")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Servers retrieved",content = @Content(mediaType = APPLICATION_JSON_VALUE, array = @ArraySchema(schema = @Schema(implementation = ServerVo.class))))
+    })
+    ResponseEntity<List<ServerVo>> getAllDefaultServers() throws ServerException;
+
 
 }

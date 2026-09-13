@@ -76,4 +76,10 @@ public class ServerController implements ServerAPI {
     public ResponseEntity<List<ServerVo>> getServersByUserID(@RequestParam Long userId) throws ServerException {
         return ResponseEntity.ok(serverService.getServersByUserId(userId));
     }
+
+    @Override
+    @GetMapping("/default")
+    public ResponseEntity<List<ServerVo>> getAllDefaultServers() throws ServerException {
+        return ResponseEntity.ok(serverService.getAllDefaultServers());
+    }
 }
