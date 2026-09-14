@@ -19,7 +19,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
@@ -100,7 +103,7 @@ public class ServerServiceImpl implements ServerService {
         String cleanUrl = sanitizeUrl(form.getServerUrl());
         if (serverRepository.existsByServerUrlAndServerType(cleanUrl, ServerType.DEFAULT)) {
             log.error("Default server already exists with the url {}", cleanUrl);
-            throw new ServerException(MDRErrorCode.MDR_EXISTS, String.format("Default server already exists with the url %s",form.getServerUrl()));
+            throw new ServerException(MDRErrorCode.MDR_EXISTS, String.format("Default server already exists with the url %s",cleanUrl));
         }
         ServerEntity server = ServerEntity.builder()
                 .name(form.getName())
@@ -120,13 +123,16 @@ public class ServerServiceImpl implements ServerService {
                     return new ServerException(MDRErrorCode.MDR_NOT_FOUND, String.format("Default server doesn't exist with the id  %s",form.getServerId()));
                 });
         if (existingServer.getServerType() != ServerType.DEFAULT) {
+            // reported as not found rather than as a type mismatch, so this endpoint cannot be used
+            // to discover, or to rewrite, another user's server preference
             log.error("Server with id : {} is not a DEFAULT server", form.getServerId());
+            throw new ServerException(MDRErrorCode.MDR_NOT_FOUND, String.format("Default server doesn't exist with the id  %s",form.getServerId()));
         }
         // Ensure the update won't result in a unique constraint violation
         if (!existingServer.getServerUrl().equals(cleanUrl)) {
             if (serverRepository.existsByServerUrlAndServerType(cleanUrl, ServerType.DEFAULT)) {
                 log.error("Default server already exists with the url {}", cleanUrl);
-                throw new ServerException(MDRErrorCode.MDR_EXISTS, String.format("Default server already exists with the url %s",existingServer.getServerUrl()));
+                throw new ServerException(MDRErrorCode.MDR_EXISTS, String.format("Default server already exists with the url %s",cleanUrl));
             }
         }
         existingServer.setName(form.getName());
@@ -142,7 +148,13 @@ public class ServerServiceImpl implements ServerService {
     public List<ServerVo> getServersByUserId(Long userId) {
         List<ServerEntity> userServers = serverRepository.findAllByUserId(userId);
         List<ServerEntity> defaultServers = serverRepository.findAllByServerType(ServerType.DEFAULT);
+        // a DEFAULT row that also carries this user's id matches both queries, so keep the first
+        // sighting of each server and preserve the preferences-before-defaults ordering
         return Stream.concat(userServers.stream(), defaultServers.stream())
+                .collect(Collectors.toMap(ServerEntity::getId, Function.identity(),
+                        (firstSeen, duplicate) -> firstSeen, LinkedHashMap::new))
+                .values()
+                .stream()
                 .map(serverEntityToVoConverter::convert)
                 .toList();
     }
