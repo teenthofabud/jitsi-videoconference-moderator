@@ -1,10 +1,9 @@
 package com.teenthofabud.videoconference.mdr.conference.service.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.fge.jsonpatch.JsonPatch;
-import com.github.fge.jsonpatch.JsonPatchException;
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonPatch;
+import jakarta.json.JsonReader;
 import com.teenthofabud.videoconference.mdr.conference.constants.google.GoogleConferenceErrorType;
 import com.teenthofabud.videoconference.mdr.conference.converter.ConferenceEntityToConferenceVoConverter;
 import com.teenthofabud.videoconference.mdr.conference.converter.google.GoogleConferenceEntityToGoogleConferenceVoConverter;
@@ -26,8 +25,11 @@ import com.teenthofabud.videoconference.mdr.user.vo.UserVo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import tools.jackson.databind.ObjectMapper;
 
+import java.io.StringReader;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -112,7 +114,7 @@ public class GoogleConferenceServiceImpl implements GoogleConferenceService {
     }
 
     @Override
-    public void patchGoogleConferenceByUserEmailAndEventId(String email, String eventId, JsonPatch patches) throws GoogleConferenceException, JsonPatchException, JsonProcessingException {
+    public void patchGoogleConferenceByUserEmailAndEventId(String email, String eventId, JsonPatch patches) throws GoogleConferenceException {
         UserVo userVo;
         try{
             userVo = userService.getUserByEmail(email);
@@ -125,12 +127,36 @@ public class GoogleConferenceServiceImpl implements GoogleConferenceService {
         if(optionalConferenceEntity.isEmpty())
             throw new GoogleConferenceException(GoogleConferenceErrorType.TEMPORARY,String.format("Calendar event with ID %s not found",eventId));
         GoogleConferenceEntity conferenceEntity = optionalConferenceEntity.get();
-        JsonNode jsonNode = objectMapper.valueToTree(conferenceEntity);
-        log.info("Before patch : {}",objectMapper.writeValueAsString(conferenceEntity));
-        JsonNode patchedNode = patches.apply(jsonNode);
-        conferenceEntity = objectMapper.treeToValue(patchedNode,GoogleConferenceEntity.class);
-        log.info("after patching : {}",conferenceEntity);
-        googleConferenceRepository.save(conferenceEntity);
+        String before = objectMapper.writeValueAsString(conferenceEntity);
+        log.info("Before patch : {}",before);
+        JsonObject patchedObject = patches.apply(readObject(before));
+        GoogleConferenceEntity patchedEntity = objectMapper.readValue(patchedObject.toString(),GoogleConferenceEntity.class);
+        rejectIdentityChanges(conferenceEntity, patchedEntity);
+        log.info("after patching : {}",patchedEntity);
+        googleConferenceRepository.save(patchedEntity);
+    }
+
+    private JsonObject readObject(String json){
+        try(JsonReader reader = Json.createReader(new StringReader(json))){
+            return reader.readObject();
+        }
+    }
+
+    /**
+     * A patch may only move a conference through its lifecycle. Rewriting the primary key, the
+     * calendar event it belongs to, the room people join or the organizer who owns it would either
+     * orphan a live meeting or hand the conference to another user, so those are refused.
+     */
+    private void rejectIdentityChanges(GoogleConferenceEntity original, GoogleConferenceEntity patched) throws GoogleConferenceException {
+        if(Objects.equals(original.getId(), patched.getId())
+                && Objects.equals(original.getEventId(), patched.getEventId())
+                && Objects.equals(original.getRoomId(), patched.getRoomId())
+                && Objects.equals(original.getOrganizerEmail(), patched.getOrganizerEmail())){
+            return;
+        }
+        log.error("Patch attempted to change immutable attributes of the conference with event id {}", original.getEventId());
+        throw new GoogleConferenceException(GoogleConferenceErrorType.PERMANENT,
+                "Only the status of a conference can be patched");
     }
 
     @Override

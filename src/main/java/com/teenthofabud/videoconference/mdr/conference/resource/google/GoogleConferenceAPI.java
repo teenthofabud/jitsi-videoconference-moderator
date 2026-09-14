@@ -1,8 +1,6 @@
 package com.teenthofabud.videoconference.mdr.conference.resource.google;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.github.fge.jsonpatch.JsonPatch;
-import com.github.fge.jsonpatch.JsonPatchException;
+import jakarta.json.JsonPatch;
 import com.teenthofabud.videoconference.mdr.conference.error.ConferenceException;
 import com.teenthofabud.videoconference.mdr.conference.error.google.GoogleConferenceException;
 import com.teenthofabud.videoconference.mdr.conference.form.google.GoogleConferenceForm;
@@ -64,7 +62,7 @@ public interface GoogleConferenceAPI {
             @ApiResponse(responseCode = "204", description = "Conference edited")
     })
     ResponseEntity<Void> patchGoogleConferenceByUserEmailAndEventId(String eventId, @Email String email, @RequestBody(description = "JsonPatch", required = true,
-            content = @Content(mediaType = HttpMediaType.APPLICATION_JSON_PATCH,schema = @Schema(implementation = JsonPatch.class))) JsonPatch patches) throws GoogleConferenceException, JsonPatchException, JsonProcessingException;
+            content = @Content(mediaType = HttpMediaType.APPLICATION_JSON_PATCH,schema = @Schema(implementation = JsonPatch.class))) JsonPatch patches) throws GoogleConferenceException;
 
     @Operation(method = "DELETE", summary = "Delete Google conference by ID", description = "deleteGoogleConferenceByUserEmailAndEventId")
     @Parameter(name = "eventId",description = "Conference Identifier",schema = @Schema(implementation = String.class), in = ParameterIn.PATH, required = true)

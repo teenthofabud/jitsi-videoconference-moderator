@@ -1,8 +1,6 @@
 package com.teenthofabud.videoconference.mdr.conference.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.github.fge.jsonpatch.JsonPatch;
-import com.github.fge.jsonpatch.JsonPatchException;
+import jakarta.json.JsonPatch;
 import com.teenthofabud.videoconference.mdr.conference.error.google.GoogleConferenceException;
 import com.teenthofabud.videoconference.mdr.conference.form.google.GoogleConferenceForm;
 import com.teenthofabud.videoconference.mdr.conference.vo.google.GoogleConferenceDataVo;
@@ -18,7 +16,7 @@ public interface GoogleConferenceService {
 
     List<GoogleConferenceVo> getAllGoogleConferencesByUserEmail(String email) throws GoogleConferenceException;
 
-    void patchGoogleConferenceByUserEmailAndEventId(String email, String eventId, JsonPatch patches) throws GoogleConferenceException, JsonPatchException, JsonProcessingException;
+    void patchGoogleConferenceByUserEmailAndEventId(String email, String eventId, JsonPatch patches) throws GoogleConferenceException;
 
     void deleteGoogleConferenceByUserEmailAndEventId(String email, String eventId) throws GoogleConferenceException;
 

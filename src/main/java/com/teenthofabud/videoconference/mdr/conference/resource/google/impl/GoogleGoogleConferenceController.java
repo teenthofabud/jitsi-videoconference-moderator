@@ -1,8 +1,6 @@
 package com.teenthofabud.videoconference.mdr.conference.resource.google.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.github.fge.jsonpatch.JsonPatch;
-import com.github.fge.jsonpatch.JsonPatchException;
+import jakarta.json.JsonPatch;
 import com.teenthofabud.videoconference.mdr.conference.error.google.GoogleConferenceException;
 import com.teenthofabud.videoconference.mdr.conference.form.google.GoogleConferenceForm;
 import com.teenthofabud.videoconference.mdr.conference.vo.google.GoogleConferenceDataVo;
@@ -51,14 +49,14 @@ public class GoogleGoogleConferenceController implements GoogleConferenceAPI {
 
     @Override
     @PatchMapping("/event/{eventId}")
-    public ResponseEntity<Void> patchGoogleConferenceByUserEmailAndEventId(@PathVariable String eventId, @RequestParam String email, @RequestBody JsonPatch patches) throws GoogleConferenceException, JsonPatchException, JsonProcessingException {
+    public ResponseEntity<Void> patchGoogleConferenceByUserEmailAndEventId(@PathVariable String eventId, @RequestParam String email, @RequestBody JsonPatch patches) throws GoogleConferenceException {
         googleConferenceService.patchGoogleConferenceByUserEmailAndEventId(email,eventId,patches);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @Override
     @DeleteMapping("/event/{eventId}")
-    public ResponseEntity<Void> deleteGoogleConferenceByUserEmailAndEventId(@PathVariable String email, @RequestParam String eventId) throws GoogleConferenceException {
+    public ResponseEntity<Void> deleteGoogleConferenceByUserEmailAndEventId(@RequestParam String email, @PathVariable String eventId) throws GoogleConferenceException {
         googleConferenceService.deleteGoogleConferenceByUserEmailAndEventId(email,eventId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

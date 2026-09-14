@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -43,7 +44,7 @@ public interface ServerAPI {
                     content = @Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorVo.class)))
 
     })
-    ResponseEntity<ServerVo> addServerPreference(ServerPreferenceForm form) throws ServerException;
+    ResponseEntity<ServerVo> addServerPreference(@Valid ServerPreferenceForm form) throws ServerException;
 
     @Operation(method = "POST", summary = "Create a default server", description = "createDefaultServer")
     @ApiResponses( value = {
@@ -53,17 +54,19 @@ public interface ServerAPI {
                     content = @Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorVo.class)))
 
     })
-    ResponseEntity<ServerVo> createDefaultServer(DefaultServerForm form) throws ServerException;
+    ResponseEntity<ServerVo> createDefaultServer(@Valid DefaultServerForm form) throws ServerException;
 
-    @Operation(method = "POST", summary = "Create a default server", description = "updateDefaultServer")
+    @Operation(method = "PUT", summary = "Update a default server", description = "updateDefaultServer")
     @ApiResponses( value = {
-            @ApiResponse(responseCode = "201",description = "Successfully added server preference",
+            @ApiResponse(responseCode = "200",description = "Successfully updated the default server",
                     content = @Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = ServerVo.class))),
-            @ApiResponse(responseCode = "404", description = "User not found",
+            @ApiResponse(responseCode = "404", description = "Default server not found",
+                    content = @Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorVo.class))),
+            @ApiResponse(responseCode = "409", description = "Another default server already uses this URL",
                     content = @Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorVo.class)))
 
     })
-    ResponseEntity<ServerVo> updateDefaultServer(DefaultServerUpdateForm form) throws ServerException;
+    ResponseEntity<ServerVo> updateDefaultServer(@Valid DefaultServerUpdateForm form) throws ServerException;
 
     @Operation(method = "POST", summary = "Update Server preference for the user", description = "updateServerPreference")
     @ApiResponses( value = {
@@ -73,7 +76,7 @@ public interface ServerAPI {
                     content = @Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorVo.class)))
 
     })
-    ResponseEntity<ServerVo> updateServerPreference(ServerPreferenceUpdateForm form) throws ServerException;
+    ResponseEntity<ServerVo> updateServerPreference(@Valid ServerPreferenceUpdateForm form) throws ServerException;
 
     @Operation(method = "GET", summary = "Get All servers for a user", description = "getServerByUserID")
     @ApiResponses(value = {

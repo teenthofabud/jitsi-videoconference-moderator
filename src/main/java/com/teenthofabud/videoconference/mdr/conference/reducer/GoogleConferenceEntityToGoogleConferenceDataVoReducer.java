@@ -14,8 +14,17 @@ public class GoogleConferenceEntityToGoogleConferenceDataVoReducer {
             return GoogleConferenceDataVo.builder()
                     .adminEmail(email)
                     .eventId(conferenceEntity.getEventId())
-                    .videoUri(String.format("https://%s/%s",serverUrl, conferenceEntity.getRoomId()))
+                    .videoUri(String.format("%s/%s",withScheme(serverUrl), conferenceEntity.getRoomId()))
                     .id(conferenceEntity.getRoomId())
                     .build();
+    }
+
+    // server URLs are sanitised to carry https:// before they are persisted; rows written before
+    // that was the case may still be bare hosts
+    private String withScheme(String serverUrl){
+        if(serverUrl == null || serverUrl.startsWith("https://") || serverUrl.startsWith("http://")){
+            return serverUrl;
+        }
+        return "https://" + serverUrl;
     }
 }

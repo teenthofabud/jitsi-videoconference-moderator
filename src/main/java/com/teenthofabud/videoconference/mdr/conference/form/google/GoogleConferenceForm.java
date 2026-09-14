@@ -41,6 +41,6 @@ public class GoogleConferenceForm {
 
     // whether the user has chosen a custom server from the plugin dropdown
     @JsonProperty("hasSelectedServer")
-    boolean hasSelectedServer;
+    Boolean hasSelectedServer;
 
 }

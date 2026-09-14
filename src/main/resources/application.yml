@@ -17,20 +17,20 @@ spring:
   version: "@project.version@"
   description: "@project.description@"
  datasource:
-  url: ${JITSI_DB_URL}
-  username: ${JITSI_DB_USERNAME}
-  password: ${JITSI_DB_PASSWORD}
-  driverClassName: ${JITSI_DB_DRIVER_CLASS}
+  url: jdbc:postgresql://${MODERATOR_DB_HOST}:${MODERATOR_DB_PORT}/${MODERATOR_DB_NAME}?currentSchema=${MODERATOR_SCHEMA_NAME}
+  username: ${MODERATOR_DB_USERNAME}
+  password: ${MODERATOR_DB_PASSWORD}
+  driverClassName: org.postgresql.Driver
   hikari:
-   maximum-pool-size: ${JITSI_HIKARI_MAX_POOL_SIZE}
-   minimum-idle: ${JITSI_HIKARI_MIN_IDLE_COUNT}
+   maximum-pool-size: ${MODERATOR_HIKARI_MAX_POOL_SIZE}
+   minimum-idle: ${MODERATOR_HIKARI_MIN_IDLE_COUNT}
 
 
  sql:
   init:
    mode: never
  jpa:
-  database-platform: ${JITSI_DB_DIALECT}
+  database-platform: org.hibernate.dialect.PostgreSQLDialect
   defer-datasource-initialization: true
   hibernate:
    ddl-auto: none
