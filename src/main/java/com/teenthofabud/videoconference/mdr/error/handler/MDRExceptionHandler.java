@@ -141,6 +141,7 @@ public class MDRExceptionHandler {
                         .message(String.format("Something unexpected happened : %s",e.getMessage()))
                                 .errorCode(MDRErrorCode.MDR_ACTION_FAILURE.getErrorCode()).build();
         log.debug("{}",vo);
+        log.debug("",e);
         return ResponseEntity.status(500).body(vo);
     }
 

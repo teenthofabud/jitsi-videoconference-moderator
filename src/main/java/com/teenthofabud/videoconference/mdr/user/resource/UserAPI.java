@@ -17,6 +17,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -53,6 +54,17 @@ public interface UserAPI {
                     content = @Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorVo.class)))
     })
     ResponseEntity<UserVo> getUserById(Long Id) throws UserException;
+
+    @Operation(method = "GET", summary = "Get User By Email", description = "getUserByEmail")
+    @Parameter(description = "User Email", name = "email", required = true, in = ParameterIn.QUERY, schema = @Schema(implementation = String.class))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User retrieved",
+                    content = @Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = UserVo.class))),
+            @ApiResponse(
+                    responseCode = "404", description = "User not found",
+                    content = @Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorVo.class)))
+    })
+    ResponseEntity<UserVo> getUserByEmail(String email) throws UserException;
 
 
 }

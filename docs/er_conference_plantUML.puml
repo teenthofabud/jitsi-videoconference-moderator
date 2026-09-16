@@ -19,7 +19,8 @@
       +id
       +roomId
       +eventId
-      +organizerEmail
+      +userId
+      +serverId
       +conferenceStatus
 
     }

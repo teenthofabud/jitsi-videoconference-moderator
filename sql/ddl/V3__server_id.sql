@@ -1,0 +1,2 @@
+ALTER TABLE google_conference
+ADD COLUMN IF NOT EXISTS server_id BIGINT NOT NULL;
