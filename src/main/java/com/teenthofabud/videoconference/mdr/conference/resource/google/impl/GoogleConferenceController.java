@@ -1,6 +1,6 @@
 package com.teenthofabud.videoconference.mdr.conference.resource.google.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import jakarta.json.JsonPatch;
 import com.teenthofabud.videoconference.mdr.conference.error.google.GoogleConferenceException;
 import com.teenthofabud.videoconference.mdr.conference.form.google.GoogleConferenceForm;
 import com.teenthofabud.videoconference.mdr.conference.vo.google.GoogleConferenceDataVo;
@@ -48,7 +48,7 @@ public class GoogleConferenceController implements GoogleConferenceAPI {
 
     @Override
     @PatchMapping("/events/{eventId}")
-    public ResponseEntity<Void> patchGoogleConferenceByUserIdAndEventId(@PathVariable String eventId, @RequestParam Long userId, @RequestBody String patches) throws GoogleConferenceException, JsonProcessingException {
+    public ResponseEntity<Void> patchGoogleConferenceByUserIdAndEventId(@PathVariable String eventId, @RequestParam Long userId, @RequestBody JsonPatch patches) throws GoogleConferenceException {
         googleConferenceService.patchGoogleConferenceByUserIdAndEventId(userId,eventId,patches);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

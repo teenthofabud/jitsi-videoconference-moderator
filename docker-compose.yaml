@@ -1,0 +1,99 @@
+services:
+
+  flyway:
+    image: flyway/flyway:13.3-alpine
+    command: -locations="filesystem:./sql" -url=jdbc:postgresql://${MODERATOR_DB_HOST}:${MODERATOR_DB_PORT}/${MODERATOR_DB_NAME} -user=${FLYWAY_USER} -password=${FLYWAY_PASSWORD} -schemas=${MODERATOR_SCHEMA_NAME} -connectRetries=60 migrate -X
+    container_name: flyway
+    restart: on-failure
+    pull_policy: always
+    environment:
+      FLYWAY_PLACEHOLDERS_SERVER_MANAGER_ROLE_NAME: ${SERVER_MANAGER_ROLE_NAME}
+      FLYWAY_PLACEHOLDERS_MODERATOR_SCHEMA_NAME: ${MODERATOR_SCHEMA_NAME}
+      FLYWAY_PLACEHOLDERS_FLYWAY_USER: ${FLYWAY_USER}
+      FLYWAY_PLACEHOLDERS_FLYWAY_PASSWORD: ${FLYWAY_PASSWORD}
+      FLYWAY_PLACEHOLDERS_MODERATOR_DB_USERNAME: ${MODERATOR_DB_USERNAME}
+      FLYWAY_PLACEHOLDERS_MODERATOR_DB_PASSWORD: ${MODERATOR_DB_PASSWORD}
+    profiles:
+      - local
+    volumes:
+      - ./sql/ddl:/flyway/sql
+    depends_on:
+      moderator-db:
+        condition: service_healthy
+
+  moderator-db:
+    image: postgres:18.4-alpine3.23
+    container_name: moderator-db
+    restart: on-failure
+    pull_policy: always
+    profiles:
+      - local
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      PGDATA: /var/lib/postgresql/18/docker
+      POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256 --auth-local=scram-sha-256"
+      FLYWAY_USER: ${FLYWAY_USER}
+      FLYWAY_PASSWORD: ${FLYWAY_PASSWORD}
+      APP_USER: ${APP_USER}
+      APP_PASSWORD: ${APP_PASSWORD}
+      MODERATOR_DB_NAME: ${MODERATOR_DB_NAME}
+      MODERATOR_SCHEMA_NAME: ${MODERATOR_SCHEMA_NAME}
+      MIGRATOR_ROLE_NAME: ${MIGRATOR_ROLE_NAME}
+      SERVER_MANAGER_ROLE_NAME: ${SERVER_MANAGER_ROLE_NAME}
+    volumes:
+      - db-data:/var/lib/postgresql
+      - ./sql/init-user-db.sh:/docker-entrypoint-initdb.d/init-user-db.sh
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d ${POSTGRES_DB} -h 127.0.0.1 -p 5432 -U ${POSTGRES_USER}" ]
+      interval: 30s
+      timeout: 60s
+      retries: 5
+      start_period: 80s
+
+  moderator-server:
+    image: ghcr.io/teenthofabud/jitsi-videoconference-moderator:${MODERATOR_IMAGE_TAG}
+    container_name: jitsi-videoconference-moderator
+    restart: on-failure
+    pull_policy: missing
+    profiles:
+      - local
+    ports:
+      - "5005:5005"
+      - "8080:8080"
+    environment:
+      # -javaagent appended (not replacing jdwp): both attach independently.
+      JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,address=*:5005,server=y,suspend=n"
+      MODERATOR_IMAGE_TAG: ${MODERATOR_IMAGE_TAG}
+      MODERATOR_DB_HOST: ${MODERATOR_DB_HOST}
+      MODERATOR_DB_PORT: ${MODERATOR_DB_PORT}
+      MODERATOR_DB_USERNAME: ${MODERATOR_DB_USERNAME}
+      MODERATOR_DB_PASSWORD: ${MODERATOR_DB_PASSWORD}
+      MODERATOR_DB_NAME: ${MODERATOR_DB_NAME}
+      MODERATOR_SCHEMA_NAME: ${MODERATOR_SCHEMA_NAME}
+      AUTH0_DOMAIN: ${AUTH0_DOMAIN}
+      AUTH0_API_IDENTIFIER: ${AUTH0_API_IDENTIFIER}
+      MODERATOR_HIKARI_MAX_POOL_SIZE: ${MODERATOR_HIKARI_MAX_POOL_SIZE}
+      MODERATOR_HIKARI_MIN_IDLE_COUNT: ${MODERATOR_HIKARI_MIN_IDLE_COUNT}
+    depends_on:
+      moderator-db:
+        condition: service_healthy
+      flyway:
+        condition: service_completed_successfully
+    healthcheck:
+      # curl is already installed in this image (Dockerfile), and
+      # management.endpoints.web.exposure.include includes "health" (application.yml).
+      # -k: curl doesn't trust the mkcert dev CA inside the container; skipping
+      # verification is fine for this internal healthcheck.
+      test: [ "CMD-SHELL", "curl -kf http://localhost:8080/actuator/health || exit 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
+
+volumes:
+  db-data:
+    driver: local

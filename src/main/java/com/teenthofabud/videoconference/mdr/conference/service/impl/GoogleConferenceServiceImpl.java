@@ -1,7 +1,9 @@
 package com.teenthofabud.videoconference.mdr.conference.service.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonPatch;
+import jakarta.json.JsonReader;
 import com.teenthofabud.videoconference.mdr.conference.constants.google.GoogleConferenceErrorType;
 import com.teenthofabud.videoconference.mdr.conference.converter.ConferenceEntityToConferenceVoConverter;
 import com.teenthofabud.videoconference.mdr.conference.converter.google.GoogleConferenceEntityToGoogleConferenceVoConverter;
@@ -20,14 +22,15 @@ import com.teenthofabud.videoconference.mdr.server.vo.ServerVo;
 import com.teenthofabud.videoconference.mdr.user.error.UserException;
 import com.teenthofabud.videoconference.mdr.user.service.UserService;
 import com.teenthofabud.videoconference.mdr.user.vo.UserVo;
-import jakarta.json.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tools.jackson.databind.ObjectMapper;
 
 import java.io.StringReader;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -46,7 +49,6 @@ public class GoogleConferenceServiceImpl implements GoogleConferenceService {
     private final ServerService serverService;
 
     @Override
-    @Transactional
     public GoogleConferenceDataVo createNewGoogleConference(GoogleConferenceForm form) throws GoogleConferenceException {
         Long userId = form.getUserId();
         String eventId = form.getEventData().getEventId();
@@ -116,7 +118,7 @@ public class GoogleConferenceServiceImpl implements GoogleConferenceService {
 
     @Override
     @Transactional
-    public void patchGoogleConferenceByUserIdAndEventId(Long userId, String eventId, String rawPatches) throws GoogleConferenceException, JsonProcessingException {
+    public void patchGoogleConferenceByUserIdAndEventId(Long userId, String eventId, JsonPatch patches) throws GoogleConferenceException {
         UserVo userVo;
         try{
             userVo = userService.getUserById(userId);
@@ -129,24 +131,35 @@ public class GoogleConferenceServiceImpl implements GoogleConferenceService {
         if(optionalConferenceEntity.isEmpty())
             throw new GoogleConferenceException(GoogleConferenceErrorType.TEMPORARY,String.format("Calendar event with ID %s not found",eventId));
         GoogleConferenceEntity conferenceEntity = optionalConferenceEntity.get();
-        JsonArray patchArray;
-        try (JsonReader reader = Json.createReader(new StringReader(rawPatches))) {
-            patchArray = reader.readArray();
+        String before = objectMapper.writeValueAsString(conferenceEntity);
+        log.info("Before patch : {}",before);
+        JsonObject patchedObject = patches.apply(readObject(before));
+        GoogleConferenceEntity patchedEntity = objectMapper.readValue(patchedObject.toString(),GoogleConferenceEntity.class);
+        rejectIdentityChanges(conferenceEntity, patchedEntity);
+        log.info("after patching : {}",patchedEntity);
+        googleConferenceRepository.save(patchedEntity);
+    }
+
+    private JsonObject readObject(String json){
+        try(JsonReader reader = Json.createReader(new StringReader(json))){
+            return reader.readObject();
         }
-        JsonPatch patches = Json.createPatch(patchArray);
-        // POJO -> String (Jackson) -> JsonObject (Jakarta)
-        String entityAsJsonString = objectMapper.writeValueAsString(conferenceEntity);
-        JsonObject source;
-        try (JsonReader reader = Json.createReader(new StringReader(entityAsJsonString))) {
-            source = reader.readObject();
+    }
+
+    /**
+     * A patch may only move a conference through its lifecycle. Rewriting the primary key, the
+     * calendar event it belongs to, the organizer who owns it would either
+     * orphan a live meeting or hand the conference to another user, so those are refused.
+     */
+    private void rejectIdentityChanges(GoogleConferenceEntity original, GoogleConferenceEntity patched) throws GoogleConferenceException {
+        if(Objects.equals(original.getId(), patched.getId())
+                && Objects.equals(original.getEventId(), patched.getEventId())
+                && Objects.equals(original.getUserId(), patched.getUserId())){
+            return;
         }
-        // Apply the patch natively in Jakarta
-        JsonObject patched = patches.apply(source);
-        // JsonObject -> String (Jakarta) -> POJO (Jackson)
-        String patchedJsonString = patched.toString();
-        conferenceEntity = objectMapper.readValue(patchedJsonString, GoogleConferenceEntity.class);
-        log.debug("after patching : {}",conferenceEntity);
-        googleConferenceRepository.save(conferenceEntity);
+        log.error("Patch attempted to change immutable attributes of the conference with event id {}", original.getEventId());
+        throw new GoogleConferenceException(GoogleConferenceErrorType.PERMANENT,
+                "Only the status of a conference can be patched");
     }
 
     @Override

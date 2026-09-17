@@ -1,7 +1,6 @@
 package com.teenthofabud.videoconference.mdr.user.service.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.json.JsonPatch;
 import com.teenthofabud.videoconference.mdr.error.core.MDRErrorCode;
 import com.teenthofabud.videoconference.mdr.user.converter.UserEntityToVoConverter;
 import com.teenthofabud.videoconference.mdr.user.converter.UserFormToUserEntityConverter;
@@ -11,13 +10,11 @@ import com.teenthofabud.videoconference.mdr.user.form.UserForm;
 import com.teenthofabud.videoconference.mdr.user.repository.UserRepository;
 import com.teenthofabud.videoconference.mdr.user.service.UserService;
 import com.teenthofabud.videoconference.mdr.user.vo.UserVo;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonPatch;
-import jakarta.json.JsonValue;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tools.jackson.databind.ObjectMapper;
 
 import java.util.Optional;
 
@@ -71,7 +68,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void patchUser(Long userId, JsonPatch patches) throws UserException, JsonProcessingException {
+    public void patchUser(Long userId, JsonPatch patches) throws UserException {
 //        UserEntity userEntity = userRepository.findById(userId).orElseThrow(()-> new UserException(MDRErrorCode.MDR_NOT_FOUND,String.format("User with ID %s not found",userId));
 //        // Convert the Spring entity into a Jakarta JsonValue using Jackson 3
 //        JsonValue source = mapper.convertValue(userEntity, JsonValue.class);

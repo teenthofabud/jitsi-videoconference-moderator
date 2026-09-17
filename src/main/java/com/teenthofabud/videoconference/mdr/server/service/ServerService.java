@@ -23,4 +23,6 @@ public interface ServerService {
     ServerVo updateDefaultServer(DefaultServerUpdateForm form) throws ServerException;
 
     List<ServerVo> getServersByUserId(Long userId);
+
+    List<ServerVo> getAllDefaultServers();
 }
