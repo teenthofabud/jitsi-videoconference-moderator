@@ -68,7 +68,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void patchUser(Long userId, JsonPatch patches) throws UserException, JsonProcessingException {
+    public void patchUser(Long userId, JsonPatch patches) throws UserException {
 //        UserEntity userEntity = userRepository.findById(userId).orElseThrow(()-> new UserException(MDRErrorCode.MDR_NOT_FOUND,String.format("User with ID %s not found",userId));
 //        // Convert the Spring entity into a Jakarta JsonValue using Jackson 3
 //        JsonValue source = mapper.convertValue(userEntity, JsonValue.class);

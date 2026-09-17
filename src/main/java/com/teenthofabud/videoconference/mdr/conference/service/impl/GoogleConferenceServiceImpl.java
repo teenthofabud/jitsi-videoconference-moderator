@@ -28,7 +28,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tools.jackson.databind.ObjectMapper;
 
+import java.io.StringReader;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -116,7 +118,7 @@ public class GoogleConferenceServiceImpl implements GoogleConferenceService {
 
     @Override
     @Transactional
-    public void patchGoogleConferenceByUserIdAndEventId(Long userId, String eventId, String rawPatches) throws GoogleConferenceException, JsonProcessingException {
+    public void patchGoogleConferenceByUserIdAndEventId(Long userId, String eventId, JsonPatch patches) throws GoogleConferenceException {
         UserVo userVo;
         try{
             userVo = userService.getUserById(userId);
@@ -146,14 +148,13 @@ public class GoogleConferenceServiceImpl implements GoogleConferenceService {
 
     /**
      * A patch may only move a conference through its lifecycle. Rewriting the primary key, the
-     * calendar event it belongs to, the room people join or the organizer who owns it would either
+     * calendar event it belongs to, the organizer who owns it would either
      * orphan a live meeting or hand the conference to another user, so those are refused.
      */
     private void rejectIdentityChanges(GoogleConferenceEntity original, GoogleConferenceEntity patched) throws GoogleConferenceException {
         if(Objects.equals(original.getId(), patched.getId())
                 && Objects.equals(original.getEventId(), patched.getEventId())
-                && Objects.equals(original.getRoomId(), patched.getRoomId())
-                && Objects.equals(original.getOrganizerEmail(), patched.getOrganizerEmail())){
+                && Objects.equals(original.getUserId(), patched.getUserId())){
             return;
         }
         log.error("Patch attempted to change immutable attributes of the conference with event id {}", original.getEventId());

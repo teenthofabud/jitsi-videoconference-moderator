@@ -16,7 +16,7 @@ public interface GoogleConferenceService {
 
     List<GoogleConferenceVo> getAllGoogleConferencesByUserId(Long userId) throws GoogleConferenceException;
 
-    void patchGoogleConferenceByUserIdAndEventId(Long userId, String eventId, JsonPatch patches) throws GoogleConferenceException, JsonProcessingException;
+    void patchGoogleConferenceByUserIdAndEventId(Long userId, String eventId, JsonPatch patches) throws GoogleConferenceException;
 
     void deleteGoogleConferenceByUserIdAndEventId(Long userId, String eventId) throws GoogleConferenceException;
 
