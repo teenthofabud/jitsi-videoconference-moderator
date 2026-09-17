@@ -17,6 +17,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
+import tools.jackson.databind.ObjectMapper;
 
 import java.util.Optional;
 
@@ -45,11 +46,7 @@ class GuestUserServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        userService = new UserServiceImpl();
-        ReflectionTestUtils.setField(userService, "userRepository", userRepository);
-        // the converters are pure functions; using the real ones keeps the assertions meaningful
-        ReflectionTestUtils.setField(userService, "userFormToUserEntityConverter", new UserFormToUserEntityConverter());
-        ReflectionTestUtils.setField(userService, "userEntityToVoConverter", new UserEntityToVoConverter());
+        userService = new UserServiceImpl(userRepository,new UserFormToUserEntityConverter(),new ObjectMapper(),new UserEntityToVoConverter());
     }
 
     private UserForm form(String email, String name) {
