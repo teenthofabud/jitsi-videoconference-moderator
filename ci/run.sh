@@ -104,6 +104,5 @@ while IFS= read -r line; do
             ;;
     esac
 done < "$ENV_FILE"
-
 echo "Running Spring Boot (env=$ENV)"
 exec mvn spring-boot:run -Dspring-boot.run.jvmArguments="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
