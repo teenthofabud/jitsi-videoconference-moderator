@@ -27,4 +27,7 @@ END $$;
 -- Assign role
 GRANT ${MIGRATOR_ROLE_NAME} TO ${FLYWAY_USER};
 
+-- Grant CREATEROLE so this user can create application users in future scripts
+ALTER ROLE ${FLYWAY_USER} CREATEROLE;
+
 -- Flyway end --
