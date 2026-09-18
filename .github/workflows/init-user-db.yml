@@ -76,7 +76,7 @@ jobs:
             -locations="filesystem:/flyway/sql" \
             -placeholders.SERVER_MANAGER_ROLE_NAME="${SERVER_MANAGER_ROLE_NAME}" \
             -placeholders.MODERATOR_DB_USERNAME="${MODERATOR_DB_USERNAME}" \
-            -placeholders.MODERATOR_SCHEMA_NAME="${MODERATOR_SCHEMA_NAME}" \
+            -placeholders.MODERATOR_SCHEMA_NAME="jitsi_moderator" \
             -placeholders.MODERATOR_DB_PASSWORD="${MODERATOR_DB_PASSWORD}" \
             -placeholders.FLYWAY_USER="${FLYWAY_USER}" \
             migrate
