@@ -52,7 +52,7 @@ jobs:
         run: |
           # Replace placeholders and create a temporary hydrated SQL file
           envsubst '${FLYWAY_USER} ${SERVER_MANAGER_ROLE_NAME} ${FLYWAY_PASSWORD} ${SCHEMA_NAME} ${MIGRATOR_ROLE_NAME} ${APP_USER} ${APP_PASSWORD}' \
-          < ./sql/init-db.sql > ./sql/init-db-hydrated.sql
+          < ./sql/init-user-db.sql > ./sql/init-db-hydrated.sql
           
           # Execute the hydrated file
           psql "${DB_URL}" -f ./sql/init-db-hydrated.sql

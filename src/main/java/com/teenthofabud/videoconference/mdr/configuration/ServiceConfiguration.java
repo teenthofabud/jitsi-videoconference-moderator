@@ -1,6 +1,5 @@
 package com.teenthofabud.videoconference.mdr.configuration;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
@@ -9,8 +8,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.validation.beanvalidation.SpringConstraintValidatorFactory;
 import org.hibernate.validator.HibernateValidator;
-
-import java.io.IOException;
 
 @Configuration
 public class ServiceConfiguration {
@@ -23,11 +20,6 @@ public class ServiceConfiguration {
                 .buildValidatorFactory();
         Validator validator = validatorFactory.getValidator();
         return validator;
-    }
-
-    @Bean
-    public ObjectMapper objectMapper() {
-        return new ObjectMapper();
     }
 
 
