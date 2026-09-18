@@ -64,6 +64,7 @@ jobs:
           SERVER_MANAGER_ROLE_NAME: moderator_server_manager_${{ inputs.environment }}
           MODERATOR_DB_USERNAME: ${{ env.MODERATOR_SERVICE_DB_USERNAME }}
           MODERATOR_DB_PASSWORD: ${{ env.MODERATOR_SERVICE_DB_PASSWORD }}
+          FLYWAY_USER: ${{ env.FLYWAY_USERNAME }}
         run: |
           docker run --rm \
             -v ${{ github.workspace }}/sql/ddl:/flyway/sql \
@@ -77,4 +78,5 @@ jobs:
             -placeholders.MODERATOR_DB_USERNAME="${MODERATOR_DB_USERNAME}" \
             -placeholders.MODERATOR_SCHEMA_NAME="${MODERATOR_SCHEMA_NAME}" \
             -placeholders.MODERATOR_DB_PASSWORD="${MODERATOR_DB_PASSWORD}" \
+            -placeholders.FLYWAY_USER="${FLYWAY_USER}" \
             migrate
