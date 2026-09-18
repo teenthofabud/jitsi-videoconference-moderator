@@ -43,11 +43,8 @@ jobs:
         env:
           FLYWAY_USER: ${{ env.FLYWAY_USERNAME }}
           FLYWAY_PASSWORD: ${{ env.FLYWAY_PASSWORD }}
-          APP_USER: ${{ env.MODERATOR_SERVICE_DB_USERNAME }}
-          APP_PASSWORD: ${{ env.MODERATOR_SERVICE_DB_PASSWORD }}
           SCHEMA_NAME: jitsi_moderator
           MIGRATOR_ROLE_NAME: moderator_schema_migrator_${{ inputs.environment }}
-          SERVER_MANAGER_ROLE_NAME: moderator_server_manager_${{ inputs.environment }}
           DB_URL: postgres://${{ env.AIVEN_DB_ADMIN_CREDENTIALS }}@${{ env.AIVEN_DB_HOST }}/toab-jitsi-${{ inputs.environment }}?sslmode=require
         run: |
           # Replace placeholders and create a temporary hydrated SQL file
@@ -64,6 +61,10 @@ jobs:
       - name: Run Flyway Migrate
         env:
           AIVEN_JDBC_URL: jdbc:postgresql://${{ env.AIVEN_DB_HOST }}/toab-jitsi-${{ inputs.environment }}?sslmode=require
+          SERVER_MANAGER_ROLE_NAME: moderator_server_manager_${{ inputs.environment }}
+          MODERATOR_DB_USERNAME: ${{ env.MODERATOR_SERVICE_DB_USERNAME }}
+          MODERATOR_DB_PASSWORD: ${{ env.MODERATOR_SERVICE_DB_PASSWORD }}
+          MODERATOR_SCHEMA_NAME: jitsi_moderator
         run: |
           docker run --rm \
             -v ${{ github.workspace }}/sql/ddl:/flyway/sql \
