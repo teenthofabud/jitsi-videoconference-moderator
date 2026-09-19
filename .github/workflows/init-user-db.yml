@@ -65,13 +65,14 @@ jobs:
           MODERATOR_DB_USERNAME: ${{ env.MODERATOR_SERVICE_DB_USERNAME }}
           MODERATOR_DB_PASSWORD: ${{ env.MODERATOR_SERVICE_DB_PASSWORD }}
           FLYWAY_USER: ${{ env.FLYWAY_USERNAME }}
+          FLYWAY_PASSWORD: ${{ env.FLYWAY_PASSWORD }}
         run: |
           docker run --rm \
             -v ${{ github.workspace }}/sql/ddl:/flyway/sql \
             flyway/flyway:13.3-alpine \
             -url="${AIVEN_JDBC_URL}" \
-            -user="${{ env.FLYWAY_USERNAME }}" \
-            -password="${{ env.FLYWAY_PASSWORD }}" \
+            -user="${FLYWAY_USERNAME}" \
+            -password="${FLYWAY_PASSWORD}" \
             -schemas="jitsi_moderator" \
             -locations="filesystem:/flyway/sql" \
             -placeholders.SERVER_MANAGER_ROLE_NAME="${SERVER_MANAGER_ROLE_NAME}" \
