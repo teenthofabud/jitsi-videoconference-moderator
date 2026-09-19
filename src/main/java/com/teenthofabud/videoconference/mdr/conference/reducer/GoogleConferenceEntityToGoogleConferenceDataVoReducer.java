@@ -16,6 +16,7 @@ public class GoogleConferenceEntityToGoogleConferenceDataVoReducer {
                     .eventId(conferenceEntity.getEventId())
                     .videoUri(String.format("%s/%s",withScheme(serverUrl), conferenceEntity.getRoomId()))
                     .id(conferenceEntity.getRoomId())
+                    .serverId(conferenceEntity.getServerId())
                     .build();
     }
 
