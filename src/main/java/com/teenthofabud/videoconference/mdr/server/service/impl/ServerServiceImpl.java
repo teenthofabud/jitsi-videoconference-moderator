@@ -172,13 +172,13 @@ public class ServerServiceImpl implements ServerService {
             return rawUrl;
         }
         // Trim whitespace
-        String cleanUrl = rawUrl.trim();
+        String cleanUrl = rawUrl.trim().toLowerCase();
         // Aggressively strip ALL leading occurrences of http:// or https:// (case-insensitive)
         // This fixes the http://https:// and https://https:// bugs
         cleanUrl = cleanUrl.replaceFirst("(?i)^(https?://)+", "");
         // Strip all trailing slashes without a while loop
         cleanUrl = cleanUrl.replaceFirst("/*$", "");
-        // Prepend a single scheme 
+        // Prepend a single scheme
         return "https://" + cleanUrl;
     }
 }
