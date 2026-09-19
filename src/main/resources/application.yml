@@ -17,14 +17,14 @@ spring:
   version: "@project.version@"
   description: "@project.description@"
  datasource:
-  url: jdbc:postgresql://${MODERATOR_DB_HOST}:${MODERATOR_DB_PORT}/${MODERATOR_DB_NAME}?currentSchema=${MODERATOR_SCHEMA_NAME}
+  url: jdbc:postgresql://${MODERATOR_DB_HOST}:${MODERATOR_DB_PORT}/${MODERATOR_DB_NAME}?currentSchema=${MODERATOR_SCHEMA_NAME}&sslmode=require
   username: ${MODERATOR_DB_USERNAME}
   password: ${MODERATOR_DB_PASSWORD}
   driverClassName: org.postgresql.Driver
   hikari:
    maximum-pool-size: ${MODERATOR_HIKARI_MAX_POOL_SIZE}
    minimum-idle: ${MODERATOR_HIKARI_MIN_IDLE_COUNT}
-
+   schema: ${MODERATOR_SCHEMA_NAME}
 
  sql:
   init:
@@ -38,6 +38,7 @@ spring:
   properties:
    hibernate:
     format_sql: true
+    default_schema: ${MODERATOR_SCHEMA_NAME}
     bytecode:
      provider: none
 #   jakarta:
