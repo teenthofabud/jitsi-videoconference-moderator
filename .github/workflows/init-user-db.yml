@@ -68,7 +68,7 @@ jobs:
           FLYWAY_PASSWORD: ${{ env.FLYWAY_PASSWORD }}
         run: |
           docker run --rm \
-            -v ${{ github.workspace }}/sql/ddl:/flyway/sql \
+            -v ${{ github.workspace }}/sql/scripts:/flyway/sql \
             flyway/flyway:13.3-alpine \
             -url="${AIVEN_JDBC_URL}" \
             -user="${FLYWAY_USERNAME}" \
