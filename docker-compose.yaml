@@ -15,7 +15,7 @@ services:
     profiles:
       - local
     volumes:
-      - ./sql/ddl:/flyway/sql
+      - ./sql/scripts:/flyway/sql
     depends_on:
       moderator-db:
         condition: service_healthy
