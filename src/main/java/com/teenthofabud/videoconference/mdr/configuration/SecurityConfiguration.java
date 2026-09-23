@@ -29,6 +29,7 @@ public class SecurityConfiguration {
                         ).permitAll()
                         .requestMatchers("/actuator/health").permitAll()
                         .requestMatchers(HttpMethod.POST,"/api/users/preview").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/servers/default").permitAll()
                         .anyRequest().authenticated()
 
                 )
