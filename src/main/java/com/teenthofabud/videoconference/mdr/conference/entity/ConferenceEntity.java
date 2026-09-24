@@ -1,8 +1,6 @@
 package com.teenthofabud.videoconference.mdr.conference.entity;
 
 import com.teenthofabud.videoconference.mdr.conference.constants.ConferenceStatus;
-import com.teenthofabud.videoconference.mdr.server.entity.ServerEntity;
-import com.teenthofabud.videoconference.mdr.user.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;

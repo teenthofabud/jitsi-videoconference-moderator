@@ -21,6 +21,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.Instant;
 import java.util.List;
 
 import static com.teenthofabud.videoconference.mdr.support.JsonTestSupport.json;
@@ -59,7 +60,8 @@ class DefaultServerControllerTest {
     }
 
     private ServerVo defaultVo(Long id, String name, String url) {
-        return ServerVo.builder().id(id).name(name).serverUrl(url).serverType(ServerType.DEFAULT).build();
+        return ServerVo.builder().id(id).name(name).serverUrl(url).serverType(ServerType.DEFAULT)
+                .version(0L).lastModifiedDate(Instant.parse("2026-01-02T03:04:05Z")).build();
     }
 
     private DefaultServerForm createForm(String name, String url) {

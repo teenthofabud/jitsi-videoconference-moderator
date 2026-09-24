@@ -20,6 +20,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import tools.jackson.databind.ObjectMapper;
 
 import java.util.Optional;
+import java.time.Instant;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -38,6 +39,7 @@ import static org.mockito.Mockito.when;
 class GuestUserServiceImplTest {
 
     private static final String EMAIL = "guest@example.com";
+    private static final Instant LAST_MODIFIED = Instant.parse("2026-01-02T03:04:05Z");
 
     @Mock
     private UserRepository userRepository;
@@ -131,7 +133,7 @@ class GuestUserServiceImplTest {
         @Test
         @DisplayName("a second guest signup on the same email is rejected as MDR_EXISTS")
         void duplicateGuestIsRejected() {
-            UserEntity existing = UserEntity.builder().id(1L).email(EMAIL).managed(false).build();
+            UserEntity existing = UserEntity.builder().id(1L).email(EMAIL).managed(false).version(0L).lastModifiedDate(LAST_MODIFIED).build();
             when(userRepository.findByEmail(EMAIL)).thenReturn(Optional.of(existing));
 
             assertThatThrownBy(() -> userService.createNewUser(form(EMAIL, "Guest User"), false))
@@ -146,7 +148,7 @@ class GuestUserServiceImplTest {
         @Test
         @DisplayName("a guest cannot claim an email already held by a managed user")
         void guestCannotReuseManagedUserEmail() {
-            UserEntity existing = UserEntity.builder().id(1L).email(EMAIL).managed(true).build();
+            UserEntity existing = UserEntity.builder().id(1L).email(EMAIL).managed(true).version(0L).lastModifiedDate(LAST_MODIFIED).build();
             when(userRepository.findByEmail(EMAIL)).thenReturn(Optional.of(existing));
 
             assertThatThrownBy(() -> userService.createNewUser(form(EMAIL, null), false))
@@ -159,7 +161,7 @@ class GuestUserServiceImplTest {
         @Test
         @DisplayName("an existing guest is never promoted to managed by re-registering")
         void existingGuestIsNotPromoted() {
-            UserEntity existing = UserEntity.builder().id(1L).email(EMAIL).managed(false).build();
+            UserEntity existing = UserEntity.builder().id(1L).email(EMAIL).managed(false).version(0L).lastModifiedDate(LAST_MODIFIED).build();
             when(userRepository.findByEmail(EMAIL)).thenReturn(Optional.of(existing));
 
             assertThatThrownBy(() -> userService.createNewUser(form(EMAIL, null), true))

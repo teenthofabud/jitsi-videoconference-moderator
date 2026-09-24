@@ -19,6 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Optional;
+import java.time.Instant;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -35,6 +36,7 @@ import static org.mockito.Mockito.when;
 class DefaultServerRetrievalTest {
 
     private static final Long USER_ID = 99L;
+    private static final Instant LAST_MODIFIED = Instant.parse("2026-01-02T03:04:05Z");
 
     @Mock
     private ServerRepository serverRepository;
@@ -54,12 +56,14 @@ class DefaultServerRetrievalTest {
 
     private ServerEntity defaultServer(Long id, String name, String url) {
         return ServerEntity.builder()
-                .id(id).name(name).serverUrl(url).serverType(ServerType.DEFAULT).build();
+                .id(id).name(name).serverUrl(url).serverType(ServerType.DEFAULT)
+                .version(0L).lastModifiedDate(LAST_MODIFIED).build();
     }
 
     private ServerEntity customServer(Long id, Long userId, String name, String url) {
         return ServerEntity.builder()
-                .id(id).name(name).serverUrl(url).userId(userId).serverType(ServerType.CUSTOM).build();
+                .id(id).name(name).serverUrl(url).userId(userId).serverType(ServerType.CUSTOM)
+                .version(0L).lastModifiedDate(LAST_MODIFIED).build();
     }
 
     @Nested
@@ -123,7 +127,8 @@ class DefaultServerRetrievalTest {
             // match it; the merge keeps the first sighting so the plugin dropdown shows no repeat
             ServerEntity odd = ServerEntity.builder()
                     .id(4L).name("Jitsi Meet").serverUrl("https://meet.jit.si")
-                    .userId(USER_ID).serverType(ServerType.DEFAULT).build();
+                    .userId(USER_ID).serverType(ServerType.DEFAULT)
+                    .version(0L).lastModifiedDate(LAST_MODIFIED).build();
             when(serverRepository.findAllByUserId(USER_ID)).thenReturn(List.of(odd));
             when(serverRepository.findAllByServerType(ServerType.DEFAULT)).thenReturn(List.of(odd));
 
@@ -137,7 +142,8 @@ class DefaultServerRetrievalTest {
         void deduplicationPreservesOrdering() {
             ServerEntity shared = ServerEntity.builder()
                     .id(4L).name("Shared").serverUrl("https://shared.example.org")
-                    .userId(USER_ID).serverType(ServerType.DEFAULT).build();
+                    .userId(USER_ID).serverType(ServerType.DEFAULT)
+                    .version(0L).lastModifiedDate(LAST_MODIFIED).build();
             when(serverRepository.findAllByUserId(USER_ID)).thenReturn(List.of(
                     customServer(1L, USER_ID, "My box", "https://jitsi.internal"), shared));
             when(serverRepository.findAllByServerType(ServerType.DEFAULT)).thenReturn(List.of(

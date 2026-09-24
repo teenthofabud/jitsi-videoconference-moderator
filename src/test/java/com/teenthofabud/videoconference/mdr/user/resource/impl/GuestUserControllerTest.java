@@ -52,7 +52,7 @@ class GuestUserControllerTest {
     }
 
     private UserVo guestVo(Long id, String email, String name) {
-        return UserVo.builder().id(id).email(email).name(name).isManaged(false).build();
+        return UserVo.builder().id(id).email(email).name(name).isManaged(false).version(0L).lastModifiedDate(java.time.Instant.parse("2026-01-02T03:04:05Z")).build();
     }
 
     private UserForm signup(String email, String name) {
@@ -79,7 +79,9 @@ class GuestUserControllerTest {
                 .andExpect(header().string("Location", "http://localhost/api/users/preview/11"))
                 .andExpect(jsonPath("$.id").value(11))
                 .andExpect(jsonPath("$.email").value("guest@example.com"))
-                .andExpect(jsonPath("$.isManaged").value(false));
+                .andExpect(jsonPath("$.isManaged").value(false))
+                .andExpect(jsonPath("$.version").value(0))
+                .andExpect(jsonPath("$.lastModifiedDate").value("2026-01-02T03:04:05Z"));
     }
 
     @Test

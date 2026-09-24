@@ -3,7 +3,7 @@ package com.teenthofabud.videoconference.mdr.support;
 import com.teenthofabud.videoconference.mdr.configuration.JsonPatchHttpMessageConverter;
 import com.teenthofabud.videoconference.mdr.error.converter.MDRExceptionToErrorVoConverter;
 import com.teenthofabud.videoconference.mdr.error.converter.MethodArgNotValidExceptionToErrorVoConverter;
-import com.teenthofabud.videoconference.mdr.error.converter.google.GoogleExceptionToConferenceErrorVoConverter;
+import com.teenthofabud.videoconference.mdr.conference.google.converter.GoogleExceptionToConferenceErrorVoConverter;
 import com.teenthofabud.videoconference.mdr.error.handler.MDRExceptionHandler;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter;
