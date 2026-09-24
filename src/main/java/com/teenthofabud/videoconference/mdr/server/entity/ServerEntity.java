@@ -6,10 +6,13 @@ import com.teenthofabud.videoconference.mdr.server.constants.ServerType;
 import com.teenthofabud.videoconference.mdr.user.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @ToString
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @AllArgsConstructor
@@ -44,5 +47,13 @@ public class ServerEntity {
     @Column(name = "server_type", nullable = false)
     @Enumerated(EnumType.STRING)
     ServerType serverType;
+
+    @Version
+    @Column(name = "version", nullable = false)
+    Long version;
+
+    @LastModifiedDate
+    @Column(name = "last_modified_date", nullable = false)
+    java.time.Instant lastModifiedDate;
 
 }
