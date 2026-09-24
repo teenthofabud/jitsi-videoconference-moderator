@@ -6,6 +6,8 @@ import com.teenthofabud.videoconference.mdr.user.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 
 @ToString
@@ -16,6 +18,7 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @Setter
 @MappedSuperclass
+@EntityListeners(AuditingEntityListener.class)
 public abstract class ConferenceEntity {
 
     @Id
@@ -35,6 +38,14 @@ public abstract class ConferenceEntity {
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
     ConferenceStatus status;
+
+    @Version
+    @Column(name = "version", nullable = false)
+    Long version;
+
+    @LastModifiedDate
+    @Column(name = "last_modified_date", nullable = false)
+    java.time.Instant lastModifiedDate;
 
 
 }
