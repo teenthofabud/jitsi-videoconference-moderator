@@ -14,6 +14,8 @@ public class GoogleConferenceEntityToGoogleConferenceVoConverter implements Conv
                 .roomId(source.getRoomId())
                 .status(source.getStatus())
                 .serverId(source.getServerId())
+                .version(source.getVersion())
+                .lastModifiedDate(source.getLastModifiedDate())
                 .build();
 
     }
