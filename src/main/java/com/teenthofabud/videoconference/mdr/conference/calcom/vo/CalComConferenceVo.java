@@ -22,7 +22,7 @@ public class CalComConferenceVo extends ConferenceVo {
     @Schema(description = "Unique immutable Cal.com booking reference (event.uid)")
     String bookingUid;
 
-    @Schema(description = "Optional Cal.com internal booking ID")
+    @Schema(description = "Cal.com internal booking ID")
     Long bookingId;
 
     @Schema(description = "Identifier for the user who owns the booking")
@@ -30,4 +30,7 @@ public class CalComConferenceVo extends ConferenceVo {
 
     @Schema(description = "Identifier for the conference server")
     Long serverId;
+
+    @Schema(description = "Normalized meeting URL for the conference")
+    String videoUri;
 }

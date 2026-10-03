@@ -7,6 +7,7 @@ import com.teenthofabud.videoconference.mdr.conference.calcom.reducer.CalComConf
 import com.teenthofabud.videoconference.mdr.conference.calcom.repository.CalComConferenceRepository;
 import com.teenthofabud.videoconference.mdr.conference.calcom.service.CalComConferenceService;
 import com.teenthofabud.videoconference.mdr.conference.calcom.vo.CalComConferenceVo;
+import com.teenthofabud.videoconference.mdr.conference.constants.ConferenceStatus;
 import com.teenthofabud.videoconference.mdr.conference.error.ConferenceException;
 import com.teenthofabud.videoconference.mdr.error.core.MDRErrorCode;
 import com.teenthofabud.videoconference.mdr.server.error.ServerException;
@@ -24,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tools.jackson.databind.ObjectMapper;
 
 import java.io.StringReader;
+import java.util.List;
 import java.util.Objects;
 
 @Slf4j
@@ -42,16 +44,16 @@ public class CalComConferenceServiceImpl implements CalComConferenceService {
     @Transactional
     public CalComConferenceVo createConference(CalComConferenceForm form) throws ConferenceException {
         requireUser(form.getUserId());
-        requireServer(form.getServerId());
+        requireServer(form.getServerId(), form.getUserId());
         var existing = repository.findByBookingUid(form.getBookingUid());
         if (existing.isPresent()) {
             if (!Objects.equals(existing.get().getUserId(), form.getUserId())) {
                 throw new ConferenceException(MDRErrorCode.MDR_EXISTS,
                         "Cal.com booking UID is already associated with another user");
             }
-            return converter.convert(existing.get());
+            return toVo(existing.get());
         }
-        return converter.convert(repository.save(reducer.reduce(form)));
+        return toVo(repository.save(reducer.reduce(form)));
     }
 
     @Override
@@ -59,8 +61,17 @@ public class CalComConferenceServiceImpl implements CalComConferenceService {
     public CalComConferenceVo getConference(Long userId, String bookingUid) throws ConferenceException {
         requireUser(userId);
         return repository.findByUserIdAndBookingUid(userId, bookingUid)
-                .map(converter::convert)
+                .map(this::toVo)
                 .orElseThrow(() -> notFound(bookingUid));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<CalComConferenceVo> getAllConferencesByUserId(Long userId) throws ConferenceException {
+        requireUser(userId);
+        return repository.findAllByUserId(userId).stream()
+                .map(this::toVo)
+                .toList();
     }
 
     @Override
@@ -74,9 +85,19 @@ public class CalComConferenceServiceImpl implements CalComConferenceService {
         CalComConferenceEntity patched = objectMapper.readValue(patchedJson.toString(), CalComConferenceEntity.class);
         rejectIdentityChanges(original, patched);
         if (!Objects.equals(original.getServerId(), patched.getServerId())) {
-            requireServer(patched.getServerId());
+            requireServer(patched.getServerId(), original.getUserId());
         }
         repository.save(patched);
+    }
+
+    @Override
+    @Transactional
+    public void deleteConference(Long userId, String bookingUid) throws ConferenceException {
+        requireUser(userId);
+        CalComConferenceEntity conference = repository.findByUserIdAndBookingUid(userId, bookingUid)
+                .orElseThrow(() -> notFound(bookingUid));
+        conference.setStatus(ConferenceStatus.CANCELLED);
+        repository.save(conference);
     }
 
     private void rejectIdentityChanges(CalComConferenceEntity original, CalComConferenceEntity patched) throws ConferenceException {
@@ -100,13 +121,37 @@ public class CalComConferenceServiceImpl implements CalComConferenceService {
         }
     }
 
-    private void requireServer(Long serverId) throws ConferenceException {
+    private void requireServer(Long serverId, Long userId) throws ConferenceException {
         try {
-            serverService.getServerById(serverId);
+            var server = serverService.getServerById(serverId);
+            if (server.getUserId() != null && !Objects.equals(server.getUserId(), userId)) {
+                throw new ConferenceException(MDRErrorCode.MDR_NOT_FOUND,
+                        String.format("Server with ID %s not found", serverId));
+            }
         } catch (ServerException e) {
             throw new ConferenceException(MDRErrorCode.MDR_NOT_FOUND,
                     String.format("Server with ID %s not found", serverId));
         }
+    }
+
+    private CalComConferenceVo toVo(CalComConferenceEntity conference) {
+        CalComConferenceVo vo = converter.convert(conference);
+        try {
+            var server = serverService.getServerById(conference.getServerId());
+            vo.setVideoUri(buildMeetingUrl(server.getServerUrl(), conference.getRoomId()));
+            return vo;
+        } catch (ServerException e) {
+            throw new IllegalStateException("Conference server disappeared while building meeting URL", e);
+        }
+    }
+
+    private String buildMeetingUrl(String serverUrl, String roomId) {
+        String normalizedServerUrl = serverUrl.trim();
+        if (!normalizedServerUrl.startsWith("https://") && !normalizedServerUrl.startsWith("http://")) {
+            normalizedServerUrl = "https://" + normalizedServerUrl;
+        }
+        normalizedServerUrl = normalizedServerUrl.replaceAll("/+$", "");
+        return normalizedServerUrl + "/" + roomId;
     }
 
     private ConferenceException notFound(String bookingUid) {

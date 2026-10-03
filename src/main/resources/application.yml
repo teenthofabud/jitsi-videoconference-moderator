@@ -53,7 +53,7 @@ spring:
 logging:
  level:
   org.hibernate.orm.jdbc.bind: trace
-  com.teenthofabud: info
+  com.teenthofabud: trace
 
 
 

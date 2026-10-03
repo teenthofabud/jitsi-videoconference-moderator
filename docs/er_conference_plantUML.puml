@@ -1,49 +1,55 @@
-    @startuml
+@startuml
 
-    class User {
-      +id
-      +name
-      +email
-      +managed
-    }
+class User {
+  +id
+  +name
+  +email
+  +managed
+}
 
-    class Server {
-      +id
-      +name
-      +serverUrl
-      +severType
-      +userId
-    }
+class Server {
+  +id
+  +name
+  +serverUrl
+  +serverType
+  +userId
+}
 
-    class Conference {
-      +id
-      +roomId
-      +eventId
-      +userId
-      +serverId
-      +conferenceStatus
+class Conference {
+  +id
+  +roomId
+  +userId
+  +serverId
+  +conferenceStatus
+}
 
-    }
+class GoogleConference {
+  +eventId
+}
 
-    enum ServerType{
-     +Custom
-     +Default
-    }
+class CalComConference {
+  +bookingUid
+  +bookingId
+}
 
-    enum ConferenceStatus{
-     +Active
-     +Pending
-     +Cancelled
-    }
+enum ServerType {
+  +Custom
+  +Default
+}
 
-    Server --> ServerType : server type
+enum ConferenceStatus {
+  +Active
+  +Pending
+  +Cancelled
+}
 
+GoogleConference --|> Conference
+CalComConference --|> Conference
 
+Server --> ServerType : server type
+Conference --> ConferenceStatus : conference status
 
-    User "1 " <..> "M" Server : prefers
+User "1 " <..> "M" Conference : owns
+Server "1 " <..> "M" Conference : uses
 
-    Conference --> ConferenceStatus : conference status
-
-    @enduml
-
-
+@enduml

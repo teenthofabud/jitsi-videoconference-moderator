@@ -23,11 +23,12 @@ import lombok.experimental.SuperBuilder;
 @Setter
 public class CalComConferenceEntity extends ConferenceEntity {
 
-    /** Cal.com event.uid; the stable reference used by webhook integrations. */
+    /** Cal.com event.uid; the stable reference used by webhook integrations.
+     * Kind of similar to Google Calendar event id */
     @Column(name = "booking_uid", nullable = false, unique = true)
     String bookingUid;
 
-    /** Cal.com internal booking ID. */
-    @Column(name = "booking_id", unique = true)
+    /** (Optional) Cal.com internal booking ID. */
+    @Column(name = "booking_id", unique = true, nullable = true)
     Long bookingId;
 }

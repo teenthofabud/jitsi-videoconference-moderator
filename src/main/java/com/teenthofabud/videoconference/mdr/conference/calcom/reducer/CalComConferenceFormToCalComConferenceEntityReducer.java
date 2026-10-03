@@ -17,7 +17,7 @@ public class CalComConferenceFormToCalComConferenceEntityReducer {
                 .userId(form.getUserId())
                 .serverId(form.getServerId())
                 .roomId(UUID.randomUUID().toString())
-                .status(ConferenceStatus.PENDING)
+                .status(ConferenceStatus.ACTIVE)
                 .build();
     }
 }
