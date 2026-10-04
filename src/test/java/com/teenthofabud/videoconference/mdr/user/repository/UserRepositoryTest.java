@@ -28,9 +28,13 @@ class UserRepositoryTest extends AbstractPostgresRepositoryTest {
                 .email("organiser@example.com")
                 .name("Organiser")
                 .managed(false)
+                .version(0L)
+                .lastModifiedDate(java.time.Instant.parse("2026-01-02T03:04:05Z"))
                 .build());
 
         assertThat(user.getId()).isNotNull();
+        assertThat(user.getVersion()).isZero();
+        assertThat(user.getLastModifiedDate()).isNotNull();
         assertThat(userRepository.findByEmail("organiser@example.com")).contains(user);
     }
 
@@ -41,12 +45,16 @@ class UserRepositoryTest extends AbstractPostgresRepositoryTest {
                 .email("organiser@example.com")
                 .name("Organiser")
                 .managed(false)
+                .version(0L)
+                .lastModifiedDate(java.time.Instant.parse("2026-01-02T03:04:05Z"))
                 .build());
 
         UserEntity duplicate = UserEntity.builder()
                 .email("organiser@example.com")
                 .name("Same email, different person")
                 .managed(true)
+                .version(0L)
+                .lastModifiedDate(java.time.Instant.parse("2026-01-02T03:04:05Z"))
                 .build();
 
         assertThatThrownBy(() -> userRepository.saveAndFlush(duplicate))

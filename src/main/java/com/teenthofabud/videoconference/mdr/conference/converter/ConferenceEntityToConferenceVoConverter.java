@@ -12,6 +12,8 @@ public class ConferenceEntityToConferenceVoConverter implements Converter<Confer
         return ConferenceVo.builder()
                 .roomId(source.getRoomId())
                 .status(source.getStatus())
+                .version(source.getVersion())
+                .lastModifiedDate(source.getLastModifiedDate())
                 .build();
     }
 }

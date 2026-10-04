@@ -1,8 +1,8 @@
 package com.teenthofabud.videoconference.mdr.error.converter;
 
-import com.teenthofabud.videoconference.mdr.conference.constants.google.GoogleConferenceErrorType;
-import com.teenthofabud.videoconference.mdr.conference.form.google.GoogleConferenceForm;
-import com.teenthofabud.videoconference.mdr.conference.vo.google.GoogleConferenceErrorVo;
+import com.teenthofabud.videoconference.mdr.conference.google.constants.GoogleConferenceErrorType;
+import com.teenthofabud.videoconference.mdr.conference.google.form.GoogleConferenceForm;
+import com.teenthofabud.videoconference.mdr.conference.google.vo.GoogleConferenceErrorVo;
 import com.teenthofabud.videoconference.mdr.error.core.MDRErrorCode;
 import com.teenthofabud.videoconference.mdr.vo.ErrorVo;
 import org.springframework.core.convert.converter.Converter;

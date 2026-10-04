@@ -18,6 +18,8 @@ public class UserEntityToVoConverter implements Converter<com.teenthofabud.video
                 .id(source.getId())
                 .name(source.getName())
                 .isManaged(source.getManaged())
+                .version(source.getVersion())
+                .lastModifiedDate(source.getLastModifiedDate())
                 .build();
     }
 }

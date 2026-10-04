@@ -2,7 +2,7 @@ package com.teenthofabud.videoconference.mdr;
 
 import tools.jackson.databind.ObjectMapper;
 import jakarta.json.JsonPatch;
-import com.teenthofabud.videoconference.mdr.conference.service.GoogleConferenceService;
+import com.teenthofabud.videoconference.mdr.conference.google.service.GoogleConferenceService;
 import com.teenthofabud.videoconference.mdr.configuration.JsonPatchHttpMessageConverter;
 import com.teenthofabud.videoconference.mdr.server.service.ServerService;
 import com.teenthofabud.videoconference.mdr.user.service.UserService;

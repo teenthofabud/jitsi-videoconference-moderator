@@ -30,9 +30,13 @@ class ServerRepositoryTest extends AbstractPostgresRepositoryTest {
                 .serverUrl("https://meet.example.com/a")
                 .userId(42L)
                 .serverType(ServerType.CUSTOM)
+                .version(0L)
+                .lastModifiedDate(java.time.Instant.parse("2026-01-02T03:04:05Z"))
                 .build());
 
         assertThat(server.getId()).isNotNull();
+        assertThat(server.getVersion()).isZero();
+        assertThat(server.getLastModifiedDate()).isNotNull();
         assertThat(serverRepository.existsByUserIdAndServerUrl(42L, "https://meet.example.com/a")).isTrue();
         assertThat(serverRepository.existsByServerUrlAndServerType("https://meet.example.com/a", ServerType.CUSTOM)).isTrue();
         assertThat(serverRepository.findAllByUserId(42L)).containsExactly(server);
@@ -47,6 +51,8 @@ class ServerRepositoryTest extends AbstractPostgresRepositoryTest {
                 .serverUrl("https://meet.example.com/a")
                 .userId(7L)
                 .serverType(ServerType.CUSTOM)
+                .version(0L)
+                .lastModifiedDate(java.time.Instant.parse("2026-01-02T03:04:05Z"))
                 .build());
 
         ServerEntity duplicate = ServerEntity.builder()
@@ -54,6 +60,8 @@ class ServerRepositoryTest extends AbstractPostgresRepositoryTest {
                 .serverUrl("https://meet.example.com/a")
                 .userId(7L)
                 .serverType(ServerType.CUSTOM)
+                .version(0L)
+                .lastModifiedDate(java.time.Instant.parse("2026-01-02T03:04:05Z"))
                 .build();
 
         assertThatThrownBy(() -> serverRepository.saveAndFlush(duplicate))

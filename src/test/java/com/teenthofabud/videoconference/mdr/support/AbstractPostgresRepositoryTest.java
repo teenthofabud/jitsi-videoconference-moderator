@@ -6,6 +6,9 @@ import org.springframework.boot.testcontainers.service.connection.ServiceConnect
 import org.testcontainers.postgresql.PostgreSQLContainer;
 import org.testcontainers.utility.MountableFile;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 /**
  * Base for repository tests that need a real PostgreSQL engine rather than a mock or an
  * in-memory stand-in: Hikari pooling, the actual JDBC driver, and the schema-level
@@ -28,12 +31,26 @@ import org.testcontainers.utility.MountableFile;
 public abstract class AbstractPostgresRepositoryTest {
 
     @ServiceConnection
-    static final PostgreSQLContainer POSTGRES = new PostgreSQLContainer("postgres:18.4-alpine3.23")
-            .withCopyFileToContainer(
-                    MountableFile.forHostPath("sql/ddl/V2__main.sql"),
-                    "/docker-entrypoint-initdb.d/V2__main.sql");
+    static final PostgreSQLContainer POSTGRES = new PostgreSQLContainer("postgres:18.4-alpine3.23");
 
     static {
+        try {
+            // 2. Read the directory programmatically
+            Files.list(Paths.get("sql/scripts"))
+                    .filter(path -> path.toString().endsWith(".sql")) // Ensure it's an SQL file
+                    .filter(path -> !path.getFileName().toString().startsWith("V1__user")) // Exclude V1
+                    .forEach(path ->
+                            // 3. Mount each passing file dynamically
+                            POSTGRES.withCopyFileToContainer(
+                                    MountableFile.forHostPath(path),
+                                    "/docker-entrypoint-initdb.d/" + path.getFileName().toString()
+                            )
+                    );
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to map SQL scripts to Testcontainer", e);
+        }
+
+        // 4. Start the container after all files are mounted
         POSTGRES.start();
     }
 }

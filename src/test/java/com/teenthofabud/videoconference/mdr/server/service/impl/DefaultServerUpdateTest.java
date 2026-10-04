@@ -19,6 +19,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
+import java.time.Instant;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -35,6 +36,8 @@ import static org.mockito.Mockito.when;
  */
 @ExtendWith(MockitoExtension.class)
 class DefaultServerUpdateTest {
+
+    private static final Instant LAST_MODIFIED = Instant.parse("2026-01-02T03:04:05Z");
 
     @Mock
     private ServerRepository serverRepository;
@@ -62,7 +65,8 @@ class DefaultServerUpdateTest {
 
     private ServerEntity existingDefault(Long id, String name, String url) {
         return ServerEntity.builder()
-                .id(id).name(name).serverUrl(url).serverType(ServerType.DEFAULT).build();
+                .id(id).name(name).serverUrl(url).serverType(ServerType.DEFAULT)
+                .version(0L).lastModifiedDate(LAST_MODIFIED).build();
     }
 
     private void saveReturnsTheArgument() {
@@ -163,7 +167,8 @@ class DefaultServerUpdateTest {
             // without this guard the endpoint would let any caller edit another user's preference
             ServerEntity someoneElsesPreference = ServerEntity.builder()
                     .id(7L).name("Alice box").serverUrl("https://alice.internal")
-                    .userId(42L).serverType(ServerType.CUSTOM).build();
+                    .userId(42L).serverType(ServerType.CUSTOM)
+                    .version(0L).lastModifiedDate(LAST_MODIFIED).build();
             when(serverRepository.findById(7L)).thenReturn(Optional.of(someoneElsesPreference));
 
             assertThatThrownBy(() -> serverService.updateDefaultServer(form(7L, "Hijacked", "https://attacker.example.org")))
@@ -180,7 +185,8 @@ class DefaultServerUpdateTest {
             // so the endpoint cannot be used to enumerate which ids exist
             when(serverRepository.findById(7L)).thenReturn(Optional.of(ServerEntity.builder()
                     .id(7L).name("Alice box").serverUrl("https://alice.internal")
-                    .userId(42L).serverType(ServerType.CUSTOM).build()));
+                    .userId(42L).serverType(ServerType.CUSTOM)
+                    .version(0L).lastModifiedDate(LAST_MODIFIED).build()));
             when(serverRepository.findById(404L)).thenReturn(Optional.empty());
 
             assertThatThrownBy(() -> serverService.updateDefaultServer(form(7L, "Hijacked", "https://attacker.example.org")))
