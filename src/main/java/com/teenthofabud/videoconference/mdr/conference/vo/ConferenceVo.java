@@ -20,4 +20,10 @@ public class ConferenceVo {
     @Schema(description = "Whether the conference is still ACTIVE, PENDING, or CANCELLED")
     ConferenceStatus status;
 
+    @Schema(description = "Optimistic locking version")
+    Long version;
+
+    @Schema(description = "Date and time the conference was last modified")
+    java.time.Instant lastModifiedDate;
+
 }

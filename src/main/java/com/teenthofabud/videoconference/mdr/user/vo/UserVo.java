@@ -24,4 +24,10 @@ public class UserVo {
     @Schema(description = "Whether the user is a guest (isManaged = false) or signed up user")
     Boolean isManaged;
 
+    @Schema(description = "Optimistic locking version")
+    Long version;
+
+    @Schema(description = "Date and time the entity was last modified")
+    java.time.Instant lastModifiedDate;
+
 }

@@ -28,5 +28,11 @@ public class ServerVo {
     @Schema(description = "User ID (PK) of the user who added this server entry")
     Long userId;
 
+    @Schema(description = "Optimistic locking version")
+    Long version;
+
+    @Schema(description = "Date and time the entity was last modified")
+    java.time.Instant lastModifiedDate;
+
 
 }

@@ -1,16 +1,10 @@
 package com.teenthofabud.videoconference.mdr.user.entity;
 
-import com.teenthofabud.videoconference.mdr.conference.entity.ConferenceEntity;
-import com.teenthofabud.videoconference.mdr.conference.entity.google.GoogleConferenceEntity;
-import com.teenthofabud.videoconference.mdr.server.entity.ServerEntity;
-import com.teenthofabud.videoconference.mdr.user.constants.ReferenceType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
