@@ -11,9 +11,7 @@ import com.teenthofabud.videoconference.mdr.conference.converter.ConferenceEntit
 import com.teenthofabud.videoconference.mdr.conference.google.converter.GoogleConferenceEntityToGoogleConferenceVoConverter;
 import com.teenthofabud.videoconference.mdr.conference.google.entity.GoogleConferenceEntity;
 import com.teenthofabud.videoconference.mdr.conference.google.error.GoogleConferenceException;
-import com.teenthofabud.videoconference.mdr.conference.google.form.GoogleCalendarEvent;
 import com.teenthofabud.videoconference.mdr.conference.google.form.GoogleConferenceForm;
-import com.teenthofabud.videoconference.mdr.conference.google.form.GoogleEventData;
 import com.teenthofabud.videoconference.mdr.conference.google.reducer.GoogleConferenceEntityToGoogleConferenceDataVoReducer;
 import com.teenthofabud.videoconference.mdr.conference.google.reducer.GoogleConferenceFormToGoogleConferenceEntityReducer;
 import com.teenthofabud.videoconference.mdr.conference.google.repository.GoogleConferenceRepository;

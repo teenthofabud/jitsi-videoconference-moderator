@@ -51,7 +51,7 @@ public class GoogleConferenceServiceImpl implements GoogleConferenceService {
     @Override
     public GoogleConferenceDataVo createNewGoogleConference(GoogleConferenceForm form) throws GoogleConferenceException {
         Long userId = form.getUserId();
-        String eventId = form.getEventData().getEventId();
+        String eventId = form.getEventId();
         UserVo userVo;
         ServerVo serverVo;
         try{
@@ -71,7 +71,7 @@ public class GoogleConferenceServiceImpl implements GoogleConferenceService {
         Optional<GoogleConferenceEntity> optionalGoogleConferenceEntity = googleConferenceRepository.findByUserIdAndEventId(userId,eventId);
         GoogleConferenceEntity conferenceEntity = optionalGoogleConferenceEntity.orElseGet(()->{
             GoogleConferenceEntity newEntity = googleConferenceFormToGoogleConferenceEntityReducer.reduce(form,userVo);
-            return googleConferenceRepository.save(newEntity);
+            return googleConferenceRepository.save(newEntity);  
         });
         GoogleConferenceDataVo googleConferenceDataVo = googleConferenceEntityToGoogleConferenceDataVoReducer.reduce(conferenceEntity,userId, serverVo.getServerUrl());
         return googleConferenceDataVo;

@@ -14,7 +14,7 @@ public class GoogleConferenceFormToGoogleConferenceEntityReducer {
     public GoogleConferenceEntity reduce(GoogleConferenceForm form, UserVo user){
         String conferenceId = UUID.randomUUID().toString();
         return GoogleConferenceEntity.builder()
-                .eventId(form.getEventData().getEventId())
+                .eventId(form.getEventId())
                 .status(ConferenceStatus.PENDING)
                 .serverId(form.getServerId())
                 .userId(user.getId())

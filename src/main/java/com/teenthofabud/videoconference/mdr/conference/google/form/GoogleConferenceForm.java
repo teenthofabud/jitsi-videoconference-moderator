@@ -13,28 +13,8 @@ import lombok.*;
 @NoArgsConstructor
 public class GoogleConferenceForm {
 
-    @JsonProperty("calendar")
-    @Schema(description = "Google calendar event")
-    @NotNull
-    GoogleCalendarEvent calendarEvent;
-
-    @JsonProperty("authorizationEventObject")
-    @Deprecated
-    @Schema(description = "Authentication details")
-    GoogleAuthObject authEventObject;
-
-    @JsonProperty("clientPlatform")
-    String clientPlatform;
-
-    @JsonProperty("hostApp")
-    String hostApp;
-
-    @JsonProperty("eventData")
-    @NotNull
-    GoogleEventData eventData;
-
-    @JsonProperty("commonEventObject")
-    GoogleCommonEventObject commonEventObject;
+    @JsonProperty("id")
+    String eventId;
 
     @JsonProperty("serverId")
     Long serverId;
