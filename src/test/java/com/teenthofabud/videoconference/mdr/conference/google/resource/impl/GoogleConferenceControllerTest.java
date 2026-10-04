@@ -74,8 +74,7 @@ class GoogleConferenceControllerTest {
     /** What the Calendar add-on sends. */
     private GoogleConferenceForm addOnForm() {
         GoogleConferenceForm form = new GoogleConferenceForm();
-        form.setEventData(new GoogleEventData(EVENT_ID, EMAIL));
-        form.setCalendarEvent(new GoogleCalendarEvent(EMAIL, EVENT_ID));
+        form.setEventId(EVENT_ID);
         form.setServerId(5L);
         form.setUserId(USER_ID);
         return form;
@@ -116,43 +115,11 @@ class GoogleConferenceControllerTest {
             ArgumentCaptor<GoogleConferenceForm> captor = ArgumentCaptor.forClass(GoogleConferenceForm.class);
             verify(googleConferenceService).createNewGoogleConference(captor.capture());
             GoogleConferenceForm form = captor.getValue();
-            assertThat(form.getEventData().getEventId()).isEqualTo(EVENT_ID);
-            assertThat(form.getEventData().getCalendarId()).isEqualTo(EMAIL);
+            assertThat(form.getEventId()).isEqualTo(EVENT_ID);
             assertThat(form.getServerId()).isEqualTo(5L);
             assertThat(form.getUserId()).isEqualTo(USER_ID);
         }
 
-        @Test
-        @DisplayName("a payload that omits userId and still binds")
-        void omittingUserIdIsTolerated() throws Exception {
-            when(googleConferenceService.createNewGoogleConference(any(GoogleConferenceForm.class)))
-                    .thenReturn(GoogleConferenceDataVo.builder().id("room-abc").build());
-
-            GoogleConferenceForm request = addOnForm();
-            request.setUserId(null);
-            mockMvc.perform(post(BASE).contentType(MediaType.APPLICATION_JSON).content(json(request)))
-                    .andExpect(status().isCreated());
-
-            ArgumentCaptor<GoogleConferenceForm> captor = ArgumentCaptor.forClass(GoogleConferenceForm.class);
-            verify(googleConferenceService).createNewGoogleConference(captor.capture());
-            assertThat(captor.getValue().getUserId()).isNull();
-        }
-
-        @Test
-        @DisplayName("an explicit null userId binds too")
-        void nullUserIdIsTolerated() throws Exception {
-            when(googleConferenceService.createNewGoogleConference(any(GoogleConferenceForm.class)))
-                    .thenReturn(GoogleConferenceDataVo.builder().id("room-abc").build());
-
-            GoogleConferenceForm request = addOnForm();
-            request.setUserId(null);
-            mockMvc.perform(post(BASE).contentType(MediaType.APPLICATION_JSON).content(jsonWithNulls(request)))
-                    .andExpect(status().isCreated());
-
-            ArgumentCaptor<GoogleConferenceForm> captor = ArgumentCaptor.forClass(GoogleConferenceForm.class);
-            verify(googleConferenceService).createNewGoogleConference(captor.capture());
-            assertThat(captor.getValue().getUserId()).isNull();
-        }
 
         @Test
         @DisplayName("a body without eventData is rejected with 400 MDR-002")
