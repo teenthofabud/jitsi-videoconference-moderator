@@ -14,12 +14,15 @@ import lombok.*;
 public class GoogleConferenceForm {
 
     @JsonProperty("id")
+    @NotNull
     String eventId;
 
     @JsonProperty("serverId")
+    @NotNull
     Long serverId;
 
     @JsonProperty("userId")
+    @NotNull
     Long userId;
 
 }
