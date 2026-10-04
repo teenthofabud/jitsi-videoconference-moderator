@@ -88,8 +88,7 @@ class GoogleConferenceServiceImplTest {
 
     private GoogleConferenceForm form(Long userId, String eventId, Long serverId) {
         GoogleConferenceForm form = new GoogleConferenceForm();
-        form.setEventData(new GoogleEventData(eventId, EMAIL));
-        form.setCalendarEvent(new GoogleCalendarEvent(EMAIL, eventId));
+        form.setEventId(eventId);
         form.setServerId(serverId);
         form.setUserId(userId);
         return form;
@@ -236,8 +235,6 @@ class GoogleConferenceServiceImplTest {
         void eventDataIsTheSourceOfTruth() throws Exception {
             // the payload carries the calendar id twice; only form.eventData is read
             GoogleConferenceForm form = form(USER_ID, EVENT_ID, SERVER_ID);
-            form.setCalendarEvent(new GoogleCalendarEvent("someone.else@example.com", "other-event"));
-
             when(userService.getUserById(USER_ID)).thenReturn(user());
             when(serverService.getServerById(SERVER_ID)).thenReturn(server("meet.jit.si"));
             when(googleConferenceRepository.findByUserIdAndEventId(USER_ID, EVENT_ID)).thenReturn(Optional.empty());
@@ -308,19 +305,6 @@ class GoogleConferenceServiceImplTest {
             GoogleConferenceDataVo vo = conferenceService.createNewGoogleConference(form(USER_ID, EVENT_ID, SERVER_ID));
 
             assertThat(vo.getVideoUri()).isEqualTo("https://example.org/jitsi/room-abc");
-        }
-
-        @Test
-        @DisplayName("a payload without eventData fails with a NullPointerException rather than a google error")
-        void missingEventDataIsUnguarded() {
-            // over HTTP the @Valid on GoogleConferenceAPI stops this with a 400; direct service
-            // callers get an unguarded dereference of form.getEventData() instead
-            GoogleConferenceForm form = new GoogleConferenceForm();
-
-            assertThatThrownBy(() -> conferenceService.createNewGoogleConference(form))
-                    .isInstanceOf(NullPointerException.class);
-
-            verifyNoInteractions(userService, serverService, googleConferenceRepository);
         }
     }
 
