@@ -32,6 +32,11 @@ class CalComConference {
   +bookingId
 }
 
+class OutlookConference {
+  +draftTrackingId
+  +eventId
+}
+
 enum ServerType {
   +Custom
   +Default
@@ -45,6 +50,7 @@ enum ConferenceStatus {
 
 GoogleConference --|> Conference
 CalComConference --|> Conference
+OutlookConference --|> Conference
 
 Server --> ServerType : server type
 Conference --> ConferenceStatus : conference status
