@@ -6,6 +6,7 @@ import com.teenthofabud.videoconference.mdr.conference.outlook.converter.Outlook
 import com.teenthofabud.videoconference.mdr.conference.outlook.entity.OutlookConferenceEntity;
 import com.teenthofabud.videoconference.mdr.conference.outlook.form.OutlookAppointmentSentForm;
 import com.teenthofabud.videoconference.mdr.conference.outlook.form.OutlookConferenceForm;
+import com.teenthofabud.videoconference.mdr.conference.outlook.form.OutlookConferenceUpdateForm;
 import com.teenthofabud.videoconference.mdr.conference.outlook.repository.OutlookConferenceRepository;
 import com.teenthofabud.videoconference.mdr.conference.outlook.service.OutlookConferenceService;
 import com.teenthofabud.videoconference.mdr.conference.outlook.vo.OutlookConferenceVo;
@@ -19,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -43,6 +45,34 @@ public class OutlookConferenceServiceImpl implements OutlookConferenceService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public List<OutlookConferenceVo> getAllConferencesByUserId(Long userId) throws ConferenceException {
+        requireUser(userId);
+        return repository.findAllByUserId(userId).stream()
+                .map(this::toVo)
+                .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public OutlookConferenceVo getConference(Long userId, String draftTrackingId) throws ConferenceException {
+        requireUser(userId);
+        return toVo(findConference(userId, draftTrackingId));
+    }
+
+    @Override
+    @Transactional
+    public OutlookConferenceVo updateConference(Long userId, String draftTrackingId,
+            OutlookConferenceUpdateForm form) throws ConferenceException {
+        requireUser(userId);
+        OutlookConferenceEntity conference = findConference(userId, draftTrackingId);
+        requireServer(form.getServerId(), userId);
+        conference.setServerId(form.getServerId());
+        conference.setStatus(ConferenceStatus.ACTIVE);
+        return toVo(repository.save(conference));
+    }
+
+    @Override
     @Transactional
     public OutlookConferenceVo createConference(OutlookConferenceForm form) throws ConferenceException {
         requireUser(form.getUserId());
@@ -61,7 +91,7 @@ public class OutlookConferenceServiceImpl implements OutlookConferenceService {
                 .userId(form.getUserId())
                 .serverId(form.getServerId())
                 .roomId(UUID.randomUUID().toString())
-                .status(ConferenceStatus.PENDING)
+                .status(ConferenceStatus.ACTIVE)
                 .build();
         return toVo(repository.save(conference));
     }

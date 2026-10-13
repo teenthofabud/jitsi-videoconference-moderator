@@ -21,7 +21,7 @@ public class SecurityConfiguration {
     CorsConfigurationSource outlookCorsConfigurationSource() {
         CorsConfiguration outlookCors = new CorsConfiguration();
         outlookCors.setAllowedOriginPatterns(List.of("*"));
-        outlookCors.setAllowedMethods(List.of("GET", "POST", "DELETE", "OPTIONS"));
+        outlookCors.setAllowedMethods(List.of("GET", "POST", "PATCH", "DELETE", "OPTIONS"));
         outlookCors.setAllowedHeaders(List.of("Content-Type"));
         outlookCors.setAllowCredentials(false);
 
