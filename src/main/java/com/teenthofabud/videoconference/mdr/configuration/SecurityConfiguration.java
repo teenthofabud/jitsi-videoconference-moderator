@@ -22,11 +22,12 @@ public class SecurityConfiguration {
         CorsConfiguration outlookCors = new CorsConfiguration();
         outlookCors.setAllowedOriginPatterns(List.of("*"));
         outlookCors.setAllowedMethods(List.of("GET", "POST", "PATCH", "DELETE", "OPTIONS"));
-        outlookCors.setAllowedHeaders(List.of("Content-Type"));
+        outlookCors.setAllowedHeaders(List.of("Content-Type", "X-Outlook-Scheduler-Secret"));
         outlookCors.setAllowCredentials(false);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/api/outlook/conferences/**", outlookCors);
+        source.registerCorsConfiguration("/api/outlook/oauth/status", outlookCors);
         return source;
     }
 
@@ -48,7 +49,8 @@ public class SecurityConfiguration {
                         .requestMatchers("/actuator/health").permitAll()
                         .requestMatchers(HttpMethod.POST,"/api/users/preview").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/servers/default").permitAll()
-                        .requestMatchers("/api/outlook/conferences/**").permitAll()
+                        .requestMatchers("/api/outlook/conferences/**", "/api/outlook/oauth/**",
+                                        "/api/outlook/graph/notifications").permitAll()
                         .anyRequest().authenticated()
 
                 )

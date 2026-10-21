@@ -12,5 +12,7 @@ public interface OutlookConferenceRepository extends JpaRepository<OutlookConfer
 
     Optional<OutlookConferenceEntity> findByDraftTrackingId(String draftTrackingId);
 
+    Optional<OutlookConferenceEntity> findByEventId(String eventId);
+
     List<OutlookConferenceEntity> findAllByUserId(Long userId);
 }

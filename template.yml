@@ -8,23 +8,43 @@ Globals:
     EndpointConfiguration: REGIONAL
 
 Parameters:
-  JITSI_DB_URL:
+  JitsiDbUrl:
     Type : String
-  JITSI_DB_USERNAME:
+  JitsiDbUsername:
     Type: String
-  JITSI_DB_DRIVER_CLASS:
+  JitsiDbDriverClass:
     Type: String
-  JITSI_DB_PASSWORD:
+  JitsiDbPassword:
     Type: String
-  JITSI_DB_DIALECT:
+  JitsiDbDialect:
     Type: String
-  AUTH0_API_IDENTIFIER:
+  Auth0ApiIdentifier:
     Type: String
-  AUTH0_DOMAIN:
+  Auth0Domain:
     Type: String
-  AWS_REGION:
+  OutlookGraphClientId:
     Type: String
-
+    Default: ''
+  OutlookGraphClientSecret:
+    Type: String
+    NoEcho: true
+    Default: ''
+  OutlookGraphTenant:
+    Type: String
+    Default: common
+  OutlookGraphRedirectUri:
+    Type: String
+    Default: ''
+  OutlookGraphPublicBaseUrl:
+    Type: String
+    Default: ''
+  OutlookGraphTokenEncryptionKey:
+    Type: String
+    NoEcho: true
+    Default: ''
+  OutlookGraphScopes:
+    Type: String
+    Default: 'openid profile offline_access User.Read Calendars.Read'
 Resources:
   MainFunction:
     Type: AWS::Serverless::Function
@@ -33,8 +53,6 @@ Resources:
       Runtime: provided.al2023
       RuntimeManagementConfig:
         UpdateRuntimeOn: Auto
-        SnapStart:
-          ApplyOn: None
       FunctionUrlConfig:
         AuthType: NONE
       CodeUri: ./target/jitsi-videoconference-moderator-0.1.0-SNAPSHOT-native-zip.zip
@@ -52,14 +70,21 @@ Resources:
         - !Sub arn:aws:lambda:${AWS::Region}:753240598075:layer:LambdaAdapterLayerX86:23
       Environment:
         Variables:
-          JITSI_DB_URL : !Ref JITSI_DB_URL
-          JITSI_DB_USERNAME : !Ref JITSI_DB_USERNAME
-          JITSI_DB_DRIVER_CLASS : !Ref JITSI_DB_DRIVER_CLASS
-          JITSI_DB_PASSWORD : !Ref JITSI_DB_PASSWORD
-          JITSI_DB_DIALECT: !Ref JITSI_DB_DIALECT
-          AUTH0_API_IDENTIFIER: !Ref AUTH0_API_IDENTIFIER
-          AUTH0_DOMAIN: !AUTH0_DOMAIN
-          AWS_REGION: !AWS_REGION
+          JITSI_DB_URL : !Ref JitsiDbUrl
+          JITSI_DB_USERNAME : !Ref JitsiDbUsername
+          JITSI_DB_DRIVER_CLASS : !Ref JitsiDbDriverClass
+          JITSI_DB_PASSWORD : !Ref JitsiDbPassword
+          JITSI_DB_DIALECT: !Ref JitsiDbDialect
+          AUTH0_API_IDENTIFIER: !Ref Auth0ApiIdentifier
+          AUTH0_DOMAIN: !Ref Auth0Domain
+          OUTLOOK_GRAPH_CLIENT_ID: !Ref OutlookGraphClientId
+          OUTLOOK_GRAPH_CLIENT_SECRET: !Ref OutlookGraphClientSecret
+          OUTLOOK_GRAPH_TENANT: !Ref OutlookGraphTenant
+          OUTLOOK_GRAPH_REDIRECT_URI: !Ref OutlookGraphRedirectUri
+          OUTLOOK_GRAPH_PUBLIC_BASE_URL: !Ref OutlookGraphPublicBaseUrl
+          OUTLOOK_GRAPH_TOKEN_ENCRYPTION_KEY: !Ref OutlookGraphTokenEncryptionKey
+          OUTLOOK_GRAPH_SCOPES: !Ref OutlookGraphScopes
+
 
 
 Outputs:

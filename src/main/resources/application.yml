@@ -58,3 +58,13 @@ logging:
 
 
 
+
+outlook:
+  graph:
+    client-id: ${OUTLOOK_GRAPH_CLIENT_ID:}
+    client-secret: ${OUTLOOK_GRAPH_CLIENT_SECRET:}
+    tenant: ${OUTLOOK_GRAPH_TENANT:common}
+    redirect-uri: ${OUTLOOK_GRAPH_REDIRECT_URI:}
+    public-base-url: ${OUTLOOK_GRAPH_PUBLIC_BASE_URL:}
+    token-encryption-key: ${OUTLOOK_GRAPH_TOKEN_ENCRYPTION_KEY:}
+    scopes: ${OUTLOOK_GRAPH_SCOPES:openid profile offline_access User.Read Calendars.Read}

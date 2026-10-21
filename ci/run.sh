@@ -64,14 +64,20 @@ if [ "$USE_SAM" = "true" ]; then
     cat > sam-env.json <<EOF
 {
   "Parameters": {
-    "JITSI_DB_URL": "$JITSI_DB_URL",
-    "JITSI_DB_USERNAME": "$JITSI_DB_USERNAME",
-    "JITSI_DB_PASSWORD": "$JITSI_DB_PASSWORD",
-    "JITSI_DB_DRIVER_CLASS": "$JITSI_DB_DRIVER_CLASS",
-    "JITSI_DB_DIALECT": "$JITSI_DB_DIALECT",
-    "AUTH0_DOMAIN":"$AUTH0_DOMAIN",
-    "AUTH0_API_IDENTIFIER":"$AUTH0_API_IDENTIFIER",
-    "AWS_REGION":"$AWS_REGION"
+    "JitsiDbUrl": "$JITSI_DB_URL",
+    "JitsiDbUsername": "$JITSI_DB_USERNAME",
+    "JitsiDbPassword": "$JITSI_DB_PASSWORD",
+    "JitsiDbDriverClass": "$JITSI_DB_DRIVER_CLASS",
+    "JitsiDbDialect": "$JITSI_DB_DIALECT",
+    "Auth0Domain":"$AUTH0_DOMAIN",
+    "Auth0ApiIdentifier":"$AUTH0_API_IDENTIFIER",
+    "OutlookGraphClientId":"$OUTLOOK_GRAPH_CLIENT_ID",
+    "OutlookGraphClientSecret":"$OUTLOOK_GRAPH_CLIENT_SECRET",
+    "OutlookGraphTenant":"${OUTLOOK_GRAPH_TENANT:-common}",
+    "OutlookGraphRedirectUri":"$OUTLOOK_GRAPH_REDIRECT_URI",
+    "OutlookGraphPublicBaseUrl":"$OUTLOOK_GRAPH_PUBLIC_BASE_URL",
+    "OutlookGraphTokenEncryptionKey":"$OUTLOOK_GRAPH_TOKEN_ENCRYPTION_KEY",
+    "OutlookGraphScopes":"${OUTLOOK_GRAPH_SCOPES:-openid profile offline_access User.Read Calendars.Read}"
   }
 }
 EOF
