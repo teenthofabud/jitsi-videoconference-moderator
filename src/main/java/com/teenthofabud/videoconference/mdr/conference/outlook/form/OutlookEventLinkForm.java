@@ -10,7 +10,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class OutlookAppointmentSentForm {
+public class OutlookEventLinkForm {
 
     @NotBlank
     String eventId;

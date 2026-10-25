@@ -14,10 +14,10 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.Instant;
 
 @Entity
-@Table(name = "outlook_graph_token_cache")
+@Table(name = "outlook_graph_connection")
 @EntityListeners(AuditingEntityListener.class)
 @Getter @Setter @NoArgsConstructor
-public class OutlookGraphTokenCacheEntity {
+public class OutlookGraphConnectionEntity {
     @Id @Column(name = "user_id") private Long userId;
     @Column(name = "microsoft_user_id") private String microsoftUserId;
     @Column(name = "mailbox_email") private String mailboxEmail;

@@ -1,0 +1,36 @@
+sequenceDiagram
+autonumber
+actor User
+participant Addin as Outlook add-in
+participant Outlook as Outlook calendar
+participant Moderator
+participant Microsoft as Microsoft Entra / Graph
+participant DB as Moderator database
+participant Renewal as EventBridge + Lambda
+
+    User->>Addin: Connect calendar sync
+    Addin->>Moderator: Start OAuth (PKCE)
+    Moderator-->>User: Microsoft sign-in and consent
+    Microsoft-->>Moderator: OAuth callback
+    Moderator->>Microsoft: Exchange code, create subscription
+    Microsoft-->>Moderator: Tokens and subscription ID
+    Moderator->>DB: Store encrypted connection and subscription
+
+    User->>Addin: Add meeting
+    Addin->>Moderator: Create ACTIVE conference
+    Moderator->>DB: Save room, user, and server
+    Moderator-->>Addin: Meeting URL
+    Addin->>Outlook: Set URL, saveAsync(), get event ID
+    Addin->>Moderator: Link converted event ID
+    Moderator->>DB: Store event ID
+
+    User->>Outlook: Cancel or delete appointment
+    Outlook->>Microsoft: Calendar change
+    Microsoft->>Moderator: Subscription notification
+    Moderator->>DB: Match event ID, mark cancelled if deleted/cancelled
+
+    loop Every 30 minutes
+        Renewal->>DB: Find expiring subscriptions or missed notifications
+        Renewal->>Microsoft: Renew/recreate, reconcile missed changes
+        Renewal->>DB: Save subscription and cancellation updates
+    end

@@ -1,7 +1,8 @@
 package com.teenthofabud.videoconference.mdr.conference.outlook.resource.impl;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import com.teenthofabud.videoconference.mdr.conference.outlook.dto.OutlookGraphDtos.NotificationPayload;
 import com.teenthofabud.videoconference.mdr.conference.outlook.service.impl.OutlookGraphSyncService;
+import tools.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -16,12 +17,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class OutlookGraphNotificationController {
     private final OutlookGraphSyncService service;
+    private final ObjectMapper objectMapper;
 
     @PostMapping(value = "/notifications", produces = MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<String> notifications(@RequestParam(required = false) String validationToken,
-                                                @RequestBody(required = false) JsonNode payload) {
+                                                @RequestBody(required = false) String payloadBody) throws Exception {
         if (validationToken != null) return ResponseEntity.ok(validationToken);
-        if (payload != null) service.handleNotifications(payload);
+        if (payloadBody != null && !payloadBody.isBlank()) {
+            service.handleNotifications(objectMapper.readValue(payloadBody, NotificationPayload.class));
+        }
         return ResponseEntity.accepted().body("");
     }
 

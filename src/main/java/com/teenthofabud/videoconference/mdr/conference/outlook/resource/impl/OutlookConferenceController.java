@@ -1,7 +1,7 @@
 package com.teenthofabud.videoconference.mdr.conference.outlook.resource.impl;
 
 import com.teenthofabud.videoconference.mdr.conference.error.ConferenceException;
-import com.teenthofabud.videoconference.mdr.conference.outlook.form.OutlookAppointmentSentForm;
+import com.teenthofabud.videoconference.mdr.conference.outlook.form.OutlookEventLinkForm;
 import com.teenthofabud.videoconference.mdr.conference.outlook.form.OutlookConferenceForm;
 import com.teenthofabud.videoconference.mdr.conference.outlook.form.OutlookConferenceUpdateForm;
 import com.teenthofabud.videoconference.mdr.conference.outlook.resource.OutlookConferenceAPI;
@@ -67,11 +67,11 @@ public class OutlookConferenceController implements OutlookConferenceAPI {
     }
 
     @Override
-    @PostMapping("/{draftTrackingId}/sent")
-    public ResponseEntity<OutlookConferenceVo> markAppointmentSent(@PathVariable String draftTrackingId,
-            @RequestParam Long userId, @Valid @RequestBody OutlookAppointmentSentForm form)
+    @PostMapping({"/{draftTrackingId}/event", "/{draftTrackingId}/sent"})
+    public ResponseEntity<OutlookConferenceVo> linkAppointmentEvent(@PathVariable String draftTrackingId,
+            @RequestParam Long userId, @Valid @RequestBody OutlookEventLinkForm form)
             throws ConferenceException {
-        return ResponseEntity.ok(service.markAppointmentSent(userId, draftTrackingId, form));
+        return ResponseEntity.ok(service.linkAppointmentEvent(userId, draftTrackingId, form));
     }
 
     @Override

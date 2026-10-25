@@ -1,7 +1,7 @@
 package com.teenthofabud.videoconference.mdr.conference.outlook.resource;
 
 import com.teenthofabud.videoconference.mdr.conference.error.ConferenceException;
-import com.teenthofabud.videoconference.mdr.conference.outlook.form.OutlookAppointmentSentForm;
+import com.teenthofabud.videoconference.mdr.conference.outlook.form.OutlookEventLinkForm;
 import com.teenthofabud.videoconference.mdr.conference.outlook.form.OutlookConferenceForm;
 import com.teenthofabud.videoconference.mdr.conference.outlook.form.OutlookConferenceUpdateForm;
 import com.teenthofabud.videoconference.mdr.conference.outlook.vo.OutlookConferenceVo;
@@ -50,8 +50,9 @@ public interface OutlookConferenceAPI {
 
     ResponseEntity<OutlookConferenceVo> createConference(@Valid OutlookConferenceForm form) throws ConferenceException;
 
-    ResponseEntity<OutlookConferenceVo> markAppointmentSent(String draftTrackingId, Long userId,
-            @Valid OutlookAppointmentSentForm form) throws ConferenceException;
+    @Operation(method = "POST", summary = "Link an Outlook event to its conference")
+    ResponseEntity<OutlookConferenceVo> linkAppointmentEvent(String draftTrackingId, Long userId,
+            @Valid OutlookEventLinkForm form) throws ConferenceException;
 
     ResponseEntity<Void> cancelConference(String draftTrackingId, Long userId) throws ConferenceException;
 }

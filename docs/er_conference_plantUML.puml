@@ -20,7 +20,9 @@ class Conference {
   +roomId
   +userId
   +serverId
-  +conferenceStatus
+  +status
+  +version
+  +lastModifiedDate
 }
 
 class GoogleConference {
@@ -35,6 +37,27 @@ class CalComConference {
 class OutlookConference {
   +draftTrackingId
   +eventId
+}
+
+class OutlookGraphConnection {
+  +userId
+  +microsoftUserId
+  +mailboxEmail
+  +tenantId
+  +accessTokenEncrypted
+  +refreshTokenEncrypted
+  +accessTokenExpiresAt
+  +subscriptionId
+  +subscriptionExpiresAt
+  +subscriptionClientState
+  +pendingStateHash
+  +pendingCodeVerifier
+  +pendingExpiresAt
+  +connectionStatus
+  +lastSyncError
+  +reconciliationRequired
+  +version
+  +lastModifiedDate
 }
 
 enum ServerType {
@@ -57,5 +80,18 @@ Conference --> ConferenceStatus : conference status
 
 User "1 " <..> "M" Conference : owns
 Server "1 " <..> "M" Conference : uses
+User "1 " -- "0..1 " OutlookGraphConnection : connects
+
+note right of OutlookConference
+  eventId is captured when the add-in saves
+  the appointment, then matched against
+  Graph change notifications.
+end note
+
+note right of OutlookGraphConnection
+  One connection record stores the user's
+  delegated Graph tokens and calendar
+  subscription state.
+end note
 
 @enduml

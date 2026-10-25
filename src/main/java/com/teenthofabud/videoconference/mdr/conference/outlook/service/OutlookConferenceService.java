@@ -1,7 +1,7 @@
 package com.teenthofabud.videoconference.mdr.conference.outlook.service;
 
 import com.teenthofabud.videoconference.mdr.conference.error.ConferenceException;
-import com.teenthofabud.videoconference.mdr.conference.outlook.form.OutlookAppointmentSentForm;
+import com.teenthofabud.videoconference.mdr.conference.outlook.form.OutlookEventLinkForm;
 import com.teenthofabud.videoconference.mdr.conference.outlook.form.OutlookConferenceForm;
 import com.teenthofabud.videoconference.mdr.conference.outlook.form.OutlookConferenceUpdateForm;
 import com.teenthofabud.videoconference.mdr.conference.outlook.vo.OutlookConferenceVo;
@@ -22,7 +22,7 @@ public interface OutlookConferenceService {
 
     OutlookConferenceVo createConference(OutlookConferenceForm form) throws ConferenceException;
 
-    OutlookConferenceVo markAppointmentSent(Long userId, String draftTrackingId, OutlookAppointmentSentForm form)
+    OutlookConferenceVo linkAppointmentEvent(Long userId, String draftTrackingId, OutlookEventLinkForm form)
             throws ConferenceException;
 
     void cancelConference(Long userId, String draftTrackingId) throws ConferenceException;

@@ -52,6 +52,8 @@ public class GoogleConferenceServiceImpl implements GoogleConferenceService {
     public GoogleConferenceDataVo createNewGoogleConference(GoogleConferenceForm form) throws GoogleConferenceException {
         Long userId = form.getUserId();
         String eventId = form.getEventId();
+        log.info("Received Google conference create request: userId={}, eventId={}, serverId={}",
+                userId, eventId, form.getServerId());
         UserVo userVo;
         ServerVo serverVo;
         try{
@@ -69,17 +71,23 @@ public class GoogleConferenceServiceImpl implements GoogleConferenceService {
             throw new GoogleConferenceException(GoogleConferenceErrorType.TEMPORARY, String.format("Server with ID %s not found",form.getServerId()));
         }
         Optional<GoogleConferenceEntity> optionalGoogleConferenceEntity = googleConferenceRepository.findByUserIdAndEventId(userId,eventId);
-        GoogleConferenceEntity conferenceEntity = optionalGoogleConferenceEntity.orElseGet(()->{
-            GoogleConferenceEntity newEntity = googleConferenceFormToGoogleConferenceEntityReducer.reduce(form,userVo);
+        boolean alreadyExists = optionalGoogleConferenceEntity.isPresent();
+        GoogleConferenceEntity conferenceEntity = optionalGoogleConferenceEntity.orElseGet(() -> {
+            GoogleConferenceEntity newEntity = googleConferenceFormToGoogleConferenceEntityReducer.reduce(form, userVo);
             return googleConferenceRepository.save(newEntity);
         });
+        log.info("{} Google conference for user {} on server {}",
+                alreadyExists ? "Reused existing" : "Created", userId, form.getServerId());
         GoogleConferenceDataVo googleConferenceDataVo = googleConferenceEntityToGoogleConferenceDataVoReducer.reduce(conferenceEntity,userId, serverVo.getServerUrl());
+        log.debug("Returning Google conference data: userId={}, eventId={}, roomId={}",
+                userId, eventId, googleConferenceDataVo.getId());
         return googleConferenceDataVo;
     }
 
     @Override
     @Transactional
     public GoogleConferenceVo getGoogleConferenceByUserIdAndEventId(Long userId, String eventId) throws GoogleConferenceException {
+        log.debug("Received Google conference lookup: userId={}, eventId={}", userId, eventId);
         GoogleConferenceVo conferenceVo = null;
         UserVo userVo;
         try{
@@ -90,17 +98,21 @@ public class GoogleConferenceServiceImpl implements GoogleConferenceService {
             throw new GoogleConferenceException(GoogleConferenceErrorType.TEMPORARY,String.format("User with userId %s not found",userId));
         }
         Optional<GoogleConferenceEntity> optionalConferenceEntity = googleConferenceRepository.findByUserIdAndEventId(userId,eventId);
-        if(optionalConferenceEntity.isEmpty())
+        if(optionalConferenceEntity.isEmpty()) {
+            log.warn("Google conference lookup found no record: userId={}, eventId={}", userId, eventId);
             throw new GoogleConferenceException(GoogleConferenceErrorType.TEMPORARY,String.format("Calendar event with ID %s not found",eventId));
+        }
         else{
             conferenceVo = googleConferenceEntityToGoogleConferenceVoConverter.convert(optionalConferenceEntity.get());
         }
+        log.debug("Returning Google conference: userId={}, eventId={}, roomId={}", userId, eventId, conferenceVo.getRoomId());
         return conferenceVo;
     }
 
     @Override
     @Transactional
     public List<GoogleConferenceVo> getAllGoogleConferencesByUserId(Long userId) throws GoogleConferenceException {
+        log.debug("Received Google conference list request: userId={}", userId);
         UserVo userVo;
         try{
             userVo = userService.getUserById(userId);
@@ -113,12 +125,14 @@ public class GoogleConferenceServiceImpl implements GoogleConferenceService {
                 .stream()
                 .map(e-> googleConferenceEntityToGoogleConferenceVoConverter.convert(e))
                 .collect(Collectors.toList());
+        log.debug("Loaded {} Google conferences for user {}", conferenceVoList.size(), userId);
         return conferenceVoList;
     }
 
     @Override
     @Transactional
     public void patchGoogleConferenceByUserIdAndEventId(Long userId, String eventId, JsonPatch patches) throws GoogleConferenceException {
+        log.info("Received Google conference patch request: userId={}, eventId={}", userId, eventId);
         UserVo userVo;
         try{
             userVo = userService.getUserById(userId);
@@ -128,16 +142,17 @@ public class GoogleConferenceServiceImpl implements GoogleConferenceService {
             throw new GoogleConferenceException(GoogleConferenceErrorType.TEMPORARY, String.format("User with userId %s not found",userId));
         }
         Optional<GoogleConferenceEntity> optionalConferenceEntity = googleConferenceRepository.findByUserIdAndEventId(userId,eventId);
-        if(optionalConferenceEntity.isEmpty())
+        if(optionalConferenceEntity.isEmpty()) {
+            log.warn("Google conference patch target not found: userId={}, eventId={}", userId, eventId);
             throw new GoogleConferenceException(GoogleConferenceErrorType.TEMPORARY,String.format("Calendar event with ID %s not found",eventId));
+        }
         GoogleConferenceEntity conferenceEntity = optionalConferenceEntity.get();
         String before = objectMapper.writeValueAsString(conferenceEntity);
-        log.info("Before patch : {}",before);
         JsonObject patchedObject = patches.apply(readObject(before));
         GoogleConferenceEntity patchedEntity = objectMapper.readValue(patchedObject.toString(),GoogleConferenceEntity.class);
         rejectIdentityChanges(conferenceEntity, patchedEntity);
-        log.info("after patching : {}",patchedEntity);
         googleConferenceRepository.save(patchedEntity);
+        log.info("Updated Google conference: userId={}, eventId={}, roomId={}", userId, eventId, patchedEntity.getRoomId());
     }
 
     private JsonObject readObject(String json){
@@ -156,7 +171,7 @@ public class GoogleConferenceServiceImpl implements GoogleConferenceService {
                 && Objects.equals(original.getUserId(), patched.getUserId())){
             return;
         }
-        log.error("Patch attempted to change immutable attributes of the conference with event id {}", original.getEventId());
+        log.warn("Rejected Google conference patch that changed identity fields for user {}", original.getUserId());
         throw new GoogleConferenceException(GoogleConferenceErrorType.PERMANENT,
                 "Patch attempted to change immutable attributes of the conference");
     }
@@ -164,6 +179,7 @@ public class GoogleConferenceServiceImpl implements GoogleConferenceService {
     @Override
     @Transactional
     public void deleteGoogleConferenceByUserIdAndEventId(Long userId, String eventId) throws GoogleConferenceException {
+        log.info("Received Google conference delete request: userId={}, eventId={}", userId, eventId);
         UserVo userVo;
         try{
             userVo = userService.getUserById(userId);
@@ -173,9 +189,13 @@ public class GoogleConferenceServiceImpl implements GoogleConferenceService {
             throw new GoogleConferenceException(GoogleConferenceErrorType.TEMPORARY, String.format("User with userId %s not found",userId));
         }
         Optional<GoogleConferenceEntity> optionalConferenceEntity = googleConferenceRepository.findByUserIdAndEventId(userId,eventId);
-        if(optionalConferenceEntity.isEmpty())
+        if(optionalConferenceEntity.isEmpty()) {
+            log.warn("Google conference delete target not found: userId={}, eventId={}", userId, eventId);
             throw new GoogleConferenceException(GoogleConferenceErrorType.TEMPORARY,String.format("Calendar event with ID %s not found",eventId));
-        else googleConferenceRepository.deleteById(optionalConferenceEntity.get().getId());
+        } else {
+            googleConferenceRepository.deleteById(optionalConferenceEntity.get().getId());
+            log.info("Deleted Google conference for user {}", userId);
+        }
     }
 
 }

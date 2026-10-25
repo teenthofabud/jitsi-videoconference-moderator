@@ -1,0 +1,10 @@
+ALTER TABLE outlook_graph_token_cache RENAME TO outlook_graph_connection;
+
+ALTER INDEX outlook_graph_token_cache_subscription_id_uq
+    RENAME TO outlook_graph_connection_subscription_id_uq;
+ALTER INDEX outlook_graph_token_cache_pending_state_hash_uq
+    RENAME TO outlook_graph_connection_pending_state_hash_uq;
+ALTER INDEX outlook_graph_token_cache_renewal_idx
+    RENAME TO outlook_graph_connection_renewal_idx;
+ALTER INDEX outlook_graph_token_cache_reconciliation_idx
+    RENAME TO outlook_graph_connection_reconciliation_idx;
